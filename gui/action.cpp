@@ -214,6 +214,7 @@ GUIAction::GUIAction(xml_node<>* node)
 #endif
 		ADD_ACTION(setlanguage);
 		ADD_ACTION(checkforapp);
+		ADD_ACTION(togglebacklight);
 
 		// remember actions that run in the caller thread
 		for (mapFunc::const_iterator it = mf.begin(); it != mf.end(); ++it)
@@ -1900,6 +1901,12 @@ int GUIAction::setlanguage(std::string arg __unused)
 	op_status = 0; // success
 
 	operation_end(op_status);
+	return 0;
+}
+
+int GUIAction::togglebacklight(std::string arg __unused)
+{
+	blankTimer.toggleBlank();
 	return 0;
 }
 
