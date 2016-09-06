@@ -72,7 +72,8 @@ LOCAL_SRC_FILES := \
     twrp-functions.cpp \
     twrpDigestDriver.cpp \
     openrecoveryscript.cpp \
-    tarWrite.c
+    tarWrite.c \
+    twrpAdbBuFifo.cpp
 
 ifeq ($(BUILD_SAFESTRAP), true)
 LOCAL_SRC_FILES += \
