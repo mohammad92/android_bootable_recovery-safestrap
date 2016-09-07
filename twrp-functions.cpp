@@ -53,10 +53,10 @@
 	#include "openaes/inc/oaes_lib.h"
 #endif
 #include "cutils/android_reboot.h"
+#include "set_metadata.h"
 
 extern "C" {
 	#include "libcrecovery/common.h"
-	#include "set_metadata.h"
 }
 
 /* Execute a command */

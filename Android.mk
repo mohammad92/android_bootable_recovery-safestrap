@@ -138,12 +138,18 @@ LOCAL_SHARED_LIBRARIES :=
 
 LOCAL_STATIC_LIBRARIES += libguitwrp
 LOCAL_SHARED_LIBRARIES += libaosprecovery libz libc libcutils libstdc++ libtar libblkid libminuitwrp libminadbd libmtdutils libminzip libtwadbbu
-LOCAL_SHARED_LIBRARIES += libcrecovery libbase libcrypto
+LOCAL_SHARED_LIBRARIES += libcrecovery
 
 ifeq ($(shell test $(PLATFORM_SDK_VERSION) -lt 23; echo $$?),0)
-    LOCAL_SHARED_LIBRARIES += libstlport
+    LOCAL_SHARED_LIBRARIES += libstlport libmincrypttwrp
+    LOCAL_C_INCLUDES += $(LOCAL_PATH)/libmincrypt/includes
+    LOCAL_CFLAGS += -DUSE_OLD_VERIFIER
 else
-    LOCAL_SHARED_LIBRARIES += libc++
+    LOCAL_SHARED_LIBRARIES += libc++ libcrypto
+endif
+
+ifeq ($(shell test $(PLATFORM_SDK_VERSION) -ge 24; echo $$?),0)
+    LOCAL_SHARED_LIBRARIES += libbase
 endif
 
 ifneq ($(wildcard system/core/libsparse/Android.mk),)
@@ -362,13 +368,15 @@ LOCAL_ADDITIONAL_DEPENDENCIES := \
     mke2fs.conf \
     pigz \
     teamwin \
+    toolbox_symlinks \
     twrp \
     unpigz_symlink \
     fsck.fat \
     fatlabel \
     mkfs.fat \
     permissive.sh \
-    simg2img_twrp
+    simg2img_twrp \
+    init.recovery.service.rc
 
 ifneq ($(TARGET_ARCH), arm64)
     ifneq ($(TARGET_ARCH), x86_64)
@@ -569,23 +577,27 @@ endif # !TW_USE_TOOLBOX
 
 # recovery-persist (system partition dynamic executable run after /data mounts)
 # ===============================
-include $(CLEAR_VARS)
-LOCAL_SRC_FILES := recovery-persist.cpp
-LOCAL_MODULE := recovery-persist
-LOCAL_SHARED_LIBRARIES := liblog libbase
-LOCAL_CFLAGS := -Werror
-LOCAL_INIT_RC := recovery-persist.rc
-include $(BUILD_EXECUTABLE)
+ifeq ($(shell test $(PLATFORM_SDK_VERSION) -ge 24; echo $$?),0)
+    include $(CLEAR_VARS)
+    LOCAL_SRC_FILES := recovery-persist.cpp
+    LOCAL_MODULE := recovery-persist
+    LOCAL_SHARED_LIBRARIES := liblog libbase
+    LOCAL_CFLAGS := -Werror
+    LOCAL_INIT_RC := recovery-persist.rc
+    include $(BUILD_EXECUTABLE)
+endif
 
 # recovery-refresh (system partition dynamic executable run at init)
 # ===============================
-include $(CLEAR_VARS)
-LOCAL_SRC_FILES := recovery-refresh.cpp
-LOCAL_MODULE := recovery-refresh
-LOCAL_SHARED_LIBRARIES := liblog
-LOCAL_CFLAGS := -Werror
-LOCAL_INIT_RC := recovery-refresh.rc
-include $(BUILD_EXECUTABLE)
+ifeq ($(shell test $(PLATFORM_SDK_VERSION) -ge 24; echo $$?),0)
+    include $(CLEAR_VARS)
+    LOCAL_SRC_FILES := recovery-refresh.cpp
+    LOCAL_MODULE := recovery-refresh
+    LOCAL_SHARED_LIBRARIES := liblog
+    LOCAL_CFLAGS := -Werror
+    LOCAL_INIT_RC := recovery-refresh.rc
+    include $(BUILD_EXECUTABLE)
+endif
 
 # shared libfusesideload
 # ===============================
@@ -597,7 +609,14 @@ LOCAL_CFLAGS += -D_XOPEN_SOURCE -D_GNU_SOURCE
 
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libfusesideload
-LOCAL_SHARED_LIBRARIES := libcutils libc libcrypto
+LOCAL_SHARED_LIBRARIES := libcutils libc
+ifeq ($(shell test $(PLATFORM_SDK_VERSION) -lt 22; echo $$?),0)
+    LOCAL_C_INCLUDES := $(LOCAL_PATH)/libmincrypt/includes
+    LOCAL_SHARED_LIBRARIES += libmincrypttwrp
+    LOCAL_CFLAGS += -DUSE_MINCRYPT
+else
+    LOCAL_SHARED_LIBRARIES += libcrypto
+endif
 include $(BUILD_SHARED_LIBRARY)
 
 # shared libaosprecovery for Apache code
@@ -606,8 +625,18 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := libaosprecovery
 LOCAL_MODULE_TAGS := eng optional
-LOCAL_SRC_FILES := adb_install.cpp asn1_decoder.cpp bootloader.cpp legacy_property_service.c verifier.cpp set_metadata.c tw_atomic.cpp
-LOCAL_SHARED_LIBRARIES += libc liblog libcutils libmtdutils libfusesideload libselinux libcrypto
+LOCAL_CFLAGS := -std=gnu++0x
+LOCAL_SRC_FILES := adb_install.cpp asn1_decoder.cpp bootloader.cpp legacy_property_service.cpp set_metadata.cpp tw_atomic.cpp
+LOCAL_SHARED_LIBRARIES += libc liblog libcutils libmtdutils libfusesideload libselinux
+ifeq ($(shell test $(PLATFORM_SDK_VERSION) -lt 23; echo $$?),0)
+    LOCAL_SHARED_LIBRARIES += libstdc++ libstlport libmincrypttwrp
+    LOCAL_C_INCLUDES := bionic external/stlport/stlport $(LOCAL_PATH)/libmincrypt/includes
+    LOCAL_SRC_FILES += oldverifier/verifier.cpp
+    LOCAL_CFLAGS += -DUSE_OLD_VERIFIER
+else
+    LOCAL_SHARED_LIBRARIES += libc++ libcrypto
+    LOCAL_SRC_FILES += verifier.cpp
+endif
 
 ifneq ($(BOARD_RECOVERY_BLDRMSG_OFFSET),)
     LOCAL_CFLAGS += -DBOARD_RECOVERY_BLDRMSG_OFFSET=$(BOARD_RECOVERY_BLDRMSG_OFFSET)
@@ -664,6 +693,7 @@ include $(commands_recovery_local_path)/injecttwrp/Android.mk \
     $(commands_recovery_local_path)/libblkid/Android.mk \
     $(commands_recovery_local_path)/minuitwrp/Android.mk \
     $(commands_recovery_local_path)/openaes/Android.mk \
+    $(commands_recovery_local_path)/toolbox/Android.mk \
     $(commands_recovery_local_path)/twrpTarMain/Android.mk \
     $(commands_recovery_local_path)/mtp/Android.mk \
     $(commands_recovery_local_path)/minzip/Android.mk \
@@ -702,6 +732,10 @@ endif
 # bypasslkm
 ifdef SS_INCLUDE_BYPASSLKM
     include $(commands_recovery_local_path)/safestrap/bypasslkm/Android.mk
+endif
+
+ifeq ($(shell test $(PLATFORM_SDK_VERSION) -lt 23; echo $$?),0)
+    include $(commands_recovery_local_path)/libmincrypt/Android.mk
 endif
 
 ifeq ($(TW_INCLUDE_CRYPTO), true)
