@@ -141,7 +141,7 @@ private:
 	bool Is_File_System(string File_System);                                  // Checks to see if the file system given is considered a file system
 	bool Is_Image(string File_System);                                        // Checks to see if the file system given is considered an image
 	void Setup_File_System(bool Display_Error);                               // Sets defaults for a file system partition
-	void Setup_Image(bool Display_Error);                                     // Sets defaults for an image partition
+	void Setup_Image();                                                       // Sets defaults for an image partition
 	void Setup_AndSec(void);                                                  // Sets up .android_secure settings
 	void Find_Real_Block_Device(string& Block_Device, bool Display_Error);    // Checks the block device given and follows symlinks until it gets to the real block device
 	unsigned long long IOCTL_Get_Block_Size();                                // Finds the partition size using ioctl
@@ -232,8 +232,9 @@ private:
 	bool Can_Flash_Img;                                                       // Indicates if this partition can have images flashed to it via the GUI
 	bool Mount_Read_Only;                                                     // Only mount this partition as read-only
 	bool Is_Adopted_Storage;                                                  // Indicates that this partition is for adopted storage (android_expand)
-	TWExclude backup_exclusions;
-	TWExclude wipe_exclusions;
+	bool SlotSelect;                                                          // Partition has A/B slots
+	TWExclude backup_exclusions;                                              // Exclusions for file based backups
+	TWExclude wipe_exclusions;                                                // Exclusions for file based wipes (data/media devices only)
 
 #ifdef BUILD_SAFESTRAP
 	bool Hidden;                                                              // Dont show in lists
@@ -316,6 +317,9 @@ public:
 	bool Flash_Image(string& path, string& filename);                         // Flashes an image to a selected partition from the partition list
 	bool Restore_Partition(struct PartitionSettings *part_settings);          // Restore the partitions based on type
 	TWAtomicInt stop_backup;
+	void Set_Active_Slot(const string& Slot);                                 // Sets the active slot to A or B
+	string Get_Active_Slot_Suffix();                                          // Returns active slot _a or _b
+	string Get_Active_Slot_Display();                                         // Returns active slot A or B for display purposes
 
 #ifdef BUILD_SAFESTRAP
 	int Backup_Safestrap(void);
@@ -340,6 +344,7 @@ private:
 
 private:
 	std::vector<TWPartition*> Partitions;                                     // Vector list of all partitions
+	string Active_Slot_Display;                                               // Current Active Slot (A or B) for display purposes
 };
 
 extern TWPartitionManager PartitionManager;
