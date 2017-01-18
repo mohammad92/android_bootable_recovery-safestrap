@@ -1648,7 +1648,6 @@ int TWPartitionManager::Decrypt_Device(string Password) {
 }
 
 int TWPartitionManager::Fix_Contexts(void) {
-#ifdef HAVE_SELINUX
 	std::vector<TWPartition*>::iterator iter;
 	for (iter = Partitions.begin(); iter != Partitions.end(); iter++) {
 		if ((*iter)->Has_Data_Media) {
@@ -1661,10 +1660,6 @@ int TWPartitionManager::Fix_Contexts(void) {
 	UnMount_Main_Partitions();
 	gui_msg("done=Done.");
 	return 0;
-#else
-	LOGERR("Cannot fix contexts, no selinux support present.\n");
-	return -1;
-#endif
 }
 
 TWPartition* TWPartitionManager::Find_Next_Storage(string Path, bool Exclude_Data_Media) {
