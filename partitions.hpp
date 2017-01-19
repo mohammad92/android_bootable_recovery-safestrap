@@ -198,7 +198,6 @@ private:
 	bool Removable;                                                           // Indicates if this partition is removable -- affects how often we check overall size, if present, etc.
 	int Length;                                                               // Used by make_ext4fs to leave free space at the end of the partition block for things like a crypto footer
 #ifndef BUILD_SAFESTRAP
-
 	unsigned long long Size;                                                  // Overall size of the partition
 	unsigned long long Used;                                                  // Overall used space
 	unsigned long long Free;                                                  // Overall free space
@@ -210,7 +209,6 @@ private:
 	bool Is_Decrypted;                                                        // This partition has successfully been decrypted
 	bool Is_FBE;                                                              // File Based Encryption is present
 #ifndef BUILD_SAFESTRAP
-	bool Mount_To_Decrypt;                                                    // Mount this partition during decrypt (/vendor, /firmware, etc in case we need proprietary libs or firmware files)
 	string Display_Name;                                                      // Display name for the GUI
 #endif
 
