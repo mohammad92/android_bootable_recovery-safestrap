@@ -152,40 +152,8 @@ static int Prepare_Update_Binary(const char *path, ZipArchive *Zip, int* wipe_ca
 	if (strncmp(bootslot.c_str(),"stock",5) == 0)
 		stock_install = 1;
 
-	if ((statfs(INCLUDED_BINARY_NAME, &st) != 0) || (stock_install != 0)) {
-		const ZipEntry* binary_location = mzFindZipEntry(Zip, ASSUMED_UPDATE_BINARY_NAME);
-
-		if (binary_location == NULL) {
-			mzCloseZipArchive(Zip);
-			return INSTALL_CORRUPT;
-		}
-
-		// Delete any existing updater
-		if (TWFunc::Path_Exists(Temp_Binary) && unlink(Temp_Binary.c_str()) != 0) {
-			LOGINFO("Unable to unlink '%s'\n", Temp_Binary.c_str());
-		}
-
-		binary_fd = creat(Temp_Binary.c_str(), 0755);
-		if (binary_fd < 0) {
-			mzCloseZipArchive(Zip);
-			LOGERR("Could not create file for updater extract in '%s'\n", Temp_Binary.c_str());
-			return INSTALL_ERROR;
-		}
-
-		ret_val = mzExtractZipEntryToFile(Zip, binary_location, binary_fd);
-		close(binary_fd);
-		mzCloseZipArchive(Zip);
-
-		if (!ret_val) {
-			LOGERR("Could not extract '%s'\n", ASSUMED_UPDATE_BINARY_NAME);
-			return INSTALL_ERROR;
-		}
-	} else {
-		// Use the update-binary that is included in the recovery
-		Temp_Binary = INCLUDED_BINARY_NAME;
-		LOGINFO("Using update-binary included in recovery: '%s'.\n", Temp_Binary.c_str());
-	}
-#else
+if ((statfs(INCLUDED_BINARY_NAME, &st) != 0) || (stock_install != 0)) {
+#endif
 	const ZipEntry* binary_location = mzFindZipEntry(Zip, ASSUMED_UPDATE_BINARY_NAME);
 	int binary_fd, ret_val;
 
@@ -213,6 +181,12 @@ static int Prepare_Update_Binary(const char *path, ZipArchive *Zip, int* wipe_ca
 		LOGERR("Could not extract '%s'\n", ASSUMED_UPDATE_BINARY_NAME);
 		return INSTALL_ERROR;
 	}
+#ifdef SAFESTRAP_NO_CUSTOM_UPDATER
+} else {
+	// Use the update-binary that is included in the recovery
+	Temp_Binary = INCLUDED_BINARY_NAME;
+	LOGINFO("Using update-binary included in recovery: '%s'.\n", Temp_Binary.c_str());
+}
 #endif
 
 	// If exists, extract file_contexts from the zip file
