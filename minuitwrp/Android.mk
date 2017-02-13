@@ -2,6 +2,12 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
+BUILD_SAFESTRAP := true
+ifeq ($(BUILD_SAFESTRAP), true)
+    LOCAL_CFLAGS += -DBUILD_SAFESTRAP
+    LOCAL_CPPFLAGS += -DBUILD_SAFESTRAP
+endif
+
 LOCAL_SRC_FILES := \
     graphics.cpp \
     graphics_fbdev.cpp \
@@ -22,7 +28,11 @@ ifeq ($(TW_TARGET_USES_QCOM_BSP), true)
   LOCAL_CFLAGS += -DMSM_BSP
   ifeq ($(TARGET_PREBUILT_KERNEL),)
     LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
-    LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
+    ifeq ($(BUILD_SAFESTRAP), true)
+      LOCAL_C_INCLUDES += $(commands_recovery_local_path)/minuitwrp/include
+    else
+      LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
+    endif
   else
     ifeq ($(TARGET_CUSTOM_KERNEL_HEADERS),)
       LOCAL_C_INCLUDES += $(commands_recovery_local_path)/minuitwrp/include
@@ -170,6 +180,24 @@ ifeq ($(TW_DISABLE_TTF), true)
     $(warning * TW_DISABLE_TTF support has been deprecated in TWRP.                      *)
     $(warning ****************************************************************************)
     $(error stopping)
+endif
+
+ifeq ($(BUILD_SAFESTRAP), true)
+ifeq ($(TW_IGNORE_VIRTUAL_KEYS), true)
+LOCAL_CFLAGS += -DTW_IGNORE_VIRTUAL_KEYS
+endif
+
+ifeq ($(RECOVERY_GRAPHICS_DONT_DOUBLE_BUFFER), true)
+LOCAL_CFLAGS += -DRECOVERY_GRAPHICS_DONT_DOUBLE_BUFFER
+endif
+
+ifeq ($(RECOVERY_GRAPHICS_DO_INITIAL_BLANK), true)
+LOCAL_CFLAGS += -DRECOVERY_GRAPHICS_DO_INITIAL_BLANK
+endif
+
+ifeq ($(RECOVERY_GRAPHICS_DONT_SET_ACTIVATE), true)
+LOCAL_CFLAGS += -DRECOVERY_GRAPHICS_DONT_SET_ACTIVATE
+endif
 endif
 
 LOCAL_CLANG := true
