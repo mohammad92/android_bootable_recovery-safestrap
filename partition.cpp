@@ -419,7 +419,7 @@ bool TWPartition::Process_Fstab_Line(const char *fstab_line, bool Display_Error)
 				Symlink_Path = Storage_Path;
 				DataManager::SetValue(TW_INTERNAL_PATH, datamedia_mount + "/media/0");
 				UnMount(true);
-				Mount_Storage_Retry();
+				Mount_Storage_Retry(true);
 			}
 #endif
 #endif
