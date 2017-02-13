@@ -1541,6 +1541,11 @@ void TWPartitionManager::Update_System_Details(void) {
 
 void TWPartitionManager::Post_Decrypt(const string& Block_Device) {
 	TWPartition* dat = Find_Partition_By_Path("/data");
+
+#ifdef BUILD_SAFESTRAP
+	string datamedia_mount = EXPAND(TW_SS_DATAMEDIA_MOUNT);
+#endif
+
 	if (dat != NULL) {
 		DataManager::SetValue(TW_IS_DECRYPTED, 1);
 		dat->Is_Decrypted = true;
@@ -1579,10 +1584,6 @@ void TWPartitionManager::Post_Decrypt(const string& Block_Device) {
 int TWPartitionManager::Decrypt_Device(string Password) {
 #ifdef TW_INCLUDE_CRYPTO
 	char crypto_state[PROPERTY_VALUE_MAX], crypto_blkdev[PROPERTY_VALUE_MAX], cPassword[255];
-
-#ifdef BUILD_SAFESTRAP
-	string datamedia_mount = EXPAND(TW_SS_DATAMEDIA_MOUNT);
-#endif
 
 	std::vector<TWPartition*>::iterator iter;
 
