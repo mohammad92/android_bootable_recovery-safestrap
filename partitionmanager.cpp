@@ -2251,8 +2251,6 @@ bool TWPartitionManager::Enable_MTP(void) {
 		gui_err("mtp_already_enabled=MTP already enabled");
 		return true;
 	}
-	//Launch MTP Responder
-	LOGINFO("Starting MTP\n");
 
 	int mtppipe[2];
 
@@ -2275,7 +2273,7 @@ bool TWPartitionManager::Enable_MTP(void) {
 		TWFunc::write_file("/sys/class/android_usb/android0/idProduct", productstr);
 		property_set("sys.usb.config", "mtp,adb");
 	}
-	/* To enable MTP debug, use the twrp command line feature to
+	/* To enable MTP debug, use the twrp command line feature:
 	 * twrp set tw_mtp_debug 1
 	 */
 	twrpMtp *mtp = new twrpMtp(DataManager::GetIntValue("tw_mtp_debug"));
