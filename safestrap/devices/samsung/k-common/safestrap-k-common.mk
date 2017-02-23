@@ -1,7 +1,7 @@
 #TWRP
 TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
 DEVICE_RESOLUTION := 1080x1920
-RECOVERY_GRAPHICS_USE_LINELENGTH := true
+RECOVERY_GRAPHICS_FORCE_USE_LINELENGTH := true
 TW_TARGET_USES_QCOM_BSP := true
 RECOVERY_INCLUDE_DIR := bootable/recovery/safestrap/devices/samsung/k-common/include
 TW_NO_SCREEN_TIMEOUT := true
@@ -32,7 +32,7 @@ SPLASH_DELAY := 4
 
 TW_DEFAULT_EXTERNAL_STORAGE := true
 TARGET_USERIMAGES_USE_EXT4 := true
-TW_BRIGHTNESS_PATH := /sys/devices/virtual/lcd/panel/panel
+TW_BRIGHTNESS_PATH := "/sys/devices/mdp.0/qcom\x2cmdss_fb_primary.189/leds/lcd-backlight/brightness"
 
 # Virtual partition size default (in mb)
 BOARD_DEFAULT_VIRT_SYSTEM_SIZE := 3000
