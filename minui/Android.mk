@@ -1,6 +1,10 @@
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
+ifndef RECOVERY_INCLUDE_DIR
+    RECOVERY_INCLUDE_DIR := $(commands_recovery_local_path)/minui/include
+endif
+
 LOCAL_SRC_FILES := \
     events.cpp \
     graphics.cpp \
@@ -16,19 +20,19 @@ ifeq ($(TW_TARGET_USES_QCOM_BSP), true)
   ifeq ($(TARGET_PREBUILT_KERNEL),)
     LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
     ifeq ($(BUILD_SAFESTRAP), true)
-      LOCAL_C_INCLUDES += $(commands_recovery_local_path)/minui/include
+      LOCAL_C_INCLUDES += $(RECOVERY_INCLUDE_DIR)
     else
       LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
     endif
   else
     ifeq ($(TARGET_CUSTOM_KERNEL_HEADERS),)
-      LOCAL_C_INCLUDES += $(commands_recovery_local_path)/minui/include
+      LOCAL_C_INCLUDES += $(RECOVERY_INCLUDE_DIR)
     else
       LOCAL_C_INCLUDES += $(TARGET_CUSTOM_KERNEL_HEADERS)
     endif
   endif
 else
-  LOCAL_C_INCLUDES += $(commands_recovery_local_path)/minui/include
+  LOCAL_C_INCLUDES += $(RECOVERY_INCLUDE_DIR)
   # The header files required for adf graphics can cause compile errors
   # with adf graphics.
   LOCAL_SRC_FILES += graphics_adf.cpp
