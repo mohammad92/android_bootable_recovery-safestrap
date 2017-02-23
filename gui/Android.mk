@@ -79,6 +79,7 @@ ifeq ($(TW_ROUND_SCREEN), true)
     LOCAL_CFLAGS += -DTW_ROUND_SCREEN
 endif
 
+ifdef BUILD_SAFESTRAP
 # Safestrap virtual size defaults
 ifndef BOARD_DEFAULT_VIRT_SYSTEM_SIZE
     BOARD_DEFAULT_VIRT_SYSTEM_SIZE := 600
@@ -116,8 +117,13 @@ endif
 LOCAL_CFLAGS += -DDEFAULT_VIRT_CACHE_SIZE=\"$(BOARD_DEFAULT_VIRT_CACHE_SIZE)\"
 LOCAL_CFLAGS += -DDEFAULT_VIRT_CACHE_MIN_SIZE=\"$(BOARD_DEFAULT_VIRT_CACHE_MIN_SIZE)\"
 LOCAL_CFLAGS += -DDEFAULT_VIRT_CACHE_MAX_SIZE=\"$(BOARD_DEFAULT_VIRT_CACHE_MAX_SIZE)\"
+endif
 
-LOCAL_C_INCLUDES += bionic system/core/libpixelflinger/include
+LOCAL_C_INCLUDES += \
+    bionic \
+    system/core/include \
+    system/core/libpixelflinger/include
+
 ifeq ($(shell test $(PLATFORM_SDK_VERSION) -lt 23; echo $$?),0)
     LOCAL_C_INCLUDES += external/stlport/stlport
 endif
