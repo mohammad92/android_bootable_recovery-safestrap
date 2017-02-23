@@ -16,7 +16,6 @@ LOCAL_SRC_FILES := \
     graphics.cpp \
     graphics_fbdev.cpp \
     resources.cpp \
-    graphics_overlay.cpp \
     truetype.cpp \
     graphics_utils.cpp \
     events.cpp
@@ -30,6 +29,7 @@ endif
 
 ifeq ($(TW_TARGET_USES_QCOM_BSP), true)
   LOCAL_CFLAGS += -DMSM_BSP
+  LOCAL_SRC_FILES += graphics_overlay.cpp
   ifeq ($(TARGET_PREBUILT_KERNEL),)
     LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
     ifeq ($(BUILD_SAFESTRAP), true)
