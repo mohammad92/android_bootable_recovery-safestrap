@@ -31,7 +31,6 @@
 		<string name="adopted_storage">Adopted Storage</string>
 
 		<!-- GUI XML strings -->
-		<string name="twrp_header">Safestrap %ss_version% (TWRP v%tw_version%)</string>
 		<string name="twrp_watch_header">TWRP %tw_version%</string>
 		<string name="cpu_temp">CPU: %tw_cpu_temp% &#xB0;C</string>
 		<string name="battery_pct">Bateria: %tw_battery%</string>
@@ -572,6 +571,7 @@
 		<string name="unable_resize">Nie można zmienić rozmiaru {1}.</string>
 		<string name="no_md5_found">Nie znaleziono pliku MD5 '{1}'. Proszę wyłączyć weryfikację MD5, aby przywrócić.</string>
 		<string name="md5_fail_match">MD5 nie pasuje do '{1}'.</string>
+		<string name="md5_matched">MD5 matched for '{1}'.</string>
 		<string name="fail_decrypt_tar">Nie udało się odszyfrować pliku tar '{1}'</string>
 		<string name="format_data_msg">Może być konieczne ponowne uruchomienie recovery, aby móc ponownie użyć /date.</string>
 		<string name="format_data_err">Nie można sformatować, aby usunąć szyfrowanie.</string>

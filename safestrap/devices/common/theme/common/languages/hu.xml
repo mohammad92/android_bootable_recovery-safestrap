@@ -31,7 +31,6 @@
 		<string name="adopted_storage">Adoptált tároló</string>
 
 		<!-- GUI XML strings -->
-		<string name="twrp_header">Safestrap %ss_version% (TWRP v%tw_version%)</string>
 		<string name="twrp_watch_header">TWRP %tw_version%</string>
 		<string name="cpu_temp">CPU: %tw_cpu_temp% °C</string>
 		<string name="battery_pct">Akkumulátor: %tw_battery%</string>
@@ -82,7 +81,7 @@
 		<string name="file">Fájl:</string>
 		<string name="zip_sig_chk">Zip aláírás ellenőrzése</string>
 		<string name="inject_twrp_chk">TWRP injektálása telepítés után</string>
-		<string name="install_reboot_chk">Újraindítás telepítés vége után</string> 
+		<string name="install_reboot_chk">Újraindítás telepítés vége után</string>
 		<string name="options_hdr">Beállítások</string>
 		<string name="confirm_flash_hdr">Flashelés megerősítése</string>
 		<string name="zip_queue">Várólista:</string>
@@ -572,6 +571,7 @@
 		<string name="unable_resize">Nem lehet átméretezni: {1}.</string>
 		<string name="no_md5_found">Nem található MD5 fájl ehhez: \'{1}\'. Kérjük, a visszaállításhoz szüntesse meg a kijelölést: \"MD5 ellenőrzés engedélyezése\".</string>
 		<string name="md5_fail_match">MD5 nem egyezik ezzel: \'{1}\'.</string>
+		<string name="md5_matched">MD5 matched for '{1}'.</string>
 		<string name="fail_decrypt_tar">Nem sikerült visszafejteni a(z) \'{1}\' tar fájlt</string>
 		<string name="format_data_msg">Lehet, hogy a recovery-be kell újraindítania ahhoz, hogy képes legyen használni az /adat partíciót.</string>
 		<string name="format_data_err">Nem sikerült formázni a titkosítás eltávolításához.</string>
@@ -667,6 +667,6 @@
 		<string name="change_fs_err">Fájlrendszer módosítási hiba.</string>
 		<string name="theme_ver_err">Egyéni téma verziója nem egyezik a TWRP verziójával. Gyári téma használata.</string>
 		<string name="up_a_level">(Egy szinttel feljebb)</string>
-		<string name="install_reboot">Újraindítás 5 mp múlva</string> 
+		<string name="install_reboot">Újraindítás 5 mp múlva</string>
 	</resources>
 </language>

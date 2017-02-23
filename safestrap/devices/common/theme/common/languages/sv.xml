@@ -18,7 +18,6 @@
 		<string name="usbotg">USB OTG</string>
 		<string name="dalvik">Dalvik / ART Cache</string>
 		<string name="sdext">SD-EXT</string>
-		<string name="twrp_header">Safestrap %ss_version% (TWRP v%tw_version%)</string>
 		<string name="twrp_watch_header">TWRP %tw_version%</string>
 		<string name="sort_by_name">Sortera efter namn</string>
 		<string name="sort_by_date">Sortera efter datum</string>

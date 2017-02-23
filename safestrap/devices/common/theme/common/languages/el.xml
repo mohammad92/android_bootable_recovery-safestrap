@@ -23,7 +23,6 @@
         <string name="sdext">SD-EXT</string>
         <string name="adopted_data">Εγκεκριμένα δεδομένα</string>
         <string name="adopted_storage">Εγκεκριμένος Αποθ. Χώρος</string>
-	<string name="twrp_header">Safestrap %ss_version% (TWRP v%tw_version%)</string>
         <string name="twrp_watch_header">TWRP %tw_version%</string>
         <string name="cpu_temp">CPU: %tw_cpu_temp% &#xB0;C</string>
         <string name="battery_pct">Μπαταρία: %tw_battery%</string>
@@ -552,6 +551,7 @@
         <string name="unable_resize">Δεν είναι δυνατή η αλλαγή μεγέθους {1}.</string>
         <string name="no_md5_found">Δεν βρέθηκε MD5 αρχείο για το '{1}'. Παρακαλώ απεπηλέξτε την επαλήθευση MD5 για επαναφορά.</string>
         <string name="md5_fail_match">Το MD5 απέτυχε να ταυτίσει με το '{1}'.</string>
+        <string name="md5_matched">MD5 matched for '{1}'.</string>
         <string name="fail_decrypt_tar">Αποτυχία αποκρυπτογράφησης του αρχείου tar '{1}'</string>
         <string name="format_data_msg">Ίσως χρειαστεί να επανεκκινήσετε στο recovery για να ξαναχρησιμοποιήσετε το /data.</string>
         <string name="format_data_err">Αδύνατη η διαμόρφωση για να καταργήσετε την κρυπτογράφηση.</string>

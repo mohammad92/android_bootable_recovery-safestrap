@@ -26,7 +26,6 @@
 		<string name="sdext">SD-EXT</string>
 		<string name="adopted_data">Datos adoptados</string>
 		<string name="adopted_storage">Memoria adoptada</string>
-		<string name="twrp_header">Safestrap %ss_version% (TWRP v%tw_version%)</string>
 		<string name="twrp_watch_header">TWRP %tw_version%</string>
 		<string name="cpu_temp">CPU: %tw_cpu_temp% °C</string>
 		<string name="battery_pct">Batería: %tw_battery%</string>
@@ -555,6 +554,7 @@
 		<string name="unable_resize">Incapaz de cambiar el tamaño de archivo de {1}.</string>
 		<string name="no_md5_found">No se encuentra archivo md5 para \'{1}\'. Por favor, deselecciona Activar verificación de MD5 para restaurar.</string>
 		<string name="md5_fail_match">MD5 no coincide en \'{1}\'.</string>
+		<string name="md5_matched">MD5 matched for '{1}'.</string>
 		<string name="fail_decrypt_tar">Fallo al desencriptar el archivo tar '{1}'</string>
 		<string name="format_data_msg">Quizás necesites reiniciar el recovery para ser capaz de usar /data de nuevo.</string>
 		<string name="format_data_err">Incapaz de formatear para remover encriptación.</string>

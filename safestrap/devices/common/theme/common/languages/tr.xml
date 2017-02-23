@@ -26,7 +26,6 @@
 		<string name="sdext">Harici SD</string>
 		<string name="adopted_data">Kabul Edilen Veri</string>
 		<string name="adopted_storage">Kabul Edilen Depolama</string>
-		<string name="twrp_header">Safestrap %ss_version% (TWRP v%tw_version%)</string>
 		<string name="twrp_watch_header">TWRP %tw_version%</string>
 		<string name="cpu_temp">İşlemci: %tw_cpu_temp% °C</string>
 		<string name="battery_pct">Pil: %tw_battery%</string>

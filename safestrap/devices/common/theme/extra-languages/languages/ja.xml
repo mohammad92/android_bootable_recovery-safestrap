@@ -27,7 +27,6 @@
 		<string name="adopted_data">Adopted Data</string>
 		<string name="adopted_storage">Adopted Storage</string>
 		<!-- GUI XML strings -->
-		<string name="twrp_header">Safestrap %ss_version% (TWRP v%tw_version%)</string>
 		<string name="twrp_watch_header">TWRP %tw_version%</string>
 		<string name="cpu_temp">CPU: %tw_cpu_temp% °C</string>
 		<string name="battery_pct">バッテリー: %tw_battery%</string>
@@ -566,6 +565,7 @@
 		<string name="unable_resize">{1} をリサイズできません。</string>
 		<string name="no_md5_found">\'{1}\' の MD5 ファイルが見つかりません。リストアするには MD5 の検証を無効化してください。</string>
 		<string name="md5_fail_match">\'{1}\' で MD5 が一致しません。</string>
+		<string name="md5_matched">MD5 matched for '{1}'.</string>
 		<string name="fail_decrypt_tar">tar ファイル '{1}' を復号できませんでした</string>
 		<string name="format_data_msg">/data を再度使用するにはリカバリを再起動してください。</string>
 		<string name="format_data_err">暗号化を解除するための初期化ができません。</string>
