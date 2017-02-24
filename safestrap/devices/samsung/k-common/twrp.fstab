@@ -1,6 +1,7 @@
 # mount point   fstype          device
 
 /external_sd  vfat      /dev/block/mmcblk1p1  /dev/block/mmcblk1            flags=display="Micro SDcard";storage;wipeingui;removable
+/usb-otg      vfat      /dev/block/sda1       /dev/block/sda                flags=display="USB-OTG";storage;wipeingui;removable
 /datamedia    ext4      /dev/block/mmcblk0p26-orig                          flags=display="Internal Storage";storage;backup=n
 /data         ext4      /dev/block/platform/msm_sdcc.1/by-name/userdata
 /cache        ext4      /dev/block/platform/msm_sdcc.1/by-name/cache
