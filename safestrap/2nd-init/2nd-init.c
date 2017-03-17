@@ -23,10 +23,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <stdlib.h>
 #include <unistd.h>
 
-#ifdef PLATFORM_SDK_22
-#include <sys/user.h>
-#else
+#ifdef __has_include
+#if __has_include(<sys/user.h>)
+# include <sys/user.h>
+#elif __has_include(<sys/user.h>)
 #include <linux/user.h>
+#endif
 #endif
 
 #include <stdio.h>

@@ -6,6 +6,10 @@ TW_TARGET_USES_QCOM_BSP := true
 RECOVERY_INCLUDE_DIR := bootable/recovery/safestrap/devices/samsung/h-common/include
 TW_NO_SCREEN_TIMEOUT := true
 
+ifeq ($(shell test $(PLATFORM_SDK_VERSION) -ge 21; echo $$?),0)
+TW_NEW_ION_HEAP := true
+endif
+
 RECOVERY_SDCARD_ON_DATA := true
 TW_INTERNAL_STORAGE_PATH := "/datamedia/media"
 TW_INTERNAL_STORAGE_MOUNT_POINT := "datamedia"

@@ -3,6 +3,7 @@
 
 #include <linux/ion.h>
 
+#ifndef NEW_ION_HEAP
 enum msm_ion_heap_types {
 	ION_HEAP_TYPE_MSM_START = ION_HEAP_TYPE_CUSTOM + 1,
 	ION_HEAP_TYPE_DMA = ION_HEAP_TYPE_MSM_START,
@@ -14,6 +15,7 @@ enum msm_ion_heap_types {
 	 * heap_types_info[] in msm_ion.c
 	 */
 };
+#endif /* NEW_ION_HEAP */
 
 /**
  * These are the only ids that should be used for Ion heap ids.

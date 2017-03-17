@@ -1,10 +1,6 @@
 LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
-ifeq ($(shell test $(PLATFORM_SDK_VERSION) -gt 22; echo $$?),0)
-    LOCAL_CFLAGS += -DPLATFORM_SDK_22
-endif
-
 LOCAL_SRC_FILES:= 2nd-init.c
 LOCAL_STATIC_LIBRARIES += libc libcutils liblog
 
