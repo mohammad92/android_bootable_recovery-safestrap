@@ -35,22 +35,24 @@ ifeq ($(TW_TARGET_USES_QCOM_BSP), true)
 endif
 
 LOCAL_MODULE := safestrapmenu
-LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_TAGS := eng
 
 LOCAL_SRC_FILES := $(splash_sources)
 
 LOCAL_CFLAGS += -DMAX_ROWS=44 -DMAX_COLS=96
 
-
 LOCAL_STATIC_LIBRARIES := \
 	libminui_ss \
-	libpixelflinger_static \
+	libpixelflinger_twrp \
 	libpng \
 	libz \
 	libstdc++ \
 	libc \
 	libcutils \
-	liblog
+	liblog \
+        libutils \
+        libm \
+        libft2_ss
 
 LOCAL_FORCE_STATIC_EXECUTABLE := true
 LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
