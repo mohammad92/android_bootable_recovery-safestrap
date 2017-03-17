@@ -45,7 +45,7 @@ ifeq ($(TW_TARGET_USES_QCOM_BSP), true)
     endif
   endif
 else
-  LOCAL_C_INCLUDES += $(commands_recovery_local_path)/minuitwrp/include
+  LOCAL_C_INCLUDES += $(RECOVERY_INCLUDE_DIR)
   # The header files required for adf graphics can cause compile errors
   # with adf graphics.
   ifneq ($(wildcard system/core/adf/Android.mk),)
