@@ -3,6 +3,8 @@ include $(ANDROID_BUILD_TOP)/bootable/recovery/safestrap/devices/common/safestra
 SPLASH_RECOVERY_KEY := KEY_MENU
 SPLASH_CONTINUE_KEY := KEY_SEARCH
 
+SS_INCLUDE_RECOVERY_USB_INIT := ../safestrap/devices/android/jem/init.recovery.usb.rc
+
 # Virtual partition size default (in mb)
 BOARD_DEFAULT_VIRT_SYSTEM_SIZE := 886
 BOARD_DEFAULT_VIRT_SYSTEM_MIN_SIZE := 886

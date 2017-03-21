@@ -1,0 +1,2 @@
+on boot
+    exec /sbin/fixboot.sh

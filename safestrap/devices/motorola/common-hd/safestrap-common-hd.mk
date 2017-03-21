@@ -1,6 +1,7 @@
 #TWRP
 TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
 RECOVERY_GRAPHICS_USE_LINELENGTH := true
+SS_INCLUDE_RECOVERY_USB_INIT := ../safestrap/devices/motorola/common-hd/init.recovery.usb.rc
 
 RECOVERY_SDCARD_ON_DATA := true
 TW_INTERNAL_STORAGE_PATH := "/datamedia/media"

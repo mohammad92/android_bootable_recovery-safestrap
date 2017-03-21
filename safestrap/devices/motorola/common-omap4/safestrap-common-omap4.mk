@@ -4,6 +4,7 @@ TW_INTERNAL_STORAGE_MOUNT_POINT := "sdcard"
 TW_EXTERNAL_STORAGE_PATH := "/sdcard-ext"
 TW_EXTERNAL_STORAGE_MOUNT_POINT := "sdcard-ext"
 TW_DEFAULT_EXTERNAL_STORAGE := true
+SS_INCLUDE_RECOVERY_USB_INIT := ../safestrap/devices/motorola/common-omap4/init.recovery.usb.rc
 
 SPLASH_RECOVERY_KEY := KEY_MENU
 SPLASH_CONTINUE_KEY := KEY_SEARCH

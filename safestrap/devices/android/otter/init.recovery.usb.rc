@@ -1,0 +1,45 @@
+on fs
+    #battd
+    mkdir /tmp/tbattd 0777 root mot_accy
+    mkdir /tmp/data 0777 root mot_accy
+    mkdir /tmp/data/battd 0777 root mot_accy
+    chmod 0666 /dev/cpcap
+    chmod 0666 /dev/cpcap_batt
+    chmod 0666 /dev/cpcap_mot_rtc
+    chmod 0666 /dev/cpcap_uc
+
+    write /sys/bus/usb/devices/usb1/power/control on
+    write /sys/bus/usb/devices/usb2/power/control on
+    write /sys/bus/usb/devices/usb3/power/control on
+
+    write /sys/class/android_usb/android0/enable 0
+    write /sys/class/android_usb/android0/idVendor 22b8
+    write /sys/class/android_usb/android0/idProduct 4366
+    write /sys/module/g_android/parameters/cdrom 0
+    write /sys/module/g_android/parameters/cdrom_switch 0
+    write /sys/class/android_usb/android0/f_ffs/aliases adb
+    write /sys/class/android_usb/android0/functions adb
+    write /sys/class/android_usb/android0/iManufacturer ${ro.product.manufacturer}
+    write /sys/class/android_usb/android0/iProduct ${ro.product.model}
+    write /sys/class/android_usb/android0/iSerial ${ro.serialno}
+
+on property:sys.usb.config=none
+    write /sys/class/android_usb/android0/enable 0
+    write /sys/class/android_usb/android0/bDeviceClass 0
+
+on property:sys.usb.config=mass_storage,adb
+    write /sys/class/android_usb/android0/enable 0
+    write /sys/class/android_usb/android0/functions ${sys.usb.config}
+    write /sys/class/android_usb/android0/enable 1
+
+on property:sys.usb.config=mtp,adb
+    write /sys/class/android_usb/android0/enable 0
+    write /sys/class/android_usb/android0/functions ${sys.usb.config}
+    write /sys/class/android_usb/android0/enable 1
+    start adbd
+
+on property:sys.usb.config=adb
+    write /sys/class/android_usb/android0/enable 0
+    write /sys/class/android_usb/android0/functions ${sys.usb.config}
+    write /sys/class/android_usb/android0/enable ${service.adb.root}
+    start adbd

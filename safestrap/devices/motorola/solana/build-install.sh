@@ -15,7 +15,6 @@ rm -rf sbin/taskset
 # copy correct bbx/fixboot.sh
 cp $ANDROID_BUILD_TOP/bootable/recovery/safestrap/bbx ./sbin/bbx
 cp $ANDROID_BUILD_TOP/bootable/recovery/safestrap/devices/common/2nd-init-files/fixboot.sh ./sbin/fixboot.sh
-cp $ANDROID_BUILD_TOP/bootable/recovery/safestrap/devices/motorola/common-omap4/init.rc ./init.rc
 cp $ANDROID_BUILD_TOP/bootable/recovery/safestrap/devices/motorola/solana/init.target.rc ./
 
 cd $OUT/recovery/root

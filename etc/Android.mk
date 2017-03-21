@@ -1,4 +1,4 @@
-# Copyright (C) 2015 TeamWin Recovery Project
+# Copyright (C) 2017 TeamWin Recovery Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,6 +17,9 @@ LOCAL_PATH := $(call my-dir)
 ifneq ($(TW_EXCLUDE_DEFAULT_USB_INIT), true)
 
 include $(CLEAR_VARS)
+ifndef SS_INCLUDE_RECOVERY_USB_INIT
+SS_INCLUDE_RECOVERY_USB_INIT := init.recovery.usb.rc
+endif
 LOCAL_MODULE := init.recovery.usb.rc
 LOCAL_MODULE_TAGS := eng
 LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
@@ -26,7 +29,7 @@ LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
 # from TARGET_ROOT_OUT thereafter
 LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT)
 
-LOCAL_SRC_FILES := $(LOCAL_MODULE)
+LOCAL_SRC_FILES := $(SS_INCLUDE_RECOVERY_USB_INIT)
 include $(BUILD_PREBUILT)
 
 endif
@@ -68,3 +71,16 @@ ifeq ($(TWRP_INCLUDE_LOGCAT), true)
         include $(BUILD_PREBUILT)
     endif
 endif
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := init.recovery.safestrap.rc
+LOCAL_MODULE_TAGS := eng
+LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
+
+# Cannot send to TARGET_RECOVERY_ROOT_OUT since build system wipes init*.rc
+# during ramdisk creation and only allows init.recovery.*.rc files to be copied
+# from TARGET_ROOT_OUT thereafter
+LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT)
+
+LOCAL_SRC_FILES := $(LOCAL_MODULE)
+include $(BUILD_PREBUILT)

@@ -1,44 +1,35 @@
-import /init.recovery.${ro.hardware}.rc
-
-on early-init
-    start ueventd
-    start healthd
-
-on init
-    export PATH /sbin:/system/bin
-    export LD_LIBRARY_PATH .:/sbin
-    export ANDROID_ROOT /system
-    export ANDROID_DATA /data
-    export EXTERNAL_STORAGE /sdcard
-
-    mkdir /boot
-    mkdir /recovery
-    mkdir /system
-    mkdir /data
-    mkdir /cache
-    mkdir /datamedia
-    mkdir /systemorig
-    mount tmpfs tmpfs /tmp
-
-    chown root shell /tmp
-    chmod 0775 /tmp
-
+on fs
     write /sys/class/android_usb/android0/enable 0
     write /sys/class/android_usb/android0/idVendor 18D1
     write /sys/class/android_usb/android0/idProduct D001
+    write /sys/class/android_usb/android0/f_ffs/aliases adb
     write /sys/class/android_usb/android0/functions adb
     write /sys/class/android_usb/android0/iManufacturer ${ro.product.manufacturer}
     write /sys/class/android_usb/android0/iProduct ${ro.product.model}
     write /sys/class/android_usb/android0/iSerial ${ro.serialno}
 
+on property:sys.usb.config=none
+    write /sys/class/android_usb/android0/enable 0
+    write /sys/class/android_usb/android0/bDeviceClass 0
+
+on property:sys.usb.config=mass_storage,adb
+    write /sys/class/android_usb/android0/enable 0
+    write /sys/class/android_usb/android0/functions ${sys.usb.config}
+    write /sys/class/android_usb/android0/enable 1
+
+on property:sys.usb.config=mtp,adb
+    write /sys/class/android_usb/android0/enable 0
+    write /sys/class/android_usb/android0/functions ${sys.usb.config}
+    write /sys/class/android_usb/android0/enable 1
+    start adbd
+
+on property:sys.usb.config=adb
+    write /sys/class/android_usb/android0/enable 0
+    write /sys/class/android_usb/android0/functions ${sys.usb.config}
+    write /sys/class/android_usb/android0/enable ${service.adb.root}
+    start adbd
 
 on boot
-    exec /sbin/fixboot.sh
-
-    ifup lo
-    hostname localhost
-    domainname localdomain
-
     # Enable Power modes and set the CPU Freq Sampling rates
     write /sys/module/rpm_resources/enable_low_power/L2_cache 1
     write /sys/module/rpm_resources/enable_low_power/pxo 1
@@ -56,32 +47,3 @@ on boot
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 384000
     write /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 384000
     write /sys/devices/system/cpu/cpu1/online 0
-
-    class_start default
-
-on property:sys.powerctl=*
-   powerctl ${sys.powerctl}
-
-service ueventd /sbin/ueventd
-    critical
-
-service healthd /sbin/healthd -n
-    critical
-
-service recovery /sbin/recovery
-
-service adbd /sbin/strace -ff -F -tt -s 200 /sbin/adbd recovery
-    disabled
-    socket adbd stream 660 system system
-
-# Always start adbd on userdebug and eng builds
-on property:ro.debuggable=1
-    #write /sys/class/android_usb/android0/enable 1
-    #start adbd
-    setprop service.adb.root 1
-
-# Restart adbd so it can run as root
-on property:service.adb.root=1
-    write /sys/class/android_usb/android0/enable 0
-    restart adbd
-    write /sys/class/android_usb/android0/enable 1

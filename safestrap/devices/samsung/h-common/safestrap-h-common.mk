@@ -5,6 +5,7 @@ RECOVERY_GRAPHICS_USE_LINELENGTH := true
 TW_TARGET_USES_QCOM_BSP := true
 RECOVERY_INCLUDE_DIR := bootable/recovery/safestrap/devices/samsung/h-common/include
 TW_NO_SCREEN_TIMEOUT := true
+SS_INCLUDE_RECOVERY_USB_INIT := ../safestrap/devices/samsung/h-common/init.recovery.usb.rc
 
 ifeq ($(shell test $(PLATFORM_SDK_VERSION) -ge 21; echo $$?),0)
 TW_NEW_ION_HEAP := true
