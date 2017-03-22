@@ -30,6 +30,9 @@ void ui_final();
 void evt_init();
 void evt_exit();
 
+// compare_string()
+int strcmp( const char * str1, const char * str2 );
+
 // Use KEY_* codes from <linux/input.h> or KEY_DREAM_* from "minui/minui.h code
 int ui_key_pressed(int key, int skipkey, int disablekey);  // returns >0 if the code is currently pressed
 int ui_text_visible();        // returns >0 if text log is currently visible
