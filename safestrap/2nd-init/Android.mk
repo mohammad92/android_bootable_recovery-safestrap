@@ -1,8 +1,7 @@
 LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
-# compile in ARM mode
-LOCAL_SRC_FILES:= 2nd-init.c.arm
+LOCAL_SRC_FILES:= 2nd-init.c
 LOCAL_STATIC_LIBRARIES += libc libcutils liblog
 
 LOCAL_MODULE_TAGS := eng

@@ -17,9 +17,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include <elf.h>
 #include <sys/ptrace.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/uio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -195,7 +197,14 @@ unsigned long find_code(char* image, unsigned long base, unsigned long size, cha
 /* Main */
 int main(int argc, char** argv)
 {
-	struct pt_regs regs;
+#ifdef __aarch64__
+        struct iovec ioVec;
+        struct user_pt_regs regs[1];
+        ioVec.iov_base = regs;
+        ioVec.iov_len = sizeof(*regs);
+#else
+        struct pt_regs regs;
+#endif
 	
 	char buff[512];
 	char init_env[512];
@@ -326,16 +335,22 @@ int main(int argc, char** argv)
    * PC = #execve 
 	 */
 	
-	ptrace(PTRACE_GETREGS, 1, NULL, &regs);
-	
-	regs.ARM_r0 = injected_data_address + 0x0100; /* char*  filename */
-	regs.ARM_r1 = injected_data_address + 0x0000; /* char** argp */
-	regs.ARM_r2 = injected_data_address + 0x0008; /* char** envp */
-	regs.ARM_pc = execve_address;
-	
-	printf("Setting /init PC to: 0x%08lX.\n", execve_address);
-	
-	ptrace(PTRACE_SETREGS, 1, NULL, &regs);
+#ifdef __aarch64__
+        ptrace(PTRACE_GETREGSET, 1, NT_PRSTATUS, &ioVec);
+        regs->regs[0] = injected_data_address + 0x10; /* char *filename */
+        regs->regs[1] = injected_data_address + 0x00; /* char *argv[] */
+        regs->regs[2] = injected_data_address + 0x08; /* char *envp[] */
+        regs->pc = execve_address;
+        ptrace(PTRACE_SETREGSET, 1, NT_PRSTATUS, &ioVec);
+#else
+        ptrace(PTRACE_GETREGS, 1, NULL, &regs);
+        regs.ARM_r0 = injected_data_address + 0x0100; /* char*  filename */
+        regs.ARM_r1 = injected_data_address + 0x0000; /* char** argp */
+        regs.ARM_r2 = injected_data_address + 0x0008; /* char** envp */
+        regs.ARM_pc = execve_address;
+        ptrace(PTRACE_SETREGS, 1, NULL, &regs);
+#endif
+        printf("Setting /init PC to: 0x%08lX.\n", execve_address);
 
   /* Detach */
 	printf("Detaching...\n");
