@@ -127,9 +127,11 @@ inc_dep_file :=
 
 ifeq ($(BUILD_SAFESTRAP), true)
 LOCAL_MODULE := update-binary
-#LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
-#LOCAL_PACK_MODULE_RELOCATIONS := false 
-#LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/sbin
+ifneq ($(wildcard system/extras/libfec/Android.mk),)
+LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
+LOCAL_PACK_MODULE_RELOCATIONS := false 
+LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/sbin
+endif
 else
 LOCAL_MODULE := updater
 endif
