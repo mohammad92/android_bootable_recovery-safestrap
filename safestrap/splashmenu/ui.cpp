@@ -96,7 +96,7 @@ static void draw_background_locked(gr_surface icon)
 
 static void draw_text_line(int row, const char* t) {
   if (t[0] != '\0') {
-    gr_text(0, row*CHAR_HEIGHT+1, t);
+    gr_text(0, row*CHAR_HEIGHT+1, t, 1);
   }
 }
 

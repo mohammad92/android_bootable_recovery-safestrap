@@ -152,6 +152,7 @@ static int vk_init(struct ev *e)
 {
     char vk_path[PATH_MAX] = "/system/etc/safestrap/res/splashkeys.";
 //    char vk_path[PATH_MAX] = "/ss-res/splashkeys.";
+//    char vk_path[PATH_MAX] = "/sys/board_properties/virtualkeys.";
     char vks[2048], *ts = NULL;
     ssize_t len;
     int vk_fd;
@@ -246,7 +247,7 @@ static int vk_init(struct ev *e)
     printf("EV: MT minX: %d  maxX: %d  minY: %d  maxY: %d\n", e->mt_p.xi.minimum, e->mt_p.xi.maximum, e->mt_p.yi.minimum, e->mt_p.yi.maximum);
 #endif
 
-    e->vks = malloc(sizeof(*e->vks) * e->vk_count);
+    e->vks = (virtualkey *)malloc(sizeof(*e->vks) * e->vk_count);
 
     for (i = 0; i < e->vk_count; ++i) {
         char *token[6];
@@ -789,7 +790,7 @@ void ev_dispatch(void)
     return;
 }
 
-int ev_get_input(int fd, short revents, struct input_event *ev)
+int ev_get_input(int fd, uint32_t epevents, input_event* ev)
 {
     return -1;
 }
