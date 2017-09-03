@@ -1,362 +1,189 @@
 /*
-Copyright (C) 2010-2011 Skrilax_CZ (skrilax@gmail.com)
-Using work done by Pradeep Padala (ptrace functions) (p_padala@yahoo.com)
+ * Copyright (c) 2017 Mohammad Afaneh (mohammad.afaneh92@gmail.com)
+ * Copyright (c) 2016 rbox
+ * Copyright (C) 2010-2011 Skrilax_CZ (skrilax@gmail.com)
+ * Using work done by Pradeep Padala (ptrace functions) (p_padala@yahoo.com)
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-*/
-
+#include <fcntl.h>
+#include <dirent.h>
 #include <elf.h>
+#include <sys/mman.h>
+#include <sys/mount.h>
 #include <sys/ptrace.h>
-#include <sys/types.h>
+#include <sys/sendfile.h>
 #include <sys/wait.h>
+
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/types.h>
 #include <sys/uio.h>
 #include <stdlib.h>
-#include <unistd.h>
-
-#ifdef __has_include
-#if __has_include(<sys/user.h>)
-# include <sys/user.h>
-#elif __has_include(<sys/user.h>)
-#include <linux/user.h>
-#endif
-#endif
-
-#include <stdio.h>
 #include <string.h>
 
-#include "2nd-init.h"
-
-unsigned long find_code(char* image, unsigned long base, unsigned long size, char *code, unsigned long code_size);
-
-union u 
+static void read_init_map(char *wanted_dev, unsigned long *base)
 {
-	unsigned long val;
-	char chars[sizeof(long)];
-};
+    char line[128];
 
-/* Get process data */
-void get_data(pid_t child, unsigned long addr, char *str, int len)
-{   
-	char *laddr;
-	int i, j;
-	union u data;
-
-	i = 0;
-	j = len / sizeof(unsigned long);
-	
-	laddr = str;
-	while(i < j) 
-	{
-		data.val = ptrace(PTRACE_PEEKDATA, child, (void*)(addr + i * 4), NULL);
-		memcpy(laddr, data.chars, sizeof(unsigned long));
-		++i;
-		laddr += sizeof(unsigned long);
-	}
-
-	j = len % sizeof(unsigned long);
-	
-	if(j != 0) 
-	{
-		data.val = ptrace(PTRACE_PEEKDATA, child, (void*)(addr + i * 4), NULL);
-		memcpy(laddr, data.chars, j);
-	}
-	
-	str[len] = '\0';       
+    FILE *fp = fopen("/proc/1/maps", "r");
+    while (fgets(line, sizeof(line), fp) != NULL)
+    {
+        if (strstr(line, wanted_dev))
+        {
+            sscanf(line, "%lx", base);
+            break;
+        }
+    }
+    fclose(fp);
 }
 
-/* Put process data */
-void put_data(pid_t child, unsigned long addr, char *str, int len)
-{
-	char *laddr;
-	int i, j;
-	
-	union u data;
-
-	i = 0;
-	j = len / sizeof(unsigned long);
-	laddr = str;
-	while(i < j) 
-	{
-		memcpy(data.chars, laddr, sizeof(unsigned long));
-		ptrace(PTRACE_POKEDATA, child, (void*)(addr + i * 4), (void*)(data.val));
-		++i;
-		laddr += sizeof(unsigned long);
-	}
-
-	j = len % sizeof(unsigned long);
-	if(j != 0) 
-	{
-		memcpy(data.chars, laddr, j);
-		ptrace(PTRACE_POKEDATA, child, (void*)(addr + i * 4), (void*)(data.val));
-	}
-}
-
-/* Gets first free address */
-unsigned long get_free_address(pid_t pid)
-{
-  FILE *fp;
-  char filename[30];
-  char line[85];
-  char str[20];
-  unsigned long addr;
-  sprintf(filename, "/proc/%d/maps", pid);
-  fp = fopen(filename, "r");
-  
-  if(fp == NULL)
-		exit(1);
-		
-  while(fgets(line, 85, fp) != NULL) 
-  {
-    sscanf(line, "%lx-%*lx %s %s %s", &addr, 
-    	str, str, str, str);
-    	
-		if(strcmp(str, "00:00") == 0)
-			break;
-  }
-  
-  fclose(fp);
-  return addr;
-}
-
-/* Gets image base data */
-void get_base_image_data(pid_t pid, unsigned long* address, unsigned long* size)
-{
-	FILE *fp;
-  char filename[30];
-  char line[85];
-  char str[20];
-  
-  *address = 0;
-	*size = 0;
-  
-  unsigned long start_address = 0;
-  unsigned long end_address = 0;
-  
-  sprintf(filename, "/proc/%d/maps", pid);
-  fp = fopen(filename, "r");
-  
-  if(fp == NULL)
-		exit(1);
-		
-  if(fgets(line, 85, fp) != NULL) 
-  {
-    sscanf(line, "%lx-%lx %s %s %s", &start_address, 
-    	&end_address, str, str, str);
-    	
-    *address = start_address;
-    *size = end_address - start_address;
-  }
-  
-  fclose(fp);
-}
-
-/* Search image for matching hex code */
-unsigned long find_code(char* image, unsigned long base, unsigned long size, char *code, unsigned long code_size)
-{
-	unsigned long address = 0;
-	unsigned long c = 0, d = 0;
-	int found = 1;
-
-	while (c < size - code_size)
-	{
-		found = 1;
-
-		for(d = 0; d < code_size; d++)
-		{
-			if (image[c+d] != code[d])
-			{
-				found = 0;
-				break;
-			}
-		}
-
-		if (found)
-		{
-			address = base + c;
-			break;
-		}
-
-		c += 4; //ARM mode
-	}
-	return address;
-}
-
-
-/* Main */
-int main(int argc, char** argv)
+static unsigned long find_execve(unsigned long image_base)
 {
 #ifdef __aarch64__
-        struct iovec ioVec;
-        struct user_pt_regs regs[1];
-        ioVec.iov_base = regs;
-        ioVec.iov_len = sizeof(*regs);
+    /*===================================
+     * Signatures of calling execve inside init
+     * execve:
+     *
+     * D2801BA8     MOV     x8, #0xDD
+     * D4000001     SVC     #0x0
+     * B140041F     CMN     x0, #0x1, LSL #12
+     * DA809400     CNEG    x0, x0, HI
+     *===================================*/
+    const int execve_code[] = { 0xD2801BA8, 0xD4000001, 0xB140041F, 0xDA809400 };
 #else
-        struct pt_regs regs;
-#endif
-	
-	char buff[512];
-	char init_env[512];
-	char injected_data[1024];
-	char* init_image;
-	char* iter;
-	
-	unsigned long image_base;
-	unsigned long image_size;
-	unsigned long execve_address = 0;
-	unsigned long injected_data_address;
-		
-	unsigned long execve_cur_env_ptr; 
-	unsigned long execve_cur_env; 
-	
-	int len;
-	
-	/* Read the enviromental variables of the init */
-	FILE* f = fopen("/proc/1/environ", "r");
-	
-	if (f == 0)
-	{
-		printf("Couldn't read /init enviromental variables.\n");
-		return 2;
-	}
-	
-	size_t sz = fread(init_env, 1, 511, f);
-	init_env[sz] = 0;
-	fclose(f);
-	
-	/* Init has always pid 1. If ptrace attach fails,
-	 * insert a module to dismantle the check for init.
-	 */
-	memset(&regs, 0, sizeof(regs));
-	ptrace(PTRACE_ATTACH, 1, NULL, NULL);
-	
-	/* wait for interrupt */
-	wait(NULL);
-		
-	/* Obtain an address */
-	injected_data_address = get_free_address(1);
-	printf("Address for data injection: 0x%08lX.\n", injected_data_address);
-	
-	/* Reset */
-	memset(injected_data, 0, sizeof(injected_data));
-	
-	/* We want to call:
-	 * execve("/init", { "/init", NULL }, envp);
-	 */
-	
-  /* Get image data */
- 	get_base_image_data(1, &image_base, &image_size);
-	
-	if (image_base == 0 || image_size == 0)
-	{
-		printf("Error, couldn't get the image base of /init.\n");
-		return 1;
-	}
-	
-	printf("image_base: 0x%08lX.\n", image_base);
-	printf("image_size: 0x%08lX.\n", image_size);
-	
-	init_image = malloc(image_size);
-	get_data(1, image_base, init_image, image_size);
-	
-	/* Search for execve */
-	execve_address = find_code(init_image, image_base, image_size, execve_code, sizeof(execve_code));
-	if (!execve_address)
-	{
-		printf("Failed locating execve v4.2.2 code.\n");
-		execve_address = find_code(init_image, image_base, image_size, execve_code_43, sizeof(execve_code_43));
-	}
-	if (!execve_address) {
-		printf("Failed locating execve v4.3 code.\n");
-		return 5;
-	}
-	
-	printf("execve located on: 0x%08lX.\n", execve_address);
-	
-	/* Fill in data:
-	 *
-	 * Offset - Description
-	 *
-	 * 0x0000 - char* - argument filename and argp[0] - pointer to "/init" on 0x0100
-	 * 0x0004 - null pointer - argp[1] (set by memset)
-	 * 0x0008 - envp[0] - first enviromental variable (starting on 0x0110)
-	 * 0x000C - envp[1] - second enviromental variable
-	 * 0x0010 - envp[2] - third enviromental variable
-	 * etc. (null pointer behind the last set by memset)
-	 * 0x0100 - "/init"
-	 */
-	
-	/* Write execve arguments */
-	
-	/* "/init" goes to 0x100 */
-	strcpy(&(injected_data[0x100]), "/init");
-	
-	/* Enviromental variables */
-	execve_cur_env_ptr = injected_data_address + 0x10;
-	execve_cur_env = injected_data_address + 0x110;
-	iter = init_env;
-		
-	while (*iter)
-	{
-	  /* Write envp */		
-		memcpy(&(injected_data[execve_cur_env_ptr - injected_data_address]), &execve_cur_env, sizeof(unsigned long));
-		execve_cur_env_ptr += sizeof(unsigned long);
-		
-		/* Write string */
-		strcpy(&(injected_data[execve_cur_env - injected_data_address]), iter);
-		len = strlen(iter) + 1;
-		
-		iter += len;
-		execve_cur_env += len;
-		
-		if (execve_cur_env % sizeof(unsigned long) != 0)
-		  execve_cur_env += sizeof(unsigned long) - (execve_cur_env % sizeof(unsigned long));	
-	}
-	
-	/* Put data to the process */
-	put_data(1, injected_data_address, injected_data, sizeof(injected_data));
-	
-	/* Set registers 
-	 *
-	 * R0 = "/init"
-	 * R1 = #argp
-	 * R2 = #envp
-   * PC = #execve 
-	 */
-	
-#ifdef __aarch64__
-        ptrace(PTRACE_GETREGSET, 1, NT_PRSTATUS, &ioVec);
-        regs->regs[0] = injected_data_address + 0x10; /* char *filename */
-        regs->regs[1] = injected_data_address + 0x00; /* char *argv[] */
-        regs->regs[2] = injected_data_address + 0x08; /* char *envp[] */
-        regs->pc = execve_address;
-        ptrace(PTRACE_SETREGSET, 1, NT_PRSTATUS, &ioVec);
-#else
-        ptrace(PTRACE_GETREGS, 1, NULL, &regs);
-        regs.ARM_r0 = injected_data_address + 0x0100; /* char*  filename */
-        regs.ARM_r1 = injected_data_address + 0x0000; /* char** argp */
-        regs.ARM_r2 = injected_data_address + 0x0008; /* char** envp */
-        regs.ARM_pc = execve_address;
-        ptrace(PTRACE_SETREGS, 1, NULL, &regs);
-#endif
-        printf("Setting /init PC to: 0x%08lX.\n", execve_address);
+    /*====================================
+     * Signatures of execve inside init
+     * execve:
+     *
+     * E1A0C007     MOV     IP, R7
+     * E3A0700B     MOV     r7, #11
+     *
+     *====================================*/
 
-  /* Detach */
-	printf("Detaching...\n");
-	ptrace(PTRACE_DETACH, 1, NULL, NULL);
-	return 0;
+    /*====================================
+     * Signature of calling execve inside init (Android <= 4.2.2)
+     * execve:
+     *
+     * 90002DE9     STMFD   SP!, {R4,R7}
+     * 0B70A0E3     MOV     R7, #0xB
+     * 000000EF     SVC     0
+     * 9000BDE8     LDMFD   SP!, {R4,R7}
+     *====================================*/
+
+    /*====================================
+     * Signature of calling execve inside init (Android 4.3)
+     * execve:
+     *
+     * 07C0A0E1     MOV     IP, R7
+     * 0B70A0E3     LDR     R7, #0xB
+     * 000000EF     SVC     0
+     * 0C70A0E1     MOV     R7, IP
+     *====================================*/
+    const int execve_code[] = { 0xE1A0C007, 0xE3A0700B, 0x90002DE9, 0x0B70A0E3, 0x000000EF, 0x9000BDE8, 0x07C0A0E1, 0x0C70A0E1 };
+#endif
+    unsigned long i;
+
+    for (i = 0; ; i += sizeof(*execve_code))
+    {
+        unsigned long buffer[2];
+
+        /* Read the next 8 or 16 bytes */
+        buffer[0] = ptrace(PTRACE_PEEKTEXT, 1, image_base + i, NULL);
+        buffer[1] = ptrace(PTRACE_PEEKTEXT, 1, image_base + i + sizeof(*buffer), NULL);
+
+        /* compare them to the execve instructions */
+        if (memcmp(buffer, execve_code, sizeof(buffer)) == 0)
+        {
+            /* Found the address of execve */
+            return image_base + i;
+        }
+    }
+
+    /* execve not found */
+    return 0;
 }
 
+static void replace_init(void)
+{
+    /* Attach to existing init and wait for an interrupt */
+    ptrace(PTRACE_ATTACH, 1, NULL, NULL);
+    wait(NULL);
 
+    /* Get first free address to inject */
+    unsigned long data_inject_address = 0;
+    read_init_map("00:00", &data_inject_address);
 
+    /* Get init text address */
+    unsigned long text_base = 0;
+    read_init_map("00:01", &text_base);
+
+    /* Find the address of execve in the init text */
+    unsigned long execve_address = find_execve(text_base);
+
+    /*======================================
+     * Inject the data
+     *
+     * argv[0]         - pointer to "/init"
+     * argv[1]/envp[0] - NULL
+     * "/init"
+     *======================================*/
+    ptrace(PTRACE_POKEDATA, 1, data_inject_address + (sizeof(void *) * 0), data_inject_address + 0x10);
+    ptrace(PTRACE_POKEDATA, 1, data_inject_address + (sizeof(void *) * 1), 0);
+#ifdef __aarch64__
+    ptrace(PTRACE_POKEDATA, 1, data_inject_address + (sizeof(void *) * 2), *(unsigned long *)"/init\0\0\0");
+#else
+    ptrace(PTRACE_POKEDATA, 1, data_inject_address + (sizeof(void *) * 2), *(unsigned long *)"/ini");
+    ptrace(PTRACE_POKEDATA, 1, data_inject_address + (sizeof(void *) * 3), *(unsigned long *)"t\0\0\0");
+#endif
+
+    /* Get inits current registers */
+#ifdef __aarch64__
+    struct iovec ioVec;
+    struct user_pt_regs regs[1];
+    ioVec.iov_base = regs;
+    ioVec.iov_len = sizeof(*regs);
+    ptrace(PTRACE_GETREGSET, 1, NT_PRSTATUS, &ioVec);
+#else
+    struct pt_regs regs;
+    ptrace(PTRACE_GETREGS, 1, NULL, &regs);
+#endif
+
+    /* Change the registers to call execve("/init", argv, envp) */
+#ifdef __aarch64__
+    regs->regs[0] = data_inject_address + 0x10; /* char *filename */
+    regs->regs[1] = data_inject_address + 0x00; /* char *argv[] */
+    regs->regs[2] = data_inject_address + 0x08; /* char *envp[] */
+    regs->pc = execve_address;
+    ptrace(PTRACE_SETREGSET, 1, NT_PRSTATUS, &ioVec);
+#else
+    regs.ARM_r0 = data_inject_address + (sizeof(void *) * 2); /* char*  filename */
+    regs.ARM_r1 = data_inject_address + (sizeof(void *) * 0); /* char** argp */
+    regs.ARM_r2 = data_inject_address + (sizeof(void *) * 1); /* char** envp */
+    regs.ARM_pc = execve_address;
+    ptrace(PTRACE_SETREGS, 1, NULL, &regs);
+#endif
+
+    /* Detach the ptrace */
+    ptrace(PTRACE_DETACH, 1, NULL, NULL);
+}
+
+int main()
+{
+    /* Use ptrace to replace init */
+    replace_init();
+
+    return -1;
+}
