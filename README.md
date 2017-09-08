@@ -13,5 +13,4 @@ Safestrap compiling guide:
 After recovery compiled run this
 - ~/$(ANDROID_TREE)/bootable/recovery/safestrap/devices/$(SS_PRODUCT_MANUFACTURER)/$(TARGET_DEVICE)/build-install.sh
 
-
-You can find TWRP compiling guide [here](http://forum.xda-developers.com/showthread.php?t=1943625 "Guide").
+You can find a compiling guide [here](http://forum.xda-developers.com/showthread.php?t=1943625 "Guide").

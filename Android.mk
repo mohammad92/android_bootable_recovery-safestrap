@@ -126,24 +126,25 @@ LOCAL_CLANG := true
 
 LOCAL_C_INCLUDES += \
     system/vold \
-    system/extras/ext4_utils \
+    system/extras \
     system/core/adb \
     system/core/libsparse \
-    external/zlib
+    external/zlib \
+    $(LOCAL_PATH)/bootloader_message_twrp/include
 
 LOCAL_C_INCLUDES += bionic
 ifeq ($(shell test $(PLATFORM_SDK_VERSION) -lt 23; echo $$?),0)
     LOCAL_C_INCLUDES += external/stlport/stlport external/openssl/include
 else
-    LOCAL_C_INCLUDES += external/boringssl/include
+    LOCAL_C_INCLUDES += external/boringssl/include external/libcxx/include
 endif
 
 LOCAL_STATIC_LIBRARIES :=
 LOCAL_SHARED_LIBRARIES :=
 
 LOCAL_STATIC_LIBRARIES += libguitwrp
-LOCAL_SHARED_LIBRARIES += libaosprecovery libz libc libcutils libstdc++ libtar libblkid libminuitwrp libminadbd libmtdutils libminzip libtwadbbu libbootloader_message
-LOCAL_SHARED_LIBRARIES += libcrecovery libtwadbbu libtwrpdigest
+LOCAL_SHARED_LIBRARIES += libaosprecovery libz libc libcutils libstdc++ libtar libblkid libminuitwrp libminadbd libmtdutils libtwadbbu libbootloader_message_twrp
+LOCAL_SHARED_LIBRARIES += libcrecovery libtwadbbu libtwrpdigest libc++
 
 ifeq ($(shell test $(PLATFORM_SDK_VERSION) -lt 23; echo $$?),0)
     LOCAL_SHARED_LIBRARIES += libstlport
@@ -154,11 +155,18 @@ ifeq ($(shell test $(PLATFORM_SDK_VERSION) -lt 24; echo $$?),0)
     LOCAL_C_INCLUDES += $(LOCAL_PATH)/libmincrypt/includes
     LOCAL_CFLAGS += -DUSE_OLD_VERIFIER
 else
-    LOCAL_SHARED_LIBRARIES += libc++ libcrypto
+    LOCAL_SHARED_LIBRARIES += libcrypto
 endif
 
 ifeq ($(shell test $(PLATFORM_SDK_VERSION) -ge 24; echo $$?),0)
     LOCAL_SHARED_LIBRARIES += libbase
+endif
+
+ifeq ($(shell test $(PLATFORM_SDK_VERSION) -ge 26; echo $$?),0)
+   LOCAL_SHARED_LIBRARIES += libziparchive
+else
+    LOCAL_SHARED_LIBRARIES += libminzip
+    LOCAL_CFLAGS += -DUSE_MINZIP
 endif
 
 ifneq ($(wildcard system/core/libsparse/Android.mk),)
@@ -183,14 +191,14 @@ ifeq ($(TARGET_USERIMAGES_USE_EXT4), true)
 endif
 LOCAL_C_INCLUDES += external/libselinux/include
 LOCAL_SHARED_LIBRARIES += libselinux
-ifneq ($(TARGET_USERIMAGES_USE_EXT4), true)
-    LOCAL_CFLAGS += -DUSE_EXT4
-    LOCAL_C_INCLUDES += system/extras/ext4_utils
-    LOCAL_SHARED_LIBRARIES += libext4_utils
-    ifneq ($(wildcard external/lz4/Android.mk),)
-        LOCAL_STATIC_LIBRARIES += liblz4
-    endif
-endif
+#ifneq ($(TARGET_USERIMAGES_USE_EXT4), true)
+#    LOCAL_CFLAGS += -DUSE_EXT4
+#    LOCAL_C_INCLUDES += system/extras/ext4_utils
+#    LOCAL_SHARED_LIBRARIES += libext4_utils
+#    ifneq ($(wildcard external/lz4/Android.mk),)
+#        LOCAL_STATIC_LIBRARIES += liblz4
+#    endif
+#endif
 
 ifeq ($(AB_OTA_UPDATER),true)
     LOCAL_CFLAGS += -DAB_OTA_UPDATER=1
@@ -326,7 +334,7 @@ ifeq ($(TW_INCLUDE_CRYPTO), true)
     endif
 endif
 WITH_CRYPTO_UTILS := \
-    $(if $(wildcard system/core/libcrypto_utils/Android.mk),true)
+    $(if $(wildcard system/core/libcrypto_utils/android_pubkey.c),true)
 ifeq ($(TW_USE_MODEL_HARDWARE_ID_FOR_DEVICE_ID), true)
     LOCAL_CFLAGS += -DTW_USE_MODEL_HARDWARE_ID_FOR_DEVICE_ID
 endif
@@ -392,7 +400,8 @@ LOCAL_ADDITIONAL_DEPENDENCIES += \
     mkfs.fat \
     permissive.sh \
     simg2img_twrp \
-    libbootloader_message \
+    libbootloader_message_twrp \
+    init.recovery.hlthchrg.rc \
     init.recovery.service.rc
 
 ifneq ($(TARGET_ARCH), arm64)
@@ -655,6 +664,37 @@ else
 endif
 include $(BUILD_SHARED_LIBRARY)
 
+# libmounts (static library)
+# ===============================
+include $(CLEAR_VARS)
+LOCAL_SRC_FILES := mounts.cpp
+LOCAL_CLANG := true
+LOCAL_CFLAGS := -Wall -Wno-unused-parameter -Werror
+LOCAL_MODULE := libmounts
+include $(BUILD_STATIC_LIBRARY)
+
+# librecovery (static library)
+# ===============================
+include $(CLEAR_VARS)
+LOCAL_SRC_FILES := \
+    install.cpp
+LOCAL_CFLAGS := -Wno-unused-parameter -Werror
+LOCAL_CFLAGS += -DRECOVERY_API_VERSION=$(RECOVERY_API_VERSION)
+
+ifeq ($(AB_OTA_UPDATER),true)
+    LOCAL_CFLAGS += -DAB_OTA_UPDATER=1
+endif
+
+LOCAL_MODULE := librecovery
+LOCAL_STATIC_LIBRARIES := \
+    libminui \
+    libvintf_recovery \
+    libcrypto_utils \
+    libcrypto \
+    libbase
+
+include $(BUILD_STATIC_LIBRARY)
+
 # shared libaosprecovery for Apache code
 # ===============================
 include $(CLEAR_VARS)
@@ -662,7 +702,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := libaosprecovery
 LOCAL_MODULE_TAGS := eng optional
 LOCAL_CFLAGS := -std=gnu++0x
-LOCAL_SRC_FILES := adb_install.cpp asn1_decoder.cpp legacy_property_service.cpp set_metadata.cpp tw_atomic.cpp installcommand.cpp
+LOCAL_SRC_FILES := adb_install.cpp legacy_property_service.cpp set_metadata.cpp tw_atomic.cpp installcommand.cpp zipwrap.cpp
 LOCAL_SHARED_LIBRARIES += libc liblog libcutils libmtdutils libfusesideload libselinux libminzip
 LOCAL_CFLAGS += -DRECOVERY_API_VERSION=$(RECOVERY_API_VERSION)
 ifeq ($(shell test $(PLATFORM_SDK_VERSION) -lt 23; echo $$?),0)
@@ -674,14 +714,22 @@ endif
 ifeq ($(shell test $(PLATFORM_SDK_VERSION) -lt 24; echo $$?),0)
     LOCAL_SHARED_LIBRARIES += libmincrypttwrp
     LOCAL_C_INCLUDES += $(LOCAL_PATH)/libmincrypt/includes
-    LOCAL_SRC_FILES += verifier24/verifier.cpp
+    LOCAL_SRC_FILES += verifier24/verifier.cpp verifier24/asn1_decoder.cpp
     LOCAL_CFLAGS += -DUSE_OLD_VERIFIER
 else
     LOCAL_SHARED_LIBRARIES += libcrypto libbase
-    LOCAL_SRC_FILES += verifier.cpp
+    LOCAL_SRC_FILES += verifier.cpp asn1_decoder.cpp
 endif
 ifeq ($(AB_OTA_UPDATER),true)
     LOCAL_CFLAGS += -DAB_OTA_UPDATER=1
+endif
+ifeq ($(shell test $(PLATFORM_SDK_VERSION) -ge 26; echo $$?),0)
+    LOCAL_SRC_FILES += otautil/ZipUtil.cpp otautil/SysUtil.cpp
+    LOCAL_SHARED_LIBRARIES += libziparchive libext4_utils libcrypto libcrypto_utils
+    LOCAL_STATIC_LIBRARIES += libvintf_recovery libfs_mgr liblogwrap libavb libvintf libtinyxml2 libz
+    LOCAL_WHOLE_STATIC_LIBRARIES +=
+else
+    LOCAL_CFLAGS += -DUSE_MINZIP
 endif
 
 ifneq ($(BOARD_RECOVERY_BLDRMSG_OFFSET),)
@@ -708,6 +756,7 @@ include $(LOCAL_PATH)/tests/Android.mk \
     $(LOCAL_PATH)/edify/Android.mk \
     $(LOCAL_PATH)/otafault/Android.mk \
     $(LOCAL_PATH)/bootloader_message/Android.mk \
+    $(LOCAL_PATH)/bootloader_message_twrp/Android.mk \
     $(LOCAL_PATH)/updater/Android.mk \
     $(LOCAL_PATH)/update_verifier/Android.mk \
     $(LOCAL_PATH)/applypatch/Android.mk
@@ -717,6 +766,10 @@ ifeq ($(wildcard system/core/uncrypt/Android.mk),)
 endif
 
 ifeq ($(shell test $(PLATFORM_SDK_VERSION) -gt 22; echo $$?),0)
+    ifeq ($(shell test $(PLATFORM_SDK_VERSION) -lt 26; echo $$?),0)
+        TARGET_GLOBAL_CFLAGS += -DTW_USE_MINUI_WITH_DATA
+        CLANG_TARGET_GLOBAL_CFLAGS += -DTW_USE_MINUI_WITH_DATA
+    endif
     include $(commands_recovery_local_path)/minadbd/Android.mk \
         $(commands_recovery_local_path)/minui/Android.mk
 else
@@ -739,6 +792,7 @@ include $(commands_recovery_local_path)/injecttwrp/Android.mk \
     $(commands_recovery_local_path)/libcrecovery/Android.mk \
     $(commands_recovery_local_path)/libblkid/Android.mk \
     $(commands_recovery_local_path)/minuitwrp/Android.mk \
+    $(commands_recovery_local_path)/otautil/Android.mk \
     $(commands_recovery_local_path)/openaes/Android.mk \
     $(commands_recovery_local_path)/toolbox/Android.mk \
     $(commands_recovery_local_path)/twrpTarMain/Android.mk \
