@@ -386,7 +386,11 @@ int TWinstall_zip(const char* path, int* wipe_cache) {
 	DataManager::SetProgress(0);
 
 	MemMapping map;
+#ifdef USE_MINZIP
 	if (sysMapFile(path, &map) != 0) {
+#else
+	if (!map.MapFile(path)) {
+#endif
 		gui_msg(Msg(msg::kError, "fail_sysmap=Failed to map file '{1}'")(path));
 		return -1;
 	}
@@ -400,6 +404,9 @@ int TWinstall_zip(const char* path, int* wipe_cache) {
 		if (!load_keys("/res/keys", loadedKeys)) {
 			LOGINFO("Failed to load keys");
 			gui_err("verify_zip_fail=Zip signature verification failed!");
+#ifdef USE_MINZIP
+			sysReleaseMap(&map);
+#endif
 			return -1;
 		}
 		ret_val = verify_file(map.addr, map.length, loadedKeys, std::bind(&DataManager::SetProgress, std::placeholders::_1));
@@ -407,7 +414,9 @@ int TWinstall_zip(const char* path, int* wipe_cache) {
 		if (ret_val != VERIFY_SUCCESS) {
 			LOGINFO("Zip signature verification failed: %i\n", ret_val);
 			gui_err("verify_zip_fail=Zip signature verification failed!");
+#ifdef USE_MINZIP
 			sysReleaseMap(&map);
+#endif
 			return -1;
 		} else {
 			gui_msg("verify_zip_done=Zip signature verified successfully.");
@@ -416,7 +425,9 @@ int TWinstall_zip(const char* path, int* wipe_cache) {
 	ZipWrap Zip;
 	if (!Zip.Open(path, &map)) {
 		gui_err("zip_corrupt=Zip file is corrupt!");
-		sysReleaseMap(&map);
+#ifdef USE_MINZIP
+			sysReleaseMap(&map);
+#endif
 		return INSTALL_CORRUPT;
 	}
 
@@ -427,8 +438,10 @@ int TWinstall_zip(const char* path, int* wipe_cache) {
 		// Additionally verify the compatibility of the package.
 		if (!verify_package_compatibility(&Zip)) {
 			gui_err("zip_compatible_err=Zip Treble compatibility error!");
-			sysReleaseMap(&map);
 			Zip.Close();
+#ifdef USE_MINZIP
+			sysReleaseMap(&map);
+#endif
 			ret_val = INSTALL_CORRUPT;
 		} else {
 			ret_val = Prepare_Update_Binary(path, &Zip, wipe_cache);
@@ -456,6 +469,8 @@ int TWinstall_zip(const char* path, int* wipe_cache) {
 	} else {
 		LOGINFO("Install took %i second(s).\n", total_time);
 	}
+#ifdef USE_MINZIP
 	sysReleaseMap(&map);
+#endif
 	return ret_val;
 }
