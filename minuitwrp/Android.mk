@@ -3,7 +3,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 ifndef RECOVERY_INCLUDE_DIR
-    RECOVERY_INCLUDE_DIR := $(commands_recovery_local_path)/minuitwrp/include
+    RECOVERY_INCLUDE_DIR += $(commands_recovery_local_path)/minuitwrp/include
 endif
 
 BUILD_SAFESTRAP := true
