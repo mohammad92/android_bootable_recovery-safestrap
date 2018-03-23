@@ -10,7 +10,6 @@ LOCAL_SRC_FILES := \
     graphics.cpp \
     graphics_fbdev.cpp \
     resources.cpp \
-    graphics_overlay.cpp \
     truetype.cpp \
     graphics_utils.cpp \
     events.cpp
@@ -24,10 +23,40 @@ endif
 
 ifeq ($(TW_TARGET_USES_QCOM_BSP), true)
   LOCAL_CFLAGS += -DMSM_BSP
+  LOCAL_SRC_FILES += graphics_overlay.cpp
+  ifeq ($(TARGET_PREBUILT_KERNEL),)
+    LOCAL_ADDITIONAL_DEPENDENCIES := $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
+    LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
+  else
+    ifeq ($(TARGET_CUSTOM_KERNEL_HEADERS),)
+      LOCAL_C_INCLUDES += $(RECOVERY_INCLUDE_DIR)
+    else
+      LOCAL_C_INCLUDES += $(TARGET_CUSTOM_KERNEL_HEADERS)
+    endif
+  endif
+else
+  LOCAL_C_INCLUDES += $(RECOVERY_INCLUDE_DIR)
+  # The header files required for adf graphics can cause compile errors
+  # with adf graphics.
+  ifneq ($(wildcard system/core/adf/Android.mk),)
+    LOCAL_CFLAGS += -DHAS_ADF
+    LOCAL_SRC_FILES += graphics_adf.cpp
+    LOCAL_WHOLE_STATIC_LIBRARIES += libadf
+  endif
 endif
 
 ifeq ($(TW_NEW_ION_HEAP), true)
   LOCAL_CFLAGS += -DNEW_ION_HEAP
+endif
+
+ifneq ($(wildcard external/libdrm/Android.mk),)
+  LOCAL_CFLAGS += -DHAS_DRM
+  LOCAL_SRC_FILES += graphics_drm.cpp
+  ifneq ($(wildcard external/libdrm/Android.common.mk),)
+    LOCAL_WHOLE_STATIC_LIBRARIES += libdrm_platform
+  else
+    LOCAL_WHOLE_STATIC_LIBRARIES += libdrm
+  endif
 endif
 
 LOCAL_C_INCLUDES += \
@@ -35,8 +64,7 @@ LOCAL_C_INCLUDES += \
     external/zlib \
     system/core/include \
     external/freetype/include \
-    external/libcxx/include \
-    $(RECOVERY_INCLUDE_DIR)
+    external/libcxx/include
 
 ifneq ($(TW_INCLUDE_JPEG),)
     LOCAL_C_INCLUDES += \
@@ -121,6 +149,9 @@ endif
 ifeq ($(TW_SCREEN_BLANK_ON_BOOT), true)
     LOCAL_CFLAGS += -DTW_SCREEN_BLANK_ON_BOOT
 endif
+ifeq ($(TW_FBIOPAN), true)
+    LOCAL_CFLAGS += -DTW_FBIOPAN
+endif
 
 ifeq ($(BOARD_HAS_FLIPPED_SCREEN), true)
 LOCAL_CFLAGS += -DBOARD_HAS_FLIPPED_SCREEN
@@ -160,7 +191,10 @@ ifneq ($(TW_INCLUDE_JPEG),)
     LOCAL_SHARED_LIBRARIES += libjpeg
 endif
 
-LOCAL_STATIC_LIBRARIES += liblog libpixelflinger_twrp
+LOCAL_STATIC_LIBRARIES += libpixelflinger_twrp
+ifeq ($(shell test $(PLATFORM_SDK_VERSION) -gt 25; echo $$?),0)
+LOCAL_SHARED_LIBRARIES += libcutils liblog libutils
+endif
 LOCAL_MODULE_TAGS := eng
 LOCAL_MODULE := libminui_ss
 

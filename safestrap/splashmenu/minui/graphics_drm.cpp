@@ -28,6 +28,7 @@
 #include <xf86drm.h>
 #include <xf86drmMode.h>
 
+#include "drm_ss.h"
 #include "minui.h"
 #include "graphics.h"
 #include <pixelflinger/pixelflinger.h>

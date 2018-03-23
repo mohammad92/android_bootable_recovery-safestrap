@@ -164,7 +164,7 @@ static int vk_init(struct ev *e)
     len = ioctl(e->fd->fd, EVIOCGNAME(sizeof(e->deviceName)), e->deviceName);
     if (len <= 0)
     {
-        printf("Unable to query event object.\n");
+        LOGE("Unable to query event object.\n");
         return -1;
     }
 #ifdef _EVENT_LOGGING
@@ -190,7 +190,7 @@ static int vk_init(struct ev *e)
 
     while (blacklist != NULL) {
         if (strcmp(e->deviceName, blacklist) == 0) {
-            printf("blacklisting %s input device\n", blacklist);
+            LOGI("Blacklisting input device: %s\n", blacklist);
             e->ignored = 1;
         }
         blacklist = strtok(NULL, "\n");
@@ -223,7 +223,7 @@ static int vk_init(struct ev *e)
         }
 
         if (e->vk_count % 6) {
-            printf("minui: %s is %d %% 6\n", vk_path, e->vk_count % 6);
+            LOGI("minui: %s is %d %% 6\n", vk_path, e->vk_count % 6);
         }
         e->vk_count /= 6;
         if (e->vk_count <= 0)
@@ -259,7 +259,7 @@ static int vk_init(struct ev *e)
 
         if (strcmp(token[0], "0x01") != 0) {
             /* Java does string compare, so we do too. */
-            printf("minui: %s: ignoring unknown virtual key type %s\n", vk_path, token[0]);
+            LOGI("minui: %s: ignoring unknown virtual key type %s\n", vk_path, token[0]);
             continue;
         }
 
@@ -320,7 +320,9 @@ int ev_init(void)
 	dir = opendir("/dev/input");
     if(dir != 0) {
         while((de = readdir(dir))) {
-//            fprintf(stderr,"/dev/input/%s\n", de->d_name);
+#ifdef _EVENT_LOGGING
+            fprintf(stderr,"/dev/input/%s\n", de->d_name);
+#endif
             if(strncmp(de->d_name,"event",5)) continue;
             fd = openat(dirfd(dir), de->d_name, O_RDONLY);
             if(fd < 0) continue;
@@ -619,8 +621,10 @@ static int vk_modify(struct ev *e, struct input_event *ev)
     }
 
 #ifdef _EVENT_LOGGING
-    if (ev->type == EV_SYN && ev->code == SYN_REPORT)       printf("EV: %s => EV_SYN  SYN_REPORT\n", e->deviceName);
-    if (ev->type == EV_SYN && ev->code == SYN_MT_REPORT)    printf("EV: %s => EV_SYN  SYN_MT_REPORT\n", e->deviceName);
+    if (ev->type == EV_SYN && ev->code == SYN_REPORT)
+        printf("EV: %s => EV_SYN  SYN_REPORT\n", e->deviceName);
+    if (ev->type == EV_SYN && ev->code == SYN_MT_REPORT)
+        printf("EV: %s => EV_SYN  SYN_MT_REPORT\n", e->deviceName);
 #endif
 
     // Discard the MT versions
@@ -754,7 +758,7 @@ int ev_get(struct input_event *ev, int timeout_ms)
         stat("/dev/input", &st);
         if (st.st_mtime > lastInputMTime)
         {
-            printf("Reloading input devices\n");
+            LOGI("Reloading input devices\n");
             ev_exit();
             ev_init();
             lastInputMTime = st.st_mtime;
