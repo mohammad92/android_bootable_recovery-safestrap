@@ -1,2 +1,7 @@
-on boot
-    exec /sbin/fixboot.sh
+on fs
+    start fixboot
+
+service fixboot /sbin/fixboot.sh
+    oneshot
+    disabled
+    seclabel u:r:recovery:s0
