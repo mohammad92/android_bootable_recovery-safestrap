@@ -16,6 +16,6 @@
 /usb-otg	vfat	/dev/block/sde1 /dev/block/sde		flags=display="USB-OTG";storage;wipeingui;removable
 
 # safestrap
-/datamedia      ext4    /dev/block/sda25-orig
+/datamedia      ext4    /dev/block/sda25-orig			flags=display="Internal Storage";storage
 /ss             ext4    /dev/block/sda25-orig			flags=hidden
 /systemorig     ext4    /dev/block/sda20-orig			flags=hidden;usermrf
