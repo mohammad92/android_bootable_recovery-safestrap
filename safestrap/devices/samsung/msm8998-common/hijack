@@ -203,12 +203,6 @@ if [ "$RUN_SS" = "1" ]; then
 
 		/sbin/hijack.killall
 
-		# remount system read only
-		$BBX mount -o remount,ro /system
-
-		# remount root read only
-		$BBX mount -o remount,ro rootfs
-
 		echo "<1>$(/sbin/taskset -p -c 0 1)" > /dev/kmsg
 		$BBX sync
 		if [ "$DEBUG_MODE" = "1" ]; then
