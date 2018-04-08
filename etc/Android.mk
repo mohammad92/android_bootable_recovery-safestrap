@@ -34,7 +34,7 @@ include $(BUILD_PREBUILT)
 
 endif
 
-ifeq ($(shell test $(PLATFORM_SDK_VERSION) -ge 22; echo $$?),0)
+ifdef SS_INCLUDE_SECLABEL_RECOVERY_SERVICE
     include $(CLEAR_VARS)
     LOCAL_MODULE := init.recovery.service.rc
     LOCAL_MODULE_TAGS := eng
