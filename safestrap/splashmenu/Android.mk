@@ -53,11 +53,11 @@ LOCAL_STATIC_LIBRARIES := \
         libutils \
         libm
 
-LOCAL_FORCE_STATIC_EXECUTABLE := true
 LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
-LOCAL_PACK_MODULE_RELOCATIONS := false 
-LOCAL_MODULE_PATH := $(TARGET_RECOVERY_OUT)/root/../../install-files/etc/safestrap
-
+LOCAL_PACK_MODULE_RELOCATIONS := false
+LOCAL_MODULE_PATH := $(TARGET_RECOVERY_OUT)/../install-files/etc/safestrap
+LOCAL_UNSTRIPPED_PATH := $(TARGET_RECOVERY_OUT)/..//symbols/install-files/etc/safestrap
+LOCAL_FORCE_STATIC_EXECUTABLE := true
 include $(BUILD_EXECUTABLE)
 
 include $(call all-makefiles-under,$(splash_local_path))
