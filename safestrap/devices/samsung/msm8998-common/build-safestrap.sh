@@ -5,7 +5,6 @@ mkdir -p $OUT/install-files/bin/
 mkdir -p $OUT/install-files/etc/safestrap/res/
 mkdir -p $OUT/install-files/etc/safestrap/rootfs/
 cd $ANDROID_BUILD_TOP/bootable/recovery/safestrap/devices/samsung
-cp -fr msm8998-common/APP/* $OUT/APP/
 cp -fr msm8998-common/res/* $OUT/install-files/etc/safestrap/res/
 cp -fr msm8998-common/hijack $OUT/install-files/bin/e2fsck
 cp -fr msm8998-common/rootfs/* $OUT/install-files/etc/safestrap/rootfs/

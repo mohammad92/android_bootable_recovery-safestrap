@@ -263,13 +263,11 @@ ifdef BUILD_SAFESTRAP
 	cp -p $(SS_COMMON)/devices/common/2nd-init-files/* $(OUT)/2nd-init-files
 	cp -p $(SS_COMMON)/devices/common/2nd-init-files/fixboot.sh $(OUT)/recovery/root/sbin/
 	cp -p $(SS_COMMON)/devices/common/2nd-init-files/ss_function.sh $(OUT)/recovery/root/sbin/
-	cp -p $(SS_COMMON)/devices/common/2nd-init-files/ss_function.sh $(OUT)/APP/
 	cp -p $(SS_COMMON)/devices/common/2nd-init-files/ss_function.sh $(OUT)/install-files/etc/safestrap/
 	cp -p $(SS_COMMON)/devices/common/APP/* $(OUT)/APP/
 	cp -p $(SS_COMMON)/devices/common/sbin/* $(OUT)/recovery/root/sbin/
 	cp -p $(SS_COMMON)/flags/* $(OUT)/install-files/etc/safestrap/flags/
 	cp -p $(SS_COMMON)/bbx $(OUT)/install-files/etc/safestrap/bbx
-	cp -p $(SS_COMMON)/busybox $(OUT)/APP/busybox
 	cp -p $(SS_COMMON)/lfs $(TARGET_RECOVERY_ROOT_OUT)/sbin/lfs
 	cp -p $(SS_COMMON)/devices/common/splashscreen-res/$(DEVICE_RESOLUTION)/* $(OUT)/install-files/etc/safestrap/res/
 	# Call out to device-specific script
