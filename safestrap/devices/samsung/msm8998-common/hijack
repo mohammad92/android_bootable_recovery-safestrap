@@ -11,7 +11,7 @@ CURRENT_USER_DIR=/data
 ALT_SYSTEM_MODE="0"
 RUN_SS="0"
 RECOVERY_BOOT=$(cat /proc/cmdline | $RECOVERY_DIR/bbx grep -c "androidboot.boot_recovery=1")
-CHARGER_BOOT=$(cat /proc/cmdline | $RECOVERY_DIR/bbx grep -c "androidboot.bootchg=true")
+CHARGER_BOOT=$(cat /proc/cmdline | $RECOVERY_DIR/bbx grep -c "androidboot.mode=charger")
 
 # check cmdline for androidboot.mode=charger
 # check cmdline for androidboot.boot_recovery=1
