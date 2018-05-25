@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-//#include <drm_fourcc.h>
+#include <drm_fourcc.h>
 #include <fcntl.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -28,7 +28,6 @@
 #include <xf86drm.h>
 #include <xf86drmMode.h>
 
-#include "drm_ss.h"
 #include "minui.h"
 #include "graphics.h"
 #include <pixelflinger/pixelflinger.h>
@@ -43,6 +42,8 @@ struct drm_surface {
 
 static drm_surface *drm_surfaces[2];
 static int current_buffer;
+static bool flip_pending = false;
+static GRSurface *draw_buf = NULL;
 
 static drmModeCrtc *main_monitor_crtc;
 static drmModeConnector *main_monitor_connector;
@@ -149,8 +150,8 @@ static drm_surface *drm_create_surface(int width, int height) {
     printf("setting DRM_FORMAT_RGBA8888 and GGL_PIXEL_FORMAT_RGBA_8888\n");
 #elif defined(RECOVERY_BGRA)
     format = DRM_FORMAT_ARGB8888;
-    base_format = GGL_PIXEL_FORMAT_BGRA_8888;
-    printf("setting DRM_FORMAT_ARGB8888 and GGL_PIXEL_FORMAT_BGRA_8888, GGL_PIXEL_FORMAT may not match!\n");
+    base_format = GGL_PIXEL_FORMAT_RGBA_8888;
+    printf("setting DRM_FORMAT_ARGB8888 and GGL_PIXEL_FORMAT_RGBA_8888\n");
 #elif defined(RECOVERY_RGBA)
     format = DRM_FORMAT_ABGR8888;
     base_format = GGL_PIXEL_FORMAT_BGRA_8888;
@@ -451,24 +452,67 @@ static GRSurface* drm_init(minui_backend* backend __unused) {
         return NULL;
     }
 
+    draw_buf = (GRSurface *)malloc(sizeof(GRSurface));
+    if (!draw_buf) {
+        printf("failed to alloc draw_buf\n");
+        drm_destroy_surface(drm_surfaces[0]);
+        drm_destroy_surface(drm_surfaces[1]);
+        drmModeFreeResources(res);
+        close(drm_fd);
+        return NULL;
+    }
+
+    memcpy(draw_buf, &drm_surfaces[0]->base, sizeof(GRSurface));
+    draw_buf->data = (unsigned char *)calloc(draw_buf->height * draw_buf->row_bytes, 1);
+    if (!draw_buf->data) {
+        printf("failed to alloc draw_buf surface\n");
+        free(draw_buf);
+        drm_destroy_surface(drm_surfaces[0]);
+        drm_destroy_surface(drm_surfaces[1]);
+        drmModeFreeResources(res);
+        close(drm_fd);
+        return NULL;
+    }
+
     current_buffer = 0;
 
     drm_enable_crtc(drm_fd, main_monitor_crtc, drm_surfaces[1]);
 
-    return &(drm_surfaces[0]->base);
+    return draw_buf;
+}
+
+static void drm_page_flip_event(int fd, unsigned int frame, unsigned int sec,
+        unsigned int usec, void *data) {
+    flip_pending = false;
 }
 
 static GRSurface* drm_flip(minui_backend* backend __unused) {
     int ret;
+    drmEventContext ev;
+
+    memset(&ev, 0, sizeof(ev));
+
+    memcpy(drm_surfaces[current_buffer]->base.data,
+            draw_buf->data, draw_buf->height * draw_buf->row_bytes);
+
+    ev.version = 2;
+    ev.page_flip_handler = drm_page_flip_event;
+
+    /* wait for previous page flip, if any, to complete */
+    while (flip_pending) {
+        drmHandleEvent(drm_fd, &ev);
+    }
 
     ret = drmModePageFlip(drm_fd, main_monitor_crtc->crtc_id,
-                          drm_surfaces[current_buffer]->fb_id, 0, NULL);
+                          drm_surfaces[current_buffer]->fb_id, DRM_MODE_PAGE_FLIP_EVENT, NULL);
     if (ret < 0) {
         printf("drmModePageFlip failed ret=%d\n", ret);
         return NULL;
     }
+
+    flip_pending = true;
     current_buffer = 1 - current_buffer;
-    return &(drm_surfaces[current_buffer]->base);
+    return draw_buf;
 }
 
 static void drm_exit(minui_backend* backend __unused) {
