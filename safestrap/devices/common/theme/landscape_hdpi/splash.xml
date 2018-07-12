@@ -43,7 +43,7 @@
 			<text color="%header_color%">
 				<font resource="font_l"/>
 				<placement x="960" y="970" placement="5"/>
-				<text>Recovery Project %tw_version%</text>
+				<text>Safestrap %ss_version% (TWRP v%tw_version%)</text>
 			</text>
 		</page>
 	</pages>
