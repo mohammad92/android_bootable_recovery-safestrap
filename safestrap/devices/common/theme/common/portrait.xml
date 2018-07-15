@@ -42,6 +42,12 @@
 			<image resource="minus_button" />
 		</style>
 
+		<style name="main_highlight_button">
+			<highlight color="%highlight_color%"/>
+			<font resource="font_l" color="%text_button_color%"/>
+			<image resource="main_highlight_button"/>
+		</style>
+
 		<style name="main_button">
 			<highlight color="%highlight_color%"/>
 			<font resource="font_l" color="%text_button_color%"/>
@@ -120,6 +126,7 @@
 		<style name="scrolllist">
 			<background color="%background_color%"/>
 			<font resource="font_m" spacing="%fileselector_spacing%" color="%text_color%"/>
+			<fastscroll linecolor="%fileselector_linecolor%" rectcolor="%accent_color%" w="%fastscroll_w%" linew="%fastscroll_linew%" rectw="%fastscroll_rectw%" recth="%fastscroll_recth%"/>
 		</style>
 
 		<style name="partitionlist">
@@ -189,12 +196,6 @@
 
 			<button style="main_button">
 				<placement x="%indent%" y="%row2a_y%"/>
-				<text>{@boot_options_btn=Boot Options}</text>
-                                <action function="page">boot_options</action>
-			</object>
-
-			<button style="main_button">
-				<placement x="%center_x%" y="%row2a_y%"/>
 				<text>{@install_btn=Install}</text>
 				<actions>
 					<action function="queueclear"/>
@@ -204,9 +205,9 @@
 			</button>
 
 			<button style="main_button">
-				<placement x="%center_x%" y="%row13a_y%"/>
-				<text>{@wipe_btn=Wipe}</text>
-				<action function="page">wipe</action>
+				<placement x="%center_x%" y="%row2a_y%"/>
+				<text>{@boot_options_btn=Boot Options}</text>
+                                <action function="page">boot_options</action>
 			</button>
 
 			<button style="main_button">
@@ -225,6 +226,12 @@
 				<placement x="%indent%" y="%row13a_y%"/>
 				<text>{@mount_btn=Mount}</text>
 				<action function="page">mount</action>
+			</button>
+
+			<button style="main_button">
+				<placement x="%center_x%" y="%row13a_y%"/>
+				<text>{@wipe_btn=Wipe}</text>
+				<action function="page">wipe</action>
 			</button>
 
 			<button style="main_button">
@@ -510,7 +517,7 @@
 				<text>{@reboot_system_btn=Reboot System}</text>
 				<actions>
 					<action function="set">tw_back=main2</action>
- 					<action function="page">reboot_system_routine</action> 
+					<action function="page">reboot_system_routine</action>
 				</actions>
 			</button>
 
@@ -882,7 +889,7 @@
 				<text>{@reboot_system_btn=Reboot System}</text>
 				<actions>
 					<action function="set">tw_back=main2</action>
- 					<action function="page">reboot_system_routine</action> 
+					<action function="page">reboot_system_routine</action>
 				</actions>
 			</button>
 
@@ -934,7 +941,7 @@
 		<page name="rebootcheck">
 			<action>
 				<condition var1="tw_backup_system_size" op="&gt;=" var2="%tw_min_system%"/>
-				<action function="page">appcheck</action> 
+				<action function="page">appcheck</action>
 			</action>
 
 			<action>
@@ -943,7 +950,7 @@
 			</action>
 		</page>
 
-                <page name="appcheck">
+		<page name="appcheck">
 			<action>
 				<condition var1="tw_app_prompt" var2="1"/>
 				<action function="checkforapp"></action>
@@ -1572,7 +1579,7 @@
 				<conditions>
 					<condition var1="tw_include_encrypted_backup" var2="1"/>
 					<condition var1="tw_encrypt_backup" var2="0"/>
- 					<condition var1="tw_enable_adb_backup" op="!=" var2="1"/> 
+					<condition var1="tw_enable_adb_backup" op="!=" var2="1"/>
 				</conditions>
 				<placement x="%tab3_col3_x%" y="%row1_y%" w="%tab3_width%" h="%tab_height%"/>
 				<text>{@encryption_tab=ENCRYPTION}</text>
@@ -1721,13 +1728,13 @@
 
 			<checkbox>
 				<placement x="%indent%" y="%row5_y%"/>
-                                <text>{@skip_digest_backup_chk=Skip Digest generation during backup}</text>
-                                <data variable="tw_skip_digest_generate"/>
+				<text>{@skip_digest_backup_chk=Skip Digest generation during backup}</text>
+				<data variable="tw_skip_digest_generate"/>
 			</checkbox>
 
 			<checkbox>
 				<placement x="%indent%" y="%row6a_y%"/>
- 				<text>{@disable_backup_space_chk=Disable free space check before backup}</text> 
+				<text>{@disable_backup_space_chk=Disable free space check before backup}</text>
 				<data variable="tw_disable_free_space"/>
 			</checkbox>
 
@@ -2779,7 +2786,7 @@
 				<text>{@rb_system_btn=System}</text>
 				<actions>
 					<action function="set">tw_back=reboot</action>
- 					<action function="page">reboot_system_routine</action> 
+					<action function="page">reboot_system_routine</action>
 				</actions>
 			</button>
 
@@ -2908,7 +2915,7 @@
 			</action>
 		</page>
 
-                <page name="rebootapp">
+		<page name="rebootapp">
 			<template name="page"/>
 
 			<text style="text_l">
@@ -2948,7 +2955,7 @@
 				<placement x="%indent%" y="%row16_y%"/>
 				<text>{@su_cancel=Do not Install}</text>
 				<action function="reboot">%tw_reboot_param%</action>
-             		</button>
+			</button>
 
 			<slider>
 				<text>{@swipe_to_install_app=Swipe to Install TWRP App}</text>
@@ -3469,7 +3476,7 @@
 			<button style="main_button">
 				<placement x="%indent%" y="%row2a_y%"/>
 				<text>{@copy_log_btn=Copy Log}</text>
- 				<action function="page">copylog</action> 
+				<action function="page">copylog</action>
 			</button>
 
 			<button style="main_button">
@@ -4793,7 +4800,7 @@
 				<action function="overlay"/>
 			</button>
 
- 			<action>
+			<action>
 				<touch key="power"/>
 				<action function="togglebacklight"/>
 			</action>
@@ -4971,7 +4978,9 @@
 		</page>
 
 		<page name="boot_slot_try_create">
-			<object type="action">
+			<template name="page"/>
+
+			<action>
 				<action function="refreshsizesnt"></action>
 				<action function="set">tw_slot_system_size=%tw_ss_default_virt_system_size%</action>
 				<action function="set">tw_slot_data_size=%tw_ss_default_virt_data_size%</action>
@@ -4980,9 +4989,7 @@
 				<action function="addsubtract">tw_slot_total_size+%tw_slot_system_size%</action>
 				<action function="addsubtract">tw_slot_total_size+%tw_slot_data_size%</action>
 				<action function="addsubtract">tw_slot_total_size+%tw_slot_cache_size%</action>
-			</object>
-
-			<template name="page"/>
+			</action>
 
 			<text style="text_l">
 				<placement x="%col1_x_header%" y="%row3_header_y%" />
@@ -5008,13 +5015,13 @@
 				<action function="addsubtract">tw_slot_total_size+%tw_slot_system_size%</action>
 				<action function="addsubtract">tw_slot_total_size+%tw_slot_cache_size%</action>
 				<action function="addsubtract">tw_slot_total_size+%tw_slot_data_size%</action>
-			</object>
+			</button>
 
 			<button style="minus_button">
 				<condition var1="tw_slot_system_size" op="<=" var2="tw_ss_default_virt_system_min_size" />
 				<placement x="%indent%" y="%row4a_y%" />
 				<text></text>
-			</object>
+			</button>
 
 			<text style="text_m">
 				<placement x="%back_button_x%" y="%row4a_y%" />
@@ -5030,13 +5037,13 @@
 				<action function="addsubtract">tw_slot_total_size+%tw_slot_system_size%</action>
 				<action function="addsubtract">tw_slot_total_size+%tw_slot_cache_size%</action>
 				<action function="addsubtract">tw_slot_total_size+%tw_slot_data_size%</action>
-			</object>
+			</button>
 
 			<button style="plus_button">
 				<condition var1="tw_slot_system_size" op=">=" var2="tw_ss_default_virt_system_max_size" />
 				<placement x="%center_x%" y="%row4a_y%" />
 				<text></text>
-			</object>
+			</button>
 
 			<text style="text_m">
 				<placement x="%indent%" y="%row6a_y%" />
@@ -5053,13 +5060,13 @@
 				<action function="addsubtract">tw_slot_total_size+%tw_slot_system_size%</action>
 				<action function="addsubtract">tw_slot_total_size+%tw_slot_cache_size%</action>
 				<action function="addsubtract">tw_slot_total_size+%tw_slot_data_size%</action>
-			</object>
+			</button>
 
 			<button style="minus_button">
 				<condition var1="tw_slot_data_size" op="<=" var2="tw_ss_default_virt_data_min_size" />
 				<placement x="%indent%" y="%row7a_y%" />
 				<text></text>
-			</object>
+			</button>
 
 			<text style="text_m">
 				<placement x="%back_button_x%" y="%row7a_y%" />
@@ -5075,13 +5082,13 @@
 				<action function="addsubtract">tw_slot_total_size+%tw_slot_system_size%</action>
 				<action function="addsubtract">tw_slot_total_size+%tw_slot_cache_size%</action>
 				<action function="addsubtract">tw_slot_total_size+%tw_slot_data_size%</action>
-			</object>
+			</button>
 
 			<button style="plus_button">
 				<condition var1="tw_slot_data_size" op=">=" var2="tw_ss_default_virt_data_max_size" />
 				<placement x="%center_x%" y="%row7a_y%" />
 				<text></text>
-			</object>
+			</button>
 
 			<text style="text_m">
 				<placement x="%indent%" y="%row9a_y%" />
@@ -5097,13 +5104,13 @@
 				<action function="addsubtract">tw_slot_total_size+%tw_slot_system_size%</action>
 				<action function="addsubtract">tw_slot_total_size+%tw_slot_cache_size%</action>
 				<action function="addsubtract">tw_slot_total_size+%tw_slot_data_size%</action>
-			</object>
+			</button>
 
 			<button style="minus_button">
 				<condition var1="tw_slot_cache_size" op="<=" var2="tw_ss_default_virt_cache_min_size" />
 				<placement x="%indent%" y="%row10a_y%" />
 				<text></text>
-			</object>
+			</button>
 
 			<text style="text_m">
 				<placement x="%back_button_x%" y="%row10a_y%" />
@@ -5119,13 +5126,13 @@
 				<action function="addsubtract">tw_slot_total_size+%tw_slot_system_size%</action>
 				<action function="addsubtract">tw_slot_total_size+%tw_slot_cache_size%</action>
 				<action function="addsubtract">tw_slot_total_size+%tw_slot_data_size%</action>
-			</object>
+			</button>
 
 			<button style="plus_button">
 				<condition var1="tw_slot_cache_size" op=">=" var2="tw_ss_default_virt_cache_max_size" />
 				<placement x="%center_x%" y="%row10a_y%" />
 				<text></text>
-			</object>
+			</button>
 
 			<text style="text_m">
 				<condition var1="tw_slot_system_size" op=">" var2="0" />
@@ -5140,34 +5147,39 @@
 				<text>Free Space: %tw_ss_storage_free_size% MB</text>
 			</text>
 
-			<object type="button" style="main_button">
+			<button style="main_button">
 				<placement x="%indent%" y="%row19_y%" />
 				<text>Create ROM Slot</text>
-			</object>
+			</button>
 
-			<object type="button" style="main_button">
+			<button style="main_highlight_button">
 				<condition var1="tw_slot_system_size" op=">" var2="0" />
 				<condition var1="tw_slot_data_size" op=">" var2="0" />
 				<condition var1="tw_slot_cache_size" op=">" var2="0" />
 				<condition var1="tw_ss_storage_free_size" op=">=" var2="tw_slot_total_size" />
 				<placement x="%indent%" y="%row19_y%" />
 				<text>Create ROM Slot</text>
-				<image resource="main_highlight_button" />
 				<actions>
 					<action function="createslot">boot_slot_create</action>
 					<action function="page">boot_options</action>
 				</actions>
-			</object>
+			</button>
 
-			<object type="action">
+			<button style="main_button">
+				<placement x="%center_x%" y="%row19_y%" />
+				<text>Cancel</text>
+				<action function="page">boot_options</action>
+			</button>
+
+			<action>
 				<touch key="home" />
 				<action function="page">main</action>
-			</object>
+			</action>
 
-			<object type="action">
+			<action>
 				<touch key="back" />
 				<action function="page">boot_options</action>
-			</object>
+			</action>
 		</page>
 
 		<page name="boot_slot_create">
@@ -5185,50 +5197,50 @@
 
 			<template name="console"/>
 
-			<text style="text_m">
-				<placement x="%center_x%" y="%row17a_y%" placement="5" />
-				<text>Creating ROM slot: %tw_trybootslot%</text>
-			</text>
-
 			<template name="progress_bar"/>
 
-			<object type="action">
+			<action>
 				<condition var1="tw_operation_state" var2="1" />
 				<action function="set">tw_bootslot=%tw_trybootslot%</action>
 				<action function="page">boot_options</action>
-			</object>
+			</action>
 		</page>
 
 		<page name="boot_slot_checkfs">
-			<object type="action">
-				<action function="checkslot"></action>
-			</object>
-
-			<object type="action">
-				<condition var1="tw_operation_state" var2="1" />
-				<action function="page">boot_slot_checkfs_done</action>
-			</object>
-
 			<template name="page"/>
 
-			<template name="console"/>
-
-			<text style="text_m">
-				<placement x="%center_x%" y="%row17a_y%" placement="5" />
+			<text style="text_l">
+				<placement x="%col1_x_header%" y="%row3_header_y%" />
 				<text>Checking FS</text>
 			</text>
 
+			<text style="text_m">
+				<placement x="%col1_x_header%" y="%row4_header_y%" />
+				<text>{@rom_slot_header=ROM Slot: %tw_bootslot%}</text>
+			</text>
+
+			<action>
+				<action function="checkslot"></action>
+			</action>
+
+			<action>
+				<condition var1="tw_operation_state" var2="1" />
+				<action function="page">boot_slot_checkfs_done</action>
+			</action>
+
+			<template name="console"/>
+
 			<template name="progress_bar"/>
 
-			<object type="action">
-				<touch key="home" />
+			<action>
+				<touch key="home"/>
 				<action function="page">main</action>
-			</object>
+			</action>
 
-			<object type="action">
-				<touch key="back" />
+			<action>
+				<touch key="back"/>
 				<action function="page">boot_options</action>
-			</object>
+			</action>
 		</page>
 
 		<page name="boot_slot_checkfs_done">
@@ -5246,30 +5258,30 @@
 
 			<template name="console"/>
 
-			<object type="button" style="main_button">
-				<placement x="%col1_x_header%" y="%row19_y%" />
+			<button style="main_button">
+				<placement x="%indent%" y="%row19_y%" />
 				<text>Close</text>
 				<action function="page">boot_slot_manage</action>
-			</object>
+			</button>
 
-			<object type="action">
-				<touch key="home" />
+			<action>
+				<touch key="home"/>
 				<action function="page">main</action>
-			</object>
+			</action>
 
-			<object type="action">
-				<touch key="back" />
+			<action>
+				<touch key="back"/>
 				<action function="page">boot_options</action>
-			</object>
+			</action>
 		</page>
 
 		<page name="boot_slot_manage">
-			<object type="action">
+			<template name="page"/>
+
+			<action>
 				<action function="loadsizes"></action>
 				<action function="setslotvarname">%tw_trybootslot%</action>
-			</object>
-
-			<template name="page"/>
+			</action>
 
 			<text style="text_l">
 				<placement x="%col1_x_header%" y="%row3_header_y%" />
@@ -5281,7 +5293,7 @@
 				<text>{@rom_slot_header=ROM Slot: %tw_bootslot%}</text>
 			</text>
 
-			<object type="button" style="main_button">
+			<button style="main_button">
 				<condition var1="tw_trybootslot" op="!=" var2="tw_bootslot" />
 				<placement x="%indent%" y="%row2a_y%" />
 				<text>Activate</text>
@@ -5289,13 +5301,13 @@
 					<action function="changeslot">%tw_trybootslot%</action>
 					<action function="page">boot_options</action>
 				</actions>
-			</object>
+			</button>
 
-			<object type="button"  style="main_button">
+			<button style="main_button">
 				<condition var1="tw_trybootslot" op="=" var2="tw_bootslot" />
 				<placement x="%indent%" y="%row2a_y%" />
 				<text>Currently Active</text>
-			</object>
+			</button>
 
 			<text style="text_m">
 				<condition var1="tw_trybootslot" op="!=" var2="stock" />
@@ -5345,7 +5357,7 @@
 				<text>%tw_slot_cache_size%MB (%tw_slot_cache_free%MB Free)</text>
 			</text>
 
-			<object type="button" style="main_button">
+			<button style="main_button">
 				<condition var1="tw_trybootslot" op="!=" var2="stock" />
 				<placement x="%center_x%" y="%row13a_y%" />
 				<text>Set Nickname</text>
@@ -5353,29 +5365,29 @@
 					<action function="set">tw_try_slotname=%tw_slotname%</action>
 					<action function="page">boot_slot_setname</action>
 				</actions>
-			</object>
+			</button>
 
-			<object type="button" style="main_button" >
+			<button style="main_button">
 				<condition var1="tw_trybootslot" op="!=" var2="tw_bootslot" />
 				<condition var1="tw_trybootslot" op="!=" var2="stock" />
-				<placement x="%indent%" y="%row19_y%" />
+				<placement x="%indent%" y="%row13a_y%" />
 				<text>FS Check</text>
-			</object>
+			</button>
 
-			<object type="button" style="main_button">
+			<button style="main_button">
 				<condition var1="tw_trybootslot" op="=" var2="tw_bootslot" />
 				<condition var1="tw_trybootslot" op="!=" var2="stock" />
-				<placement x="%indent%" y="%row19_y%" />
+				<placement x="%indent%" y="%row13a_y%" />
 				<text>FS Check</text>
 				<actions>
 					<action function="page">boot_slot_checkfs</action>
 				</actions>
-			</object>
+			</button>
 
-			<object type="button" style="main_button">
+			<button style="main_button">
 				<condition var1="tw_trybootslot" op="!=" var2="tw_bootslot" />
 				<condition var1="tw_trybootslot" op="!=" var2="stock" />
-				<placement x="%center_x%" y="%row19_y%" />
+				<placement x="%indent%" y="%row19_y%" />
 				<text>Delete</text>
 				<actions>
 					<action function="set">tw_back=boot_options</action>
@@ -5387,23 +5399,30 @@
 					<action function="set">tw_slider_text=Swipe to Delete</action>
 					<action function="page">confirm_action</action>
 				</actions>
-			</object>
-			<object type="button" style="main_button">
+			</button>
+
+			<button style="main_button">
 				<condition var1="tw_trybootslot" op="=" var2="tw_bootslot" />
 				<condition var1="tw_trybootslot" op="!=" var2="stock" />
-				<placement x="%center_x%" y="%row19_y%" />
+				<placement x="%indent%" y="%row19_y%" />
 				<text>Delete</text>
-			</object>
+			</button>
 
-			<object type="action">
-				<touch key="home" />
-				<action function="page">main</action>
-			</object>
-
-			<object type="action">
-				<touch key="back" />
+			<button style="main_button">
+				<placement x="%center_x%" y="%row19_y%" />
+				<text>Close</text>
 				<action function="page">boot_options</action>
-			</object>
+			</button>
+
+			<action>
+				<touch key="home"/>
+				<action function="page">main</action>
+			</action>
+
+			<action>
+				<touch key="back"/>
+				<action function="page">boot_options</action>
+			</action>
 		</page>
 
 		<page name="boot_slot_setname">
@@ -5419,14 +5438,9 @@
 				<text>{@rom_slot_header=ROM Slot: %tw_bootslot%}</text>
 			</text>
 
-			<text style="text_m">
-				<placement x="%center_x%" y="%row2_y%" placement="5" />
-				<text>Please Enter a ROM Slot Nickname</text>
-			</text>
-
 			<text style="text_m_accent">
 				<placement x="%indent%" y="%row3a_y%"/>
-				<text>{@name=Name:}</text>
+				<text>Please Enter a ROM Slot Nickname</text>
 			</text>
 
 			<input>
@@ -5447,35 +5461,29 @@
 			<button style="main_button_half_height">
 				<placement x="%indent%" y="%row10_y%"/>
 				<text>{@cancel_btn=Cancel}</text>
-				<actions>
-					<action function="page">boot_slot_manage</action>
-				</actions>
+				<action function="page">boot_slot_manage</action>
 			</button>
 
 			<template name="keyboardtemplate"/>
 
-			<object type="action">
-				<touch key="home" />
-				<actions>
-					<action function="page">main</action>
-				</actions>
-			</object>
+			<action>
+				<touch key="home"/>
+				<action function="page">main</action>
+			</action>
 
-			<object type="action">
-				<touch key="back" />
-				<actions>
-					<action function="page">boot_slot_manage</action>
-				</actions>
-			</object>
+			<action>
+				<touch key="back"/>
+				<action function="page">boot_slot_manage</action>
+			</action>
 		</page>
 
 		<page name="boot_options">
-			<object type="action">
+			<template name="page"/>
+
+			<action>
 				<action function="set">tw_trybootslot=off</action>
 				<action function="checkslotnames"></action>
-			</object>
-
-			<template name="page"/>
+			</action>
 
 			<text style="text_l">
 				<placement x="%col1_x_header%" y="%row3_header_y%" />
@@ -5492,7 +5500,7 @@
 				<text>Choose Boot ROM (highlighted is active)</text>
 			</text>
 
-			<object type="button" style="main_button">
+			<button style="main_button">
 				<condition var1="tw_bootslot" op="!=" var2="stock" />
 				<placement x="%center_x%" y="%row2a_y%" />
 				<text>Stock ROM</text>
@@ -5500,20 +5508,19 @@
 					<action function="set">tw_trybootslot=stock</action>
 					<action function="page">boot_slot_manage</action>
 				</actions>
-			</object>
+			</button>
 
-			<object type="button" style="main_button">
+			<button style="main_highlight_button">
 				<condition var1="tw_bootslot" var2="stock" />
 				<placement x="%center_x%" y="%row2a_y%" />
 				<text>Stock ROM</text>
-				<image resource="main_highlight_button" />
 				<actions>
 					<action function="set">tw_trybootslot=stock</action>
 					<action function="page">boot_slot_manage</action>
 				</actions>
-			</object>
+			</button>
 
-			<object type="button" style="main_button">
+			<button style="main_button">
 				<condition var1="tw_bootslot" op="!=" var2="rom-slot1" />
 				<placement x="%indent%" y="%row2a_y%" />
 				<text>%tw_rom-slot1_name%</text>
@@ -5524,13 +5531,12 @@
 					<action function="set">tw_notexistpage=boot_slot_try_create</action>
 					<action function="page">filecheck</action>
 				</actions>
-			</object>
+			</button>
 
-			<object type="button" style="main_button">
+			<button style="main_highlight_button">
 				<condition var1="tw_bootslot" var2="rom-slot1" />
 				<placement x="%indent%" y="%row2a_y%" />
 				<text>%tw_rom-slot1_name%</text>
-				<image resource="main_highlight_button" />
 				<actions>
 					<action function="set">tw_trybootslot=rom-slot1</action>
 					<action function="set">tw_filecheck=/ss/safestrap/rom-slot1/system.img</action>
@@ -5538,9 +5544,9 @@
 					<action function="set">tw_notexistpage=boot_slot_try_create</action>
 					<action function="page">filecheck</action>
 				</actions>
-			</object>
+			</button>
 
-			<object type="button" style="main_button">
+			<button style="main_button">
 				<condition var1="tw_bootslot" op="!=" var2="rom-slot2" />
 				<placement x="%indent%" y="%row8_y%" />
 				<text>%tw_rom-slot2_name%</text>
@@ -5551,13 +5557,12 @@
 					<action function="set">tw_notexistpage=boot_slot_try_create</action>
 					<action function="page">filecheck</action>
 				</actions>
-			</object>
+			</button>
 
-			<object type="button" style="main_button">
+			<button style="main_highlight_button">
 				<condition var1="tw_bootslot" var2="rom-slot2" />
 				<placement x="%indent%" y="%row8_y%" />
 				<text>%tw_rom-slot2_name%</text>
-				<image resource="main_highlight_button" />
 				<actions>
 					<action function="set">tw_trybootslot=rom-slot2</action>
 					<action function="set">tw_filecheck=/ss/safestrap/rom-slot2/system.img</action>
@@ -5565,9 +5570,9 @@
 					<action function="set">tw_notexistpage=boot_slot_try_create</action>
 					<action function="page">filecheck</action>
 				</actions>
-			</object>
+			</button>
 
-			<object type="button" style="main_button">
+			<button style="main_button">
 				<condition var1="tw_bootslot" op="!=" var2="rom-slot3" />
 				<placement x="%indent%" y="%row13a_y%" />
 				<text>%tw_rom-slot3_name%</text>
@@ -5578,13 +5583,12 @@
 					<action function="set">tw_notexistpage=boot_slot_try_create</action>
 					<action function="page">filecheck</action>
 				</actions>
-			</object>
+			</button>
 
-			<object type="button" style="main_button">
+			<button style="main_highlight_button">
 				<condition var1="tw_bootslot" var2="rom-slot3" />
 				<placement x="%indent%" y="%row13a_y%" />
 				<text>%tw_rom-slot3_name%</text>
-				<image resource="main_highlight_button" />
 				<actions>
 					<action function="set">tw_trybootslot=rom-slot3</action>
 					<action function="set">tw_filecheck=/ss/safestrap/rom-slot3/system.img</action>
@@ -5592,9 +5596,9 @@
 					<action function="set">tw_notexistpage=boot_slot_try_create</action>
 					<action function="page">filecheck</action>
 				</actions>
-			</object>
+			</button>
 
-			<object type="button" style="main_button">
+			<button style="main_button">
 				<condition var1="tw_bootslot" op="!=" var2="rom-slot4" />
 				<placement x="%indent%" y="%row19_y%" />
 				<text>%tw_rom-slot4_name%</text>
@@ -5605,13 +5609,12 @@
 					<action function="set">tw_notexistpage=boot_slot_try_create</action>
 					<action function="page">filecheck</action>
 				</actions>
-			</object>
+			</button>
 
-			<object type="button" style="main_button">
+			<button style="main_highlight_button">
 				<condition var1="tw_bootslot" var2="rom-slot4" />
 				<placement x="%indent%" y="%row19_y%" />
 				<text>%tw_rom-slot4_name%</text>
-				<image resource="main_highlight_button" />
 				<actions>
 					<action function="set">tw_trybootslot=rom-slot4</action>
 					<action function="set">tw_filecheck=/ss/safestrap/rom-slot4/system.img</action>
@@ -5619,17 +5622,17 @@
 					<action function="set">tw_notexistpage=boot_slot_try_create</action>
 					<action function="page">filecheck</action>
 				</actions>
-			</object>
+			</button>
 
-			<object type="action">
-				<touch key="home" />
+			<action>
+				<touch key="home"/>
 				<action function="page">main</action>
-			</object>
+			</action>
 
-			<object type="action">
-				<touch key="back" />
+			<action>
+				<touch key="back"/>
 				<action function="page">main</action>
-			</object>
+			</action>
 		</page>
 	</pages>
 </recovery>
