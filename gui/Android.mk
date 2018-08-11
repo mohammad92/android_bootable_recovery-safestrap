@@ -168,11 +168,11 @@ endef
 
 ifdef BUILD_SAFESTRAP
 SS_COMMON := $(commands_recovery_local_path)/safestrap
-TWRP_RES := $(SS_COMMON)/devices/common/theme/common/fonts
-TWRP_RES += $(SS_COMMON)/devices/common/theme/common/languages
+TWRP_RES := $(SS_COMMON)/theme/common/fonts
+TWRP_RES += $(SS_COMMON)/theme/common/languages
 ifeq ($(TW_EXTRA_LANGUAGES),true)
-    TWRP_RES += $(SS_COMMON)/devices/common/theme/extra-languages/fonts
-    TWRP_RES += $(SS_COMMON)/devices/common/theme/extra-languages/languages
+    TWRP_RES += $(SS_COMMON)/theme/extra-languages/fonts
+    TWRP_RES += $(SS_COMMON)/theme/extra-languages/languages
 endif
 else
 TWRP_RES := $(commands_recovery_local_path)/gui/theme/common/fonts
@@ -218,7 +218,7 @@ ifeq ($(TW_CUSTOM_THEME),)
         endif
     endif
 ifdef BUILD_SAFESTRAP
-    TWRP_THEME_LOC := $(SS_COMMON)/devices/common/theme/$(TW_THEME)
+    TWRP_THEME_LOC := $(SS_COMMON)/theme/$(TW_THEME)
 else
     TWRP_THEME_LOC := $(commands_recovery_local_path)/gui/theme/$(TW_THEME)
 endif
@@ -228,7 +228,7 @@ endif
     endif
 
 ifdef BUILD_SAFESTRAP
-    TWRP_RES += $(SS_COMMON)/devices/common/theme/common/$(word 1,$(subst _, ,$(TW_THEME))).xml
+    TWRP_RES += $(SS_COMMON)/theme/common/$(word 1,$(subst _, ,$(TW_THEME))).xml
 else
     TWRP_RES += $(commands_recovery_local_path)/gui/theme/common/$(word 1,$(subst _, ,$(TW_THEME))).xml
 endif
