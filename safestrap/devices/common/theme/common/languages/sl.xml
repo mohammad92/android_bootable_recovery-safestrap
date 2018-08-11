@@ -26,7 +26,7 @@
 		<string name="sdext">SD-EXT</string>
 		<string name="adopted_data">Prevzeti podatki</string>
 		<string name="adopted_storage">Prevzeta pomnilniška naprava</string>
-		<string name="twrp_header">Team Win Recovery Project</string>
+		<string name="twrp_header">Safestrap %ss_version% (TWRP %tw_version%)</string>
 		<string name="twrp_watch_header">TWRP %tw_version%</string>
 		<string name="cpu_temp">CPE: %tw_cpu_temp% °C</string>
 		<string name="battery_pct">Baterija: %tw_battery%</string>
@@ -441,14 +441,7 @@
 		<string name="sideload_usage">Uporaba: adb sideload filename.zip</string>
 		<string name="sideload_complete">Stransko nalaganje ADB končano</string>
 		<string name="reboot_hdr">Pon. zaženi</string>
-		<string name="su_hdr">Preveri SuperSU</string>
-		<string name="su_note1">Videti je, da vaša naprava nima skrbniškega dostopa.</string>
-		<string name="su_note2">Namesti SuperSU zdaj?</string>
-		<string name="su_note3">To bo omogočilo skrbniški dostop na napravi.</string>
-		<string name="su_cancel">Ne namesti</string>
-		<string name="swipe_su_to_install">Povlecite za namestitev</string>
-		<string name="swipe_su_install">   Namesti</string>
-		<string name="su_installing">Nameščanje SuperSU-ja</string>
+		<string name="install_cancel">Ne namesti</string>
 		<string name="sel_storage_list">Izberite pomnilniško napravo</string>
 		<string name="ok_btn">V redu</string>
 		<string name="no_kernel_selinux">Jedro nima podpore za branje vsebin SELinux.</string>
