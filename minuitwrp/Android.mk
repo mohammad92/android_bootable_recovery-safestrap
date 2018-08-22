@@ -6,12 +6,6 @@ ifndef RECOVERY_INCLUDE_DIR
     RECOVERY_INCLUDE_DIR += $(commands_recovery_local_path)/minuitwrp/include
 endif
 
-BUILD_SAFESTRAP := true
-ifeq ($(BUILD_SAFESTRAP), true)
-    LOCAL_CFLAGS += -DBUILD_SAFESTRAP
-    LOCAL_CPPFLAGS += -DBUILD_SAFESTRAP
-endif
-
 LOCAL_SRC_FILES := \
     graphics.cpp \
     graphics_fbdev.cpp \

@@ -17,9 +17,6 @@ LOCAL_PATH := $(call my-dir)
 ifneq ($(TW_EXCLUDE_DEFAULT_USB_INIT), true)
 
 include $(CLEAR_VARS)
-ifndef SS_INCLUDE_RECOVERY_USB_INIT
-SS_INCLUDE_RECOVERY_USB_INIT := init.recovery.usb.rc
-endif
 LOCAL_MODULE := init.recovery.usb.rc
 LOCAL_MODULE_TAGS := eng
 LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
@@ -28,13 +25,19 @@ LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
 # during ramdisk creation and only allows init.recovery.*.rc files to be copied
 # from TARGET_ROOT_OUT thereafter
 LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT)
-
-LOCAL_SRC_FILES := $(SS_INCLUDE_RECOVERY_USB_INIT)
+ifdef SS_DEFAULT_USB_INIT
+LOCAL_SRC_FILES := $(SS_DEFAULT_USB_INIT)
+else
+LOCAL_SRC_FILES := $(LOCAL_MODULE)
+endif
 include $(BUILD_PREBUILT)
 
 endif
 
-ifdef SS_INCLUDE_SECLABEL_RECOVERY_SERVICE
+ifeq ($(BUILD_SAFESTRAP), true)
+#ifeq ($(shell test $(PLATFORM_SDK_VERSION) -ge 22; echo $$?),0)
+endif
+ifeq ($(SS_FORCE_SECLABEL_RECOVERY_SERVICE), true)
     include $(CLEAR_VARS)
     LOCAL_MODULE := init.recovery.service.rc
     LOCAL_MODULE_TAGS := eng
@@ -92,6 +95,7 @@ ifeq ($(TWRP_INCLUDE_LOGCAT), true)
     endif
 endif
 
+ifeq ($(BUILD_SAFESTRAP), true)
 include $(CLEAR_VARS)
 LOCAL_MODULE := init.recovery.safestrap.rc
 LOCAL_MODULE_TAGS := eng
@@ -104,3 +108,4 @@ LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT)
 
 LOCAL_SRC_FILES := $(LOCAL_MODULE)
 include $(BUILD_PREBUILT)
+endif

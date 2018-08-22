@@ -7,7 +7,7 @@ mkdir -p $OUT/install-files/etc/safestrap/rootfs/
 cd $ANDROID_BUILD_TOP/bootable/recovery/safestrap/devices/samsung
 cp -fr d2-common/res/* $OUT/install-files/etc/safestrap/res/
 cp -fr d2-common/hijack $OUT/install-files/bin/e2fsck
-cp -fr d2-common/twrp.fstab $OUT/recovery/root/etc/twrp.fstab
+cp -fr d2-common/twrp.fstab $OUT/recovery/root/etc/recovery.fstab
 cp -fr d2-common/ss.config $OUT/install-files/etc/safestrap/ss.config
 cp -fr d2-common/ss.config $OUT/APP/ss.config
 cp -fr d2-common/ss.config $OUT/recovery/root/ss.config

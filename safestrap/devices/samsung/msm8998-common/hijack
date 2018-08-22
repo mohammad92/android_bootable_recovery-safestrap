@@ -295,7 +295,7 @@ if [ "$RUN_SS" = "1" ]; then
 			$BBX cp -R $CURRENT_SYS_DIR/etc/rootfs/* /
 
 			# set loglevel
-			$BBX sed -i "s/loglevel 3/loglevel 8/" /init.rc
+			$BBX sed -i "s/loglevel \${sys.init_log_level}/loglevel 8/" /init.rc
 
 			# adjust stock init.target.rc file to include /sbin/fixboot.sh
 			$BBX sed -i "s/mount_all fstab.qcom/exec \/sbin\/fixboot.sh\n    mount_all fstab.qcom/" /init.target.rc

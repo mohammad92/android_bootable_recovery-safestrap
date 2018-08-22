@@ -3,7 +3,7 @@ TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
 DEVICE_RESOLUTION := 1080x1920
 RECOVERY_GRAPHICS_FORCE_USE_LINELENGTH := true
 RECOVERY_GRAPHICS_FORCE_SINGLE_BUFFER := true
-SS_INCLUDE_RECOVERY_USB_INIT := ../safestrap/devices/samsung/jf-common/init.recovery.usb.rc
+SS_DEFAULT_USB_INIT := ../safestrap/devices/samsung/jf-common/init.recovery.usb.rc
 
 RECOVERY_SDCARD_ON_DATA := true
 TW_INTERNAL_STORAGE_PATH := "/datamedia/media"

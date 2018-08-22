@@ -8,7 +8,7 @@ cd $ANDROID_BUILD_TOP/bootable/recovery/safestrap/devices/samsung
 cp -fr melius/res/* $OUT/install-files/etc/safestrap/res/
 cp -fr melius/sbin-libs/* $OUT/recovery/root/sbin/
 cp -fr melius/hijack $OUT/install-files/bin/e2fsck
-cp -fr melius/twrp.fstab $OUT/recovery/root/etc/twrp.fstab
+cp -fr melius/twrp.fstab $OUT/recovery/root/etc/recovery.fstab
 cp -fr melius/ss.config $OUT/install-files/etc/safestrap/ss.config
 cp -fr melius/ss.config $OUT/APP/ss.config
 cp -fr melius/ss.config $OUT/recovery/root/ss.config

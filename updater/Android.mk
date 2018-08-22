@@ -14,11 +14,9 @@
 
 LOCAL_PATH := $(call my-dir)
 
-BUILD_SAFESTRAP := true
-
 ifeq ($(BUILD_SAFESTRAP), true)
-  updater_src_files += \
-	../safestrap-functions.c
+  LOCAL_CFLAGS += -DBUILD_SAFESTRAP
+  LOCAL_CPPFLAGS += -DBUILD_SAFESTRAP
 endif
 
 ifneq ($(wildcard external/e2fsprogs/misc/tune2fs.h),)
@@ -66,16 +64,16 @@ updater_common_static_libraries := \
 # ===============================
 include $(CLEAR_VARS)
 
-ifeq ($(BUILD_SAFESTRAP), true)
-  LOCAL_CFLAGS += -DBUILD_SAFESTRAP
-  LOCAL_CPPFLAGS += -DBUILD_SAFESTRAP
-endif
-
 LOCAL_MODULE := libupdater
 
 LOCAL_SRC_FILES := \
     install.cpp \
     blockimg.cpp
+
+ifeq ($(BUILD_SAFESTRAP), true)
+LOCAL_SRC_FILES += \
+    ../safestrap-functions.c
+endif
 
 LOCAL_C_INCLUDES := \
     $(LOCAL_PATH)/.. \
@@ -100,17 +98,21 @@ include $(CLEAR_VARS)
 
 ifeq ($(BUILD_SAFESTRAP), true)
 LOCAL_MODULE := update-binary
-ifneq ($(wildcard system/extras/libfec/Android.mk),)
 LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
 LOCAL_PACK_MODULE_RELOCATIONS := false 
 LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/sbin
-endif
+LOCAL_UNSTRIPPED_PATH := $(TARGET_RECOVERY_ROOT_OUT)/../../symbols/sbin
 else
 LOCAL_MODULE := updater
 endif
 
 LOCAL_SRC_FILES := \
     updater.cpp
+
+ifeq ($(BUILD_SAFESTRAP), true)
+LOCAL_SRC_FILES += \
+    ../safestrap-functions.c
+endif
 
 LOCAL_C_INCLUDES := \
     $(LOCAL_PATH)/.. \
@@ -137,8 +139,8 @@ LOCAL_STATIC_LIBRARIES := \
 # any subsidiary static libraries required for your registered
 # extension libs.
 
-LOCAL_MODULE_CLASS := EXECUTABLES
 ifneq ($(BUILD_SAFESTRAP), true)
+LOCAL_MODULE_CLASS := EXECUTABLES
 inc := $(call local-generated-sources-dir)/register.inc
 endif
 

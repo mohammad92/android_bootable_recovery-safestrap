@@ -4,7 +4,7 @@ TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
 DEVICE_RESOLUTION := 720x1280
 RECOVERY_GRAPHICS_FORCE_USE_LINELENGTH := true
 RECOVERY_GRAPHICS_FORCE_SINGLE_BUFFER := true
-SS_INCLUDE_RECOVERY_USB_INIT := ../safestrap/devices/samsung/melius/init.recovery.usb.rc
+SS_DEFAULT_USB_INIT := ../safestrap/devices/samsung/melius/init.recovery.usb.rc
 
 #TWRP
 TW_INTERNAL_STORAGE_PATH := "/datamedia/media"

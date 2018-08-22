@@ -14,15 +14,19 @@
 
 LOCAL_PATH := $(call my-dir)
 
-ifeq ($(SS_PRODUCT_MANUFACTURER), )
-  SS_PRODUCT_MANUFACTURER := $(shell echo $(PRODUCT_MANUFACTURER) | tr '[A-Z]' '[a-z]')
-endif
-
 BUILD_SAFESTRAP := true
 ifeq ($(BUILD_SAFESTRAP), true)
-  COMMON_GLOBAL_CFLAGS += -DBUILD_SAFESTRAP
-  COMMON_GLOBAL_CPPFLAGS += -DBUILD_SAFESTRAP
-  include $(LOCAL_PATH)/safestrap/devices/$(SS_PRODUCT_MANUFACTURER)/$(TARGET_DEVICE)/safestrap.mk
+    LOCAL_CFLAGS += -DBUILD_SAFESTRAP
+    LOCAL_CPPFLAGS += -DBUILD_SAFESTRAP
+    TARGET_GLOBAL_CFLAGS += -DBUILD_SAFESTRAP
+    CLANG_TARGET_GLOBAL_CFLAGS += -DBUILD_SAFESTRAP
+endif
+
+ifeq ($(BUILD_SAFESTRAP), true)
+ifeq ($(SS_PRODUCT_MANUFACTURER), )
+    SS_PRODUCT_MANUFACTURER := $(shell echo $(PRODUCT_MANUFACTURER) | tr '[A-Z]' '[a-z]')
+endif
+include $(LOCAL_PATH)/safestrap/devices/$(SS_PRODUCT_MANUFACTURER)/$(TARGET_DEVICE)/safestrap.mk
 endif
 
 ifdef project-path-for
@@ -499,6 +503,7 @@ ifeq ($(shell test $(CM_PLATFORM_SDK_VERSION) -ge 3; echo $$?),0)
 endif
 endif
 
+ifeq ($(BUILD_SAFESTRAP), true)
 # Safestrap virtual size defaults
 ifndef BOARD_DEFAULT_VIRT_SYSTEM_SIZE
     BOARD_DEFAULT_VIRT_SYSTEM_SIZE := 600
@@ -536,12 +541,15 @@ endif
 LOCAL_CFLAGS += -DDEFAULT_VIRT_CACHE_SIZE=\"$(BOARD_DEFAULT_VIRT_CACHE_SIZE)\"
 LOCAL_CFLAGS += -DDEFAULT_VIRT_CACHE_MIN_SIZE=\"$(BOARD_DEFAULT_VIRT_CACHE_MIN_SIZE)\"
 LOCAL_CFLAGS += -DDEFAULT_VIRT_CACHE_MAX_SIZE=\"$(BOARD_DEFAULT_VIRT_CACHE_MAX_SIZE)\"
+endif
 
+ifeq ($(BUILD_SAFESTRAP), true)
 # /datamedia/media mount location for multi-boot SD calculation
 ifeq ($(TW_SS_DATAMEDIA_MOUNT),)
     TW_SS_DATAMEDIA_MOUNT := /datamedia
 endif
 LOCAL_CFLAGS += -DTW_SS_DATAMEDIA_MOUNT=$(TW_SS_DATAMEDIA_MOUNT)
+endif
 
 ifeq ($(shell test $(PLATFORM_SDK_VERSION) -ge 25; echo $$?),0)
     LOCAL_ADDITIONAL_DEPENDENCIES += file_contexts_text
@@ -844,6 +852,7 @@ include $(commands_recovery_local_path)/injecttwrp/Android.mk \
     $(commands_recovery_local_path)/twrpDigest/Android.mk \
     $(commands_recovery_local_path)/attr/Android.mk
 
+ifeq ($(BUILD_SAFESTRAP), true)
 # 2nd-init
 ifeq ($(SS_INCLUDE_2NDINIT), true)
   include $(commands_recovery_local_path)/safestrap/2nd-init/Android.mk
@@ -872,6 +881,7 @@ endif
 # bypasslkm
 ifdef SS_INCLUDE_BYPASSLKM
     include $(commands_recovery_local_path)/safestrap/bypasslkm/Android.mk
+endif
 endif
 
 ifeq ($(shell test $(PLATFORM_SDK_VERSION) -lt 24; echo $$?),0)
