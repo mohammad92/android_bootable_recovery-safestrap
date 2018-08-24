@@ -13,10 +13,13 @@
 # limitations under the License.
 
 LOCAL_PATH := $(call my-dir)
+
+# libminui (static library)
+# ===============================
 include $(CLEAR_VARS)
 
 ifndef RECOVERY_INCLUDE_DIR
-    RECOVERY_INCLUDE_DIR += $(commands_recovery_local_path)/minui/include
+    RECOVERY_INCLUDE_DIR += $(LOCAL_PATH)/include
 endif
 
 LOCAL_SRC_FILES := \
@@ -58,7 +61,7 @@ ifeq ($(TW_NEW_ION_HEAP), true)
   LOCAL_CFLAGS += -DNEW_ION_HEAP
 endif
 
-LOCAL_STATIC_LIBRARIES += libpng
+LOCAL_STATIC_LIBRARIES += libpng libbase
 ifneq ($(wildcard external/libdrm/Android.common.mk),)
 LOCAL_WHOLE_STATIC_LIBRARIES += libdrm_platform
 else
@@ -69,11 +72,7 @@ ifeq ($(shell test $(PLATFORM_SDK_VERSION) -ge 26; echo $$?),0)
     LOCAL_WHOLE_STATIC_LIBRARIES += libsync_recovery
 endif
 
-LOCAL_STATIC_LIBRARIES := \
-    libpng \
-    libbase
-
-LOCAL_CFLAGS += -Werror -std=c++14
+LOCAL_CFLAGS += -Wall -Werror -std=c++14 -Wno-unused-private-field
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/include
 LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_PATH)/include
 
@@ -122,8 +121,16 @@ ifeq ($(wildcard system/core/healthd/animation.h),)
     TARGET_GLOBAL_CFLAGS += -DTW_NO_MINUI_CUSTOM_FONTS
     CLANG_TARGET_GLOBAL_CFLAGS += -DTW_NO_MINUI_CUSTOM_FONTS
 endif
+ifneq ($(TARGET_RECOVERY_DEFAULT_ROTATION),)
+  LOCAL_CFLAGS += -DDEFAULT_ROTATION=$(TARGET_RECOVERY_DEFAULT_ROTATION)
+else
+  LOCAL_CFLAGS += -DDEFAULT_ROTATION=ROTATION_NONE
+endif
+
 include $(BUILD_STATIC_LIBRARY)
 
+# libminui (shared library)
+# ===============================
 # Used by OEMs for factory test images.
 include $(CLEAR_VARS)
 LOCAL_CLANG := true
@@ -133,8 +140,7 @@ LOCAL_SHARED_LIBRARIES := \
     libpng \
     libbase
 
-LOCAL_CFLAGS := -Werror
-
+LOCAL_CFLAGS := -Wall -Werror -std=c++14 -Wno-unused-private-field
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
 LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_PATH)/include
 include $(BUILD_SHARED_LIBRARY)
