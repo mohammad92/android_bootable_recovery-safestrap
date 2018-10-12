@@ -610,7 +610,7 @@ int OpenRecoveryScript::Run_OpenRecoveryScript_Action() {
 	// Run those first.
 	int reboot = 0;
 #ifdef BUILD_SAFESTRAP
-				PartitionManager.Backup_Safestrap();
+	PartitionManager.Backup_Safestrap();
 #endif
 	if (TWFunc::Path_Exists(SCRIPT_FILE_TMP)) {
 		gui_msg("running_recovery_commands=Running Recovery Commands");
@@ -628,11 +628,13 @@ int OpenRecoveryScript::Run_OpenRecoveryScript_Action() {
 		}
 	}
 #ifdef BUILD_SAFESTRAP
-				PartitionManager.Restore_Safestrap();
+	PartitionManager.Restore_Safestrap();
 #endif
 	if (reboot) {
+#ifndef BUILD_SAFESTRAP
 		// Disable stock recovery reflashing
 		TWFunc::Disable_Stock_Recovery_Replace();
+#endif
 		usleep(2000000); // Sleep for 2 seconds before rebooting
 		TWFunc::tw_reboot(rb_system);
 		usleep(5000000); // Sleep for 5 seconds to allow reboot to occur

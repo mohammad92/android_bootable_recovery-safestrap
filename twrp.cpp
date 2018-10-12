@@ -366,8 +366,10 @@ int main(int argc, char **argv) {
 	gui_start();
 
 #ifndef TW_OEM_BUILD
+#ifndef BUILD_SAFESTRAP
 	// Disable flashing of stock recovery
 	TWFunc::Disable_Stock_Recovery_Replace();
+#endif
 #endif
 
 	// Reboot
