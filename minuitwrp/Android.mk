@@ -42,7 +42,7 @@ else
   LOCAL_C_INCLUDES += $(RECOVERY_INCLUDE_DIR)
   # The header files required for adf graphics can cause compile errors
   # with adf graphics.
-  ifneq ($(wildcard system/core/adf/Android.mk),)
+  ifneq ($(wildcard system/core/adf/Android.*),)
     LOCAL_CFLAGS += -DHAS_ADF
     LOCAL_SRC_FILES += graphics_adf.cpp
     LOCAL_WHOLE_STATIC_LIBRARIES += libadf
