@@ -1,0 +1,21 @@
+# mount point	fstype	device device2				flags
+/cache		ext4	/dev/block/sda21
+/system		ext4	/dev/block/sda20
+/system_image	emmc	/dev/block/sda20
+/data		ext4	/dev/block/sda23			flags=encryptable=footer;length=-16384
+/modem		vfat	/dev/block/sda16			flags=display="Modem";mounttodecrypt;fsflags=ro
+/misc		emmc	/dev/block/sda8
+/efs		ext4	/dev/block/sda6				flags=backup=1;display="EFS"
+/modemst1	emmc	/dev/block/sda1				flags=backup=1;subpartitionof=/efs
+/modemst2	emmc	/dev/block/sda2				flags=backup=1;subpartitionof=/efs
+/efsc		emmc	/dev/block/sda3				flags=backup=1;subpartitionof=/efs
+/efsg		emmc	/dev/block/sda4				flags=backup=1;subpartitionof=/efs
+
+# Removable storage
+/external_sd	vfat	/dev/block/mmcblk0p1 /dev/block/mmcblk0	flags=display="Micro SDcard";storage;wipeingui;removable;encryptable=footer;length=-16384
+/usb-otg	vfat	/dev/block/sde1 /dev/block/sde		flags=display="USB-OTG";storage;wipeingui;removable
+
+# safestrap
+/datamedia      ext4    /dev/block/sda23-orig			flags=display="Internal Storage";storage
+/ss             ext4    /dev/block/sda23-orig			flags=hidden
+/systemorig     ext4    /dev/block/sda20-orig			flags=hidden;usermrf

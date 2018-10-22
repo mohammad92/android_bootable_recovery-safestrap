@@ -1,0 +1,366 @@
+#!/system/bin/sh
+# By Hashcode
+PATH=/sbin:/system/bin:/system/xbin
+
+RECOVERY_DIR=/system/etc/safestrap
+BBX=/sbin/bbx
+SS_CONFIG=/ss.config
+SS_CHECK_FILE=/.safestrapped
+CURRENT_SYS_DIR=/system
+CURRENT_USER_DIR=/data
+ALT_SYSTEM_MODE="0"
+RUN_SS="0"
+RECOVERY_BOOT=$(cat /proc/cmdline | $RECOVERY_DIR/bbx grep -c "androidboot.boot_recovery=1")
+CHARGER_BOOT=$(cat /proc/cmdline | $RECOVERY_DIR/bbx grep -c "androidboot.mode=charger")
+
+# check cmdline for androidboot.mode=charger
+# check cmdline for androidboot.boot_recovery=1
+if [ "$RECOVERY_BOOT" -ne "1" ]; then
+if [ "$CHARGER_BOOT" -ne "1" ]; then
+if [ ! -f "$SS_CHECK_FILE" ]; then
+	# startup safestrap
+	RUN_SS="1"
+
+	# remount root as rw
+	$RECOVERY_DIR/bbx mount -o remount,rw rootfs /
+
+	# don't do this processing again
+	$RECOVERY_DIR/bbx touch $SS_CHECK_FILE
+
+	# need busybox / ss.config
+	$RECOVERY_DIR/bbx cp $RECOVERY_DIR/bbx $BBX
+	$RECOVERY_DIR/bbx chmod 755 $BBX
+	$RECOVERY_DIR/bbx chown 0.2000 $BBX
+
+	$BBX cp $RECOVERY_DIR/ss.config $SS_CONFIG
+	$BBX chmod 600 $SS_CONFIG
+	$BBX chown 0.0 $SS_CONFIG
+fi
+
+	. /system/etc/safestrap/ss_function.sh
+	readConfig
+
+if [ "$RUN_SS" = "1" ]; then
+	echo "<1>Running Safestrap hijack" > /dev/kmsg
+
+	if [ "$DEBUG_MODE" = "1" ]; then
+		dumpConfig
+	fi
+
+	# set backlight
+	$BBX echo $BACKLIGHT_BRIGHTNESS_VALUE > $BACKLIGHT_BRIGHTNESS_PATH
+
+	# create SS loopdevs
+	$BBX mknod -m600 /dev/block/loop-system b 7 99
+	$BBX mknod -m600 /dev/block/loop-userdata b 7 98
+	$BBX mknod -m600 /dev/block/loop-cache b 7 97
+	$BBX mknod -m600 /dev/block/loop-boot b 7 96
+
+	# create safestrap mount point
+	$BBX mkdir $SS_MNT
+	$BBX chown 0.2000 $SS_MNT
+	$BBX chmod 777 $SS_MNT
+	$BBX mkdir $SYS2_MNT
+	$BBX chown 0.2000 $SYS2_MNT
+	$BBX chmod 777 $SYS2_MNT
+	$BBX mkdir $USER2_MNT
+	$BBX chown 0.2000 $USER2_MNT
+	$BBX chmod 777 $USER2_MNT
+
+	# mount safestrap partition
+	if [ "$SS_USE_DATAMEDIA" = "1" ]; then
+		$BBX mkdir $DATAMEDIA_MNT
+		$BBX chown 0.2000 $DATAMEDIA_MNT
+		$BBX chmod 777 $DATAMEDIA_MNT
+		$BBX mount -t $SS_FSTYPE $BLOCK_DIR/$SS_PART $DATAMEDIA_MNT
+		$BBX mount $DATAMEDIA_MNT/media $SS_MNT
+	else
+		$BBX mount -t $SS_FSTYPE $BLOCK_DIR/$SS_PART $SS_MNT
+	fi
+
+	if [ ! -d "$SS_DIR" ]; then
+		$BBX mkdir -p $SS_DIR
+	fi
+	if [ ! -f "$SS_DIR/active_slot" ]; then
+		$BBX echo "stock" > $SS_DIR/active_slot
+	fi
+	SLOT_LOC=$($BBX cat $SS_DIR/active_slot)
+
+	# check the boot mode from the recovery file
+	if [ -f $SS_DIR/recovery_mode ]; then
+		CHECK_BOOTMODE=$($BBX cat $SS_DIR/recovery_mode)
+	fi
+	# boot modes= ap-bp-bypass, bp-tools
+	if [ "$BOOTMODE" = "$CHECK_BOOTMODE" ]; then
+		ALT_SYSTEM_MODE="2"
+	else
+		if [ -f "$SS_DIR/$SLOT_LOC/system.img" ] && [ -f "$SS_DIR/$SLOT_LOC/userdata.img" ] && [ -f "$SS_DIR/$SLOT_LOC/cache.img" ]; then
+			ALT_SYSTEM_MODE="1"
+		fi
+	fi
+
+#######
+#	if [ "$DEBUG_MODE" = "1" ]; then
+#		CMD_LINE=$(cat /proc/cmdline)
+#		$BBX echo "CMD_LINE=$CMD_LINE\n" >> $SS_DIR/cmd_line
+#	fi
+
+	# check for .recovery_mode on current /data mount
+	if [ "$ALT_SYSTEM_MODE" = "1" ]; then
+		# setup loopback
+		$BBX losetup $BLOCK_DIR/loop-userdata $SS_DIR/$SLOT_LOC/userdata.img
+		$BBX mount -t $USERDATA_FSTYPE $BLOCK_DIR/loop-userdata $USER2_MNT
+		CURRENT_USER_DIR=$USER2_MNT
+	else
+		$BBX mount -t $USERDATA_FSTYPE $BLOCK_DIR/$BLOCK_USERDATA /data
+	fi
+
+	if [ -f $CURRENT_USER_DIR/$SS_RECOVERY_FILE ]; then
+		$BBX rm $CURRENT_USER_DIR/$SS_RECOVERY_FILE
+		ALT_SYSTEM_MODE="2"
+	fi
+
+	if [ "$CURRENT_USER_DIR" = "$USER2_MNT" ]; then
+		$BBX umount $USER2_MNT
+		$BBX losetup -d $BLOCK_DIR/loop-userdata
+	else
+		$BBX umount $CURRENT_USER_DIR
+	fi
+
+	# set /dev/ion permissions
+	$BBX chmod 666 /dev/ion
+
+	ENTER_RECOVERY="0"
+	CHECK_RECOVERY_ENTRY="1"
+	if [ "$ALT_SYSTEM_MODE" = "2" ]; then
+		ENTER_RECOVERY="1"
+        fi
+
+	if [ "$ENTER_RECOVERY" = "0" ]; then
+		CHECK_RECOVERY_ENTRY=$($RECOVERY_DIR/safestrapmenu $ALT_SYSTEM_MODE > /dev/null 2>&1;echo $?)
+		if [ "$CHECK_RECOVERY_ENTRY" = "0" ]; then
+			ENTER_RECOVERY="1"
+		fi
+		if [ "$CHECK_RECOVERY_ENTRY" = "2" ]; then
+			ALT_SYSTEM_MODE="0"
+		fi
+	fi
+
+	if [ "$ENTER_RECOVERY" = "1" ]; then
+		# HASH: Another KK+ Hack. /system is mounted RO by default, remount here for the future
+		mount -o remount,rw /system
+
+		# filesystem cleanup
+		$BBX rm /d
+		$BBX rm /etc
+		$BBX rm -rf /mnt
+		$BBX rm /sdcard
+		$BBX rm /storage
+		$BBX rm /vendor
+		$BBX rm /tmp
+		$BBX mkdir /tmp
+		# move bins out of the way so they don't block
+		$BBX mv /sbin/adbd /sbin/adbd.old
+		$BBX mv /init /init.old
+
+		# backup selinux/prop files
+		$BBX cp /file_contexts.bin /tmp/
+		$BBX cp /property_contexts /tmp/
+		$BBX cp /seapp_contexts /tmp/
+		$BBX cp /sepolicy /tmp/
+		$BBX cp /sepolicy_version /tmp/
+		$BBX echo "ro.secure=0" > /tmp/default.prop
+		$BBX echo "ro.allow.mock.location=1" >> /tmp/default.prop
+		$BBX echo "ro.debuggable=1" >> /tmp/default.prop
+		$BBX echo "persist.sys.usb.config=adb" >> /tmp/default.prop
+		$BBX cat /system/build.prop >> /tmp/default.prop
+		$BBX chmod 644 /tmp/*
+
+		# clear out local files
+		$BBX rm /*
+
+		# extract recovery ramdisk
+		cd /
+		$BBX gzip -dc $RECOVERY_DIR/ramdisk-recovery.img | $BBX cpio -iu
+		$BBX mv /sbin/getprop /sbin/getprop.bak
+		$BBX rm /sbin/stop /sbin/stop.bak
+		$BBX rm /sbin/taskset /sbin/taskset.bak
+		$BBX unzip -o $RECOVERY_DIR/2nd-init.zip -d /sbin
+
+		# copy back selinux/prop files
+		$BBX cp /tmp/* /
+		$BBX rm /tmp/*
+
+		$BBX chmod 750 /sbin/*
+		$BBX sync
+
+		# unmount partitions
+		$BBX umount -l /system
+		$BBX umount $SS_MNT
+		if [ "$SS_USE_DATAMEDIA" = "1" ]; then
+			$BBX umount $DATAMEDIA_MNT
+		fi
+
+		/sbin/hijack.killall
+
+		echo "<1>$(/sbin/taskset -p -c 0 1)" > /dev/kmsg
+		$BBX sync
+		if [ "$DEBUG_MODE" = "1" ]; then
+			logCurrentStatus
+		fi
+		echo "<1>$(/sbin/taskset -c 0 /sbin/2nd-init)" > /dev/kmsg
+		exit
+	fi
+
+	# either way we mount virtual "system" or real "system" and check for:
+	# 1. /system/etc/rootfs (2nd-init boot)
+	# 2. /system/etc/kexec (kexec boot)
+
+	# if we're on a virtual system set it up and change CURRENT_SYS_DIR
+	if [ "$ALT_SYSTEM_MODE" = "1" ]; then
+		# setup loopback
+		$BBX losetup $BLOCK_DIR/loop-system $SS_DIR/$SLOT_LOC/system.img
+		$BBX mount -t $SYSTEM_FSTYPE $BLOCK_DIR/loop-system $SYS2_MNT
+		CURRENT_SYS_DIR=$SYS2_MNT
+	fi
+
+	if [ "$ALT_SYSTEM_MODE" = "1" ] || [ -d "$CURRENT_SYS_DIR/etc/rootfs" ] || [ -d "$CURRENT_SYS_DIR/etc/kexec" ]; then
+		if [ -f "/sbin/taskset" ]; then
+			$BBX mv /sbin/taskset /sbin/taskset.old
+		fi
+		$BBX unzip -o $RECOVERY_DIR/2nd-init.zip -d /sbin
+		$BBX chmod 750 /sbin/*
+
+		# on virtual systems, check for hijacks, and remove
+		if [ "$ALT_SYSTEM_MODE" = "1" ] && [ -f "$SYS2_MNT/$HIJACK_LOC/$HIJACK_BIN.bin" ]; then
+			$BBX rm $CURRENT_SYS_DIR/$HIJACK_LOC/$HIJACK_BIN
+			$BBX mv $CURRENT_SYS_DIR/$HIJACK_LOC/$HIJACK_BIN.bin $CURRENT_SYS_DIR/$HIJACK_LOC/$HIJACK_BIN
+			$BBX chmod 755 $CURRENT_SYS_DIR/$HIJACK_LOC/$HIJACK_BIN
+			$BBX chown 0.2000 $CURRENT_SYS_DIR/$HIJACK_LOC/$HIJACK_BIN
+		fi
+
+		# check for kexec files
+		if [ -d "$CURRENT_SYS_DIR/etc/kexec" ]; then
+			$BBX cp $CURRENT_SYS_DIR/etc/kexec/* /
+
+			# if virtual system is mounted unmount it
+			if [ "$ALT_SYSTEM_MODE" = "1" ]; then
+				# cleanup loopback
+				$BBX umount $SYS2_MNT
+				$BBX losetup -d $BLOCK_DIR/loop-system
+			fi
+
+			# unmount SS
+			$BBX umount $SS_MNT
+			if [ "$SS_USE_DATAMEDIA" = "1" ]; then
+				$BBX umount $DATAMEDIA_MNT
+			fi
+			$BBX umount -l /system
+
+			/sbin/hijack.killall
+
+			cd /
+			$BBX chmod 755 /kexec
+			$BBX chown 0.2000 /kexec
+			$BBX insmod /uart.ko
+			$BBX insmod /arm_kexec.ko
+			$BBX insmod /kexec.ko
+			/kexec -l /kernel --devtree=/devtree --ramdisk=/ramdisk.img --command-line='androidboot.safestrap.romslot=$SLOT_LOC'
+			$BBX sleep 1
+			/kexec -e
+			exit
+		fi
+
+		# check for alt-system or rootfs files
+		if [ "$ALT_SYSTEM_MODE" = "1" ] || [ -d "$CURRENT_SYS_DIR/etc/rootfs" ]; then
+			# HASH: Another KK+ Hack.  System is default mounted RO, need to remount here for the future
+			mount -o remount,rw /system
+
+			# BEGIN CLEANUP TODO: this should really be a device independant cleanup file
+			if [ -d "$RECOVERY_DIR/rootfs" ]; then
+				if [ -f "$RECOVERY_DIR/rootfs/sbin/adbd" ]; then
+					$BBX mv /sbin/adbd /sbin/adbd.old
+				fi
+				if [ -f "$RECOVERY_DIR/rootfs/init" ]; then
+					$BBX mv /init /init.old
+				fi
+				$BBX cp -R $RECOVERY_DIR/rootfs/* /
+			fi
+			if [ -f "$CURRENT_SYS_DIR/etc/rootfs/sbin/adbd" ]; then
+				$BBX mv /sbin/adbd /sbin/adbd.old
+			fi
+			if [ -f "$CURRENT_SYS_DIR/etc/rootfs/init" ]; then
+				$BBX mv /init /init.old
+			fi
+			$BBX cp -R $CURRENT_SYS_DIR/etc/rootfs/* /
+
+			# set loglevel
+			$BBX sed -i "s/loglevel \${sys.init_log_level}/loglevel 8/" /init.rc
+
+			# adjust stock init.target.rc file to include /sbin/fixboot.sh
+			$BBX sed -i "s/mount_all fstab.qcom/exec \/sbin\/fixboot.sh\n    mount_all fstab.qcom/" /init.target.rc
+
+			# reset permissions
+			$BBX chmod -R 755 /sbin/*
+			$BBX chmod 755 /init
+			$BBX chmod 755 /charger
+			$BBX chmod 644 /default.prop
+			$BBX chmod 755 /*.rc
+			$BBX chmod 755 /*.sh
+
+			# if virtual system is mounted unmount it
+			if [ "$ALT_SYSTEM_MODE" = "1" ]; then
+				# cleanup loopback
+				$BBX umount $SYS2_MNT
+				$BBX losetup -d $BLOCK_DIR/loop-system
+			fi
+
+			# unmount SS
+			$BBX umount $SS_MNT
+			if [ "$SS_USE_DATAMEDIA" = "1" ]; then
+				$BBX umount $DATAMEDIA_MNT
+			fi
+
+			# unmount old /system
+			$BBX umount -l /system
+
+			/sbin/hijack.killall
+
+			# mount point / symlink cleanup
+			$BBX rm /sdcard
+			$BBX rm -rf /mnt
+
+			echo "<1>$(/sbin/taskset -p -c 0 1)" > /dev/kmsg
+			$BBX sync
+			if [ "$DEBUG_MODE" = "1" ]; then
+				logCurrentStatus
+			fi
+
+			echo "<1>$(/sbin/taskset -c 0 /sbin/2nd-init)" > /dev/kmsg
+			exit
+		fi
+	fi
+
+	if [ "$ALT_SYSTEM_MODE" = "1" ]; then
+		# cleanup loopback
+		$BBX umount $SYS2_MNT
+		$BBX losetup -d $BLOCK_DIR/loop-system
+	fi
+
+	# unmount safestrap partition
+	$BBX umount $SS_MNT
+	if [ "$SS_USE_DATAMEDIA" = "1" ]; then
+		$BBX umount $DATAMEDIA_MNT
+	fi
+fi
+else
+	echo "<1>Skip safestrap hijack because of charger mode" > /dev/kmsg
+fi
+else
+	echo "<1>Skip safestrap hijack because of recovery mode" > /dev/kmsg
+fi
+
+# Run current file like expected by the system
+$BBX echo "<1>Passing through hijack: /system/$HIJACK_LOC/$HIJACK_BIN.bin $@" > /dev/kmsg
+
+/system/$HIJACK_LOC/$HIJACK_BIN.bin "$@"
