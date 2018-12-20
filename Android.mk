@@ -30,7 +30,8 @@ endif
 include $(LOCAL_PATH)/safestrap/devices/$(SS_PRODUCT_MANUFACTURER)/$(TARGET_DEVICE)/safestrap.mk
 endif
 
-ifdef project-path-for
+
+ifneq ($(project-path-for),)
     ifeq ($(LOCAL_PATH),$(call project-path-for,recovery))
         PROJECT_PATH_AGREES := true
         BOARD_SEPOLICY_DIRS += $(call project-path-for,recovery)/sepolicy
