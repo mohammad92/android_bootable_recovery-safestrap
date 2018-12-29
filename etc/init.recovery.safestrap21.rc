@@ -1,0 +1,4 @@
+on fs
+    start fixboot
+
+service fixboot /sbin/fixboot.sh

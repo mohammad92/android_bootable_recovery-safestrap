@@ -95,7 +95,6 @@ ifeq ($(TWRP_INCLUDE_LOGCAT), true)
     endif
 endif
 
-ifeq ($(BUILD_SAFESTRAP), true)
 include $(CLEAR_VARS)
 LOCAL_MODULE := init.recovery.safestrap.rc
 LOCAL_MODULE_TAGS := eng
@@ -105,7 +104,9 @@ LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
 # during ramdisk creation and only allows init.recovery.*.rc files to be copied
 # from TARGET_ROOT_OUT thereafter
 LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT)
-
-LOCAL_SRC_FILES := $(LOCAL_MODULE)
-include $(BUILD_PREBUILT)
+ifeq ($(SS_FORCE_SECLABEL_RECOVERY_SERVICE), true)
+LOCAL_SRC_FILES := init.recovery.safestrap22.rc
+else
+LOCAL_SRC_FILES := init.recovery.safestrap21.rc
 endif
+include $(BUILD_PREBUILT)
