@@ -1793,11 +1793,17 @@ int GUIAction::flashimage(std::string arg __unused)
 	string path, filename;
 	DataManager::GetValue("tw_zip_location", path);
 	DataManager::GetValue("tw_file", filename);
+#ifdef BUILD_SAFESTRAP
+	if (PartitionManager.Backup_Safestrap()) return 1;
+#endif
 	if (PartitionManager.Flash_Image(path, filename))
 		op_status = 0; // success
 	else
 		op_status = 1; // fail
 
+#ifdef BUILD_SAFESTRAP
+	if (PartitionManager.Restore_Safestrap()) return 1;
+#endif
 	operation_end(op_status);
 	return 0;
 }
