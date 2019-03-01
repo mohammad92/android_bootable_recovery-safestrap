@@ -250,7 +250,12 @@ int TWPartitionManager::Process_Fstab(string Fstab_Filename, bool Display_Error)
 
 	if (!datamedia && !settings_partition && Find_Partition_By_Path("/sdcard") == NULL && Find_Partition_By_Path("/internal_sd") == NULL && Find_Partition_By_Path("/internal_sdcard") == NULL && Find_Partition_By_Path("/emmc") == NULL) {
 		// Attempt to automatically identify /data/media emulated storage devices
+#ifdef BUILD_SAFESTRAP
+		string datamedia_mount = EXPAND(TW_SS_DATAMEDIA_MOUNT);
+		TWPartition* Dat = Find_Partition_By_Path(datamedia_mount);
+#else
 		TWPartition* Dat = Find_Partition_By_Path("/data");
+#endif
 		if (Dat) {
 			LOGINFO("Using automatic handling for /data/media emulated storage device.\n");
 			datamedia = true;
@@ -1678,13 +1683,14 @@ void TWPartitionManager::Post_Decrypt(const string& Block_Device) {
 			dat->Storage_Path = datamedia_mount + "/media/0";
 			dat->Symlink_Path = dat->Storage_Path;
 			DataManager::SetValue("tw_storage_path", datamedia_mount + "/media/0");
+			DataManager::SetValue("tw_settings_path", datamedia_mount + "/media/0");
 #else
 		if (dat->Has_Data_Media && dat->Mount(false) && TWFunc::Path_Exists("/data/media/0")) {
 			dat->Storage_Path = "/data/media/0";
 			dat->Symlink_Path = dat->Storage_Path;
 			DataManager::SetValue("tw_storage_path", "/data/media/0");
-#endif
 			DataManager::SetValue("tw_settings_path", "/data/media/0");
+#endif
 			dat->UnMount(false);
 		}
 		Update_System_Details();

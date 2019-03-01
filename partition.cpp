@@ -284,9 +284,6 @@ bool TWPartition::Process_Fstab_Line(const char *fstab_line, bool Display_Error,
 	char full_line[MAX_FSTAB_LINE_LENGTH];
 	char twflags[MAX_FSTAB_LINE_LENGTH] = "";
 	char* ptr;
-#ifdef BUILD_SAFESTRAP
-	string datamedia_mount = EXPAND(TW_SS_DATAMEDIA_MOUNT);
-#endif
 	int line_len = strlen(fstab_line), index = 0, item_index = 0;
 	bool skip = false;
 	int fstab_version = 1, mount_point_index = 0, fs_index = 1, block_device_index = 2;
@@ -505,25 +502,9 @@ bool TWPartition::Process_Fstab_Line(const char *fstab_line, bool Display_Error,
 #ifdef RECOVERY_SDCARD_ON_DATA
 		} else if (Mount_Point == "/datamedia") {
 			Display_Name = "DataMedia";
+			Storage_Name = Display_Name;
 			Is_Storage = true;
 			Can_Be_Wiped = true;
-			Storage_Name = "Internal Storage";
-			Storage_Path = datamedia_mount + "/media";
-			Symlink_Path = Storage_Path;
-			if (strcmp(EXPAND(TW_EXTERNAL_STORAGE_PATH), "/sdcard") == 0) {
-				Make_Dir("/emmc", Display_Error);
-				Symlink_Mount_Point = "/emmc";
-			} else {
-				Make_Dir("/sdcard", Display_Error);
-				Symlink_Mount_Point = "/sdcard";
-			}
-			if (Mount(false) && TWFunc::Path_Exists(datamedia_mount + "/media/0")) {
-				Storage_Path = datamedia_mount + "/media/0";
-				Symlink_Path = Storage_Path;
-				DataManager::SetValue(TW_INTERNAL_PATH, datamedia_mount + "/media/0");
-				UnMount(true);
-				Mount_Storage_Retry(true);
-			}
 #endif
 #endif
 		}
@@ -640,6 +621,14 @@ bool TWPartition::Process_Fstab_Line(const char *fstab_line, bool Display_Error,
 void TWPartition::Partition_Post_Processing(bool Display_Error) {
 	if (Mount_Point == "/data")
 		Setup_Data_Partition(Display_Error);
+#ifdef BUILD_SAFESTRAP
+#ifdef RECOVERY_SDCARD_ON_DATA
+	else if (Mount_Point == "/datamedia") {
+		Setup_Data_Media();
+		Recreate_Media_Folder();
+	}
+#endif
+#endif
 	else if (Mount_Point == "/cache")
 		Setup_Cache_Partition(Display_Error);
 }
@@ -1136,6 +1125,16 @@ void TWPartition::Setup_AndSec(void) {
 }
 
 void TWPartition::Setup_Data_Media() {
+#ifdef BUILD_SAFESTRAP
+	LOGINFO("Setting up '%s' as data/media emulated storage.\n", Mount_Point.c_str());
+	if (Storage_Name.empty() || Storage_Name == "DataMedia")
+		Storage_Name = "Internal Storage";
+	Has_Data_Media = true;
+	Is_Storage = true;
+	Storage_Path = Mount_Point + "/media";
+	Symlink_Path = Storage_Path;
+	if (Mount_Point == "/datamedia") {
+#else
 	LOGINFO("Setting up '%s' as data/media emulated storage.\n", Mount_Point.c_str());
 	if (Storage_Name.empty() || Storage_Name == "Data")
 		Storage_Name = "Internal Storage";
@@ -1144,6 +1143,7 @@ void TWPartition::Setup_Data_Media() {
 	Storage_Path = Mount_Point + "/media";
 	Symlink_Path = Storage_Path;
 	if (Mount_Point == "/data") {
+#endif
 		Is_Settings_Storage = true;
 		if (strcmp(EXPAND(TW_EXTERNAL_STORAGE_PATH), "/sdcard") == 0) {
 			Make_Dir("/emmc", false);
@@ -1157,6 +1157,9 @@ void TWPartition::Setup_Data_Media() {
 			Symlink_Path = Storage_Path;
 			DataManager::SetValue(TW_INTERNAL_PATH, Mount_Point + "/media/0");
 			UnMount(true);
+#ifdef BUILD_SAFESTRAP
+			Mount_Storage_Retry(true);
+#endif
 		}
 		DataManager::SetValue("tw_has_internal", 1);
 		DataManager::SetValue("tw_has_data_media", 1);
@@ -2772,9 +2775,6 @@ bool TWPartition::Restore_Image(PartitionSettings *part_settings) {
 
 bool TWPartition::Update_Size(bool Display_Error) {
 	bool ret = false, Was_Already_Mounted = false;
-#ifdef BUILD_SAFESTRAP
-	string datamedia_mount = EXPAND(TW_SS_DATAMEDIA_MOUNT);
-#endif
 
 	Find_Actual_Block_Device();
 
@@ -2929,10 +2929,6 @@ void TWPartition::Find_Actual_Block_Device(void) {
 void TWPartition::Recreate_Media_Folder(void) {
 	string Command;
 	string Media_Path = Mount_Point + "/media";
-#ifdef BUILD_SAFESTRAP
-	string datamedia_mount = EXPAND(TW_SS_DATAMEDIA_MOUNT);
-	char path[255];
-#endif
 
 	if (Is_FBE) {
 		LOGINFO("Not recreating media folder on FBE\n");
@@ -2940,19 +2936,10 @@ void TWPartition::Recreate_Media_Folder(void) {
 	}
 	if (!Mount(true)) {
 		gui_msg(Msg(msg::kError, "recreate_folder_err=Unable to recreate {1} folder.")(Media_Path));
-#ifdef BUILD_SAFESTRAP
-	} else if (!TWFunc::Path_Exists(datamedia_mount + "/media")) {
-#else
-	} else if (!TWFunc::Path_Exists(Media_Path)) { 
-#endif
+	} else if (!TWFunc::Path_Exists(Media_Path)) {
 		PartitionManager.Mount_By_Path(Symlink_Mount_Point, true);
  		LOGINFO("Recreating %s folder.\n", Media_Path.c_str()); 
-#ifdef BUILD_SAFESTRAP
-		sprintf(path, "%s/media", datamedia_mount.c_str());
-		mkdir(path, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
-#else
 		mkdir(Media_Path.c_str(), 0770); 
-#endif
 		string Internal_path = DataManager::GetStrValue("tw_internal_path");
 		if (!Internal_path.empty()) {
 			LOGINFO("Recreating %s folder.\n", Internal_path.c_str());
