@@ -1069,18 +1069,13 @@ int DataManager::GetMagicValue(const string& varName, string& value)
 #endif
 			FILE * cap = fopen(capacity_file.c_str(),"rt");
 #else
-#ifdef BUILD_SAFESTRAP
 			string capacity_file = "/sys/class/power_supply/battery/";
 #ifdef TW_CUSTOM_BATTERY_CAPACITY_FIELD
-			capacity_file += "/";
-			capacity_file += EXPAND(TW_CUSTOM_BATTERY_CAPACITY_FIELD);
+			capacity_file += "/" + EXPAND(TW_CUSTOM_BATTERY_CAPACITY_FIELD);
 #else
 			capacity_file += "/capacity";
 #endif
 			FILE * cap = fopen(capacity_file.c_str(),"rt");
-#else
-			FILE * cap = fopen("/sys/class/power_supply/battery/capacity","rt");
-#endif
 #endif
 			if (cap) {
 				fgets(cap_s, 4, cap);

@@ -525,7 +525,7 @@ Value* FormatFn(const char* name, State* state, const std::vector<std::unique_pt
   if (argv.size() != 5) {
     return ErrorAbort(state, kArgsParsingFailure, "%s() expects 5 args, got %zu", name,
                       argv.size());
-    }
+  }
 #endif
 
   std::vector<std::string> args;
@@ -621,7 +621,6 @@ Value* FormatFn(const char* name, State* state, const std::vector<std::unique_pt
   }
 
   return nullptr;
->>>>>>> 8373cfe2... Update to AOSP 8.0 base
 }
 
 // rename(src_name, dst_name)

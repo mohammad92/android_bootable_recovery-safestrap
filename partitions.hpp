@@ -252,11 +252,10 @@ private:
 	bool Is_Encrypted;                                                        // This partition is thought to be encrypted -- it wouldn't mount for some reason, only avialble with crypto support
 	bool Is_Decrypted;                                                        // This partition has successfully been decrypted
 	bool Is_FBE;                                                              // File Based Encryption is present
+	bool Mount_To_Decrypt;                                                    // Mount this partition during decrypt (/vendor, /firmware, etc in case we need proprietary libs or firmware files)
 #ifndef BUILD_SAFESTRAP
 	string Display_Name;                                                      // Display name for the GUI
 #endif
-
-	bool Mount_To_Decrypt;                                                    // Mount this partition during decrypt (/vendor, /firmware, etc in case we need proprietary libs or firmware files)
 	string Backup_Name;                                                       // Backup name -- used for backup filenames
 	string Storage_Name;                                                      // Name displayed in the partition list for storage selection
 	string Backup_FileName;                                                   // Actual backup filename

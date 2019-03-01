@@ -2928,7 +2928,7 @@ void TWPartition::Find_Actual_Block_Device(void) {
 
 void TWPartition::Recreate_Media_Folder(void) {
 	string Command;
-	string Media_Path = Mount_Point + "/media"; 
+	string Media_Path = Mount_Point + "/media";
 #ifdef BUILD_SAFESTRAP
 	string datamedia_mount = EXPAND(TW_SS_DATAMEDIA_MOUNT);
 	char path[255];
@@ -2939,7 +2939,7 @@ void TWPartition::Recreate_Media_Folder(void) {
 		return;
 	}
 	if (!Mount(true)) {
- 		gui_msg(Msg(msg::kError, "recreate_folder_err=Unable to recreate {1} folder.")(Media_Path));
+		gui_msg(Msg(msg::kError, "recreate_folder_err=Unable to recreate {1} folder.")(Media_Path));
 #ifdef BUILD_SAFESTRAP
 	} else if (!TWFunc::Path_Exists(datamedia_mount + "/media")) {
 #else

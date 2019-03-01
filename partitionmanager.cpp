@@ -855,9 +855,9 @@ int TWPartitionManager::Run_Backup(bool adbbackup) {
 #ifdef BUILD_SAFESTRAP
 	part_settings.Backup_Folder = part_settings.Backup_Folder + "/" + bootslot + "-" + Backup_Name;
 #else
-        part_settings.Backup_Folder = part_settings.Backup_Folder + "/" + Backup_Name;
+	part_settings.Backup_Folder = part_settings.Backup_Folder + "/" + Backup_Name;
 #endif
-	LOGINFO("Backup_Folder is: '%s'\n", part_settings.Backup_Folder.c_str()); 
+	LOGINFO("Backup_Folder is: '%s'\n", part_settings.Backup_Folder.c_str());
 
 	LOGINFO("Calculating backup details...\n");
 	DataManager::GetValue("tw_backup_list", Backup_List);

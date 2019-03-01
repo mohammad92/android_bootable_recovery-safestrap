@@ -28,7 +28,6 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
-#include <sys/vfs.h>
 #include <unistd.h>
 
 #include <string.h>

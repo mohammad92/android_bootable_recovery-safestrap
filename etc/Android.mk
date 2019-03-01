@@ -1,4 +1,4 @@
-# Copyright (C) 2017 TeamWin Recovery Project
+# Copyright (C) 2015 TeamWin Recovery Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,17 +34,18 @@ include $(BUILD_PREBUILT)
 
 endif
 
-ifeq ($(BUILD_SAFESTRAP), true)
-#ifeq ($(shell test $(PLATFORM_SDK_VERSION) -ge 22; echo $$?),0)
-endif
-ifeq ($(SS_FORCE_SECLABEL_RECOVERY_SERVICE), true)
+ifeq ($(shell test $(PLATFORM_SDK_VERSION) -ge 22; echo $$?),0)
     include $(CLEAR_VARS)
     LOCAL_MODULE := init.recovery.service.rc
     LOCAL_MODULE_TAGS := eng
     LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
     LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT)
 
+ifeq ($(SS_FORCE_SECLABEL_RECOVERY_SERVICE), true)
     LOCAL_SRC_FILES := init.recovery.service22.rc
+else
+    LOCAL_SRC_FILES := init.recovery.service21.rc
+endif
     include $(BUILD_PREBUILT)
 else
     include $(CLEAR_VARS)
@@ -95,6 +96,7 @@ ifeq ($(TWRP_INCLUDE_LOGCAT), true)
     endif
 endif
 
+ifeq ($(BUILD_SAFESTRAP), true)
 include $(CLEAR_VARS)
 LOCAL_MODULE := init.recovery.safestrap.rc
 LOCAL_MODULE_TAGS := eng
@@ -110,3 +112,4 @@ else
 LOCAL_SRC_FILES := init.recovery.safestrap21.rc
 endif
 include $(BUILD_PREBUILT)
+endif
