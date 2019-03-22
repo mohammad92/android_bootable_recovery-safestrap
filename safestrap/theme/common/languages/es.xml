@@ -26,7 +26,7 @@
 		<string name="sdext">SD-EXT</string>
 		<string name="adopted_data">Datos adoptados</string>
 		<string name="adopted_storage">Memoria adoptada</string>
-		<string name="twrp_header">Safestrap %ss_version% (TWRP %tw_version%)</string>
+		<string name="twrp_header">Proyecto Team Win Recovery</string>
 		<string name="twrp_watch_header">TWRP %tw_version%</string>
 		<string name="cpu_temp">CPU: %tw_cpu_temp% °C</string>
 		<string name="battery_pct">Batería: %tw_battery%</string>
@@ -263,6 +263,7 @@
 		<string name="rb_recovery_btn">Recovery</string>
 		<string name="rb_bootloader_btn">Bootloader</string>
 		<string name="rb_download_btn">Descarga</string>
+		<string name="rb_edl_btn">Edl</string>
 		<string name="turning_off">Apagando...</string>
 		<string name="swipe_power_off">Deslice para Apagar</string>
 		<string name="swipe_power_off_s">Apagar</string>

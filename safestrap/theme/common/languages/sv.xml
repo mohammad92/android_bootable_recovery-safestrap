@@ -19,7 +19,6 @@
 		<string name="usbotg">USB OTG</string>
 		<string name="dalvik">Dalvik / ART Cache</string>
 		<string name="sdext">SD-EXT</string>
-		<string name="twrp_header">Safestrap %ss_version% (TWRP %tw_version%)</string>
 		<string name="twrp_watch_header">TWRP %tw_version%</string>
 		<string name="sort_by_name">Sortera efter namn</string>
 		<string name="sort_by_date">Sortera efter datum</string>
@@ -102,6 +101,7 @@
 		<string name="rb_system_btn">System</string>
 		<string name="rb_bootloader_btn">Bootloader</string>
 		<string name="rb_download_btn">Ladda ner</string>
+		<string name="rb_edl_btn">Edl</string>
 		<string name="turning_off">Stänger av...</string>
 		<string name="settings_hdr">Inställningar</string>
 		<string name="settings_gen_s_hdr">Allmänt</string>

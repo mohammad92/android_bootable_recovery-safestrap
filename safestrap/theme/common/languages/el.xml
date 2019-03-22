@@ -24,7 +24,7 @@
         <string name="sdext">SD-EXT</string>
         <string name="adopted_data">Εγκεκριμένα δεδομένα</string>
         <string name="adopted_storage">Εγκεκριμένος Αποθ. Χώρος</string>
-	<string name="twrp_header">Safestrap %ss_version% (TWRP %tw_version%)</string>
+        <string name="twrp_header">Team Win Recovery Project</string>
         <string name="twrp_watch_header">TWRP %tw_version%</string>
         <string name="cpu_temp">CPU: %tw_cpu_temp% &#xB0;C</string>
         <string name="battery_pct">Μπαταρία: %tw_battery%</string>
@@ -273,6 +273,7 @@
         <string name="rb_recovery_btn">Recovery</string>
         <string name="rb_bootloader_btn">Bootloader</string>
         <string name="rb_download_btn">Λήψη</string>
+		<string name="rb_edl_btn">Edl</string>
         <string name="turning_off">Απενεργοποίηση...</string>
         <string name="swipe_power_off">Σύρετε για Απενεργοποίηση</string>
         <string name="swipe_power_off_s">Απενεργοποίηση</string>

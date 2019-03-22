@@ -26,7 +26,7 @@
 		<string name="sdext">SD-EXT</string>
 		<string name="adopted_data">Prevzeti podatki</string>
 		<string name="adopted_storage">Prevzeta pomnilniška naprava</string>
-		<string name="twrp_header">Safestrap %ss_version% (TWRP %tw_version%)</string>
+		<string name="twrp_header">Team Win Recovery Project</string>
 		<string name="twrp_watch_header">TWRP %tw_version%</string>
 		<string name="cpu_temp">CPE: %tw_cpu_temp% °C</string>
 		<string name="battery_pct">Baterija: %tw_battery%</string>
@@ -262,6 +262,7 @@
 		<string name="rb_recovery_btn">Obnovitev</string>
 		<string name="rb_bootloader_btn">Zagonski nalagalnik</string>
 		<string name="rb_download_btn">Prejmi</string>
+		<string name="rb_edl_btn">Edl</string>
 		<string name="turning_off">Izklapljanje …</string>
 		<string name="swipe_power_off">Povlecite za izklop</string>
 		<string name="swipe_power_off_s">Izklopi</string>

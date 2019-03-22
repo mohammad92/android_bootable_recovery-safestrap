@@ -186,12 +186,12 @@
 
 			<text style="text_l">
 				<placement x="%col1_x_header%" y="%row3_header_y%"/>
-				<text>{@twrp_header=Safestrap %ss_version% (TWRP v%tw_version%)}</text>
+				<text>Safestrap %ss_version% (TWRP v%tw_version%)</text>
 			</text>
 
 			<text style="text_m">
 				<placement x="%col1_x_header%" y="%row4_header_y%"/>
-				<text>{@rom_slot_header=ROM Slot: %tw_bootslot%}</text>
+				<text>ROM Slot: %tw_bootslot%</text>
 			</text>
 
 			<button style="main_button">
@@ -206,7 +206,7 @@
 
 			<button style="main_button">
 				<placement x="%center_x%" y="%row2a_y%"/>
-				<text>{@boot_options_btn=Boot Options}</text>
+				<text>Boot Options</text>
                                 <action function="page">boot_options</action>
 			</button>
 
@@ -2794,7 +2794,7 @@
 
 			<text style="text_m">
 				<placement x="%col1_x_header%" y="%row4_header_y%" />
-				<text>{@rom_slot_header=ROM Slot: %tw_bootslot%}</text>
+				<text>ROM Slot: %tw_bootslot%</text>
 			</text>
 
 			<button style="main_button">
@@ -3515,7 +3515,7 @@
 
 			<text style="text_m">
 				<placement x="%col1_x_header%" y="%row4_header_y%" />
-				<text>{@rom_slot_header=ROM Slot: %tw_bootslot%}</text>
+				<text>ROM Slot: %tw_bootslot%</text>
 			</text>
 
 			<button style="main_button">
@@ -4998,7 +4998,7 @@
 
 			<text style="text_m">
 				<placement x="%col1_x_header%" y="%row4_header_y%" />
-				<text>{@rom_slot_header=ROM Slot: %tw_bootslot%}</text>
+				<text>ROM Slot: %tw_bootslot%</text>
 			</text>
 
 			<text style="text_m">
@@ -5192,7 +5192,7 @@
 
 			<text style="text_m">
 				<placement x="%col1_x_header%" y="%row4_header_y%" />
-				<text>{@rom_slot_header=ROM Slot: %tw_bootslot%}</text>
+				<text>ROM Slot: %tw_bootslot%</text>
 			</text>
 
 			<template name="console"/>
@@ -5216,7 +5216,7 @@
 
 			<text style="text_m">
 				<placement x="%col1_x_header%" y="%row4_header_y%" />
-				<text>{@rom_slot_header=ROM Slot: %tw_bootslot%}</text>
+				<text>ROM Slot: %tw_bootslot%</text>
 			</text>
 
 			<action>
@@ -5253,7 +5253,7 @@
 
 			<text style="text_m">
 				<placement x="%col1_x_header%" y="%row4_header_y%" />
-				<text>{@rom_slot_header=ROM Slot: %tw_bootslot%}</text>
+				<text>ROM Slot: %tw_bootslot%</text>
 			</text>
 
 			<template name="console"/>
@@ -5290,7 +5290,7 @@
 
 			<text style="text_m">
 				<placement x="%col1_x_header%" y="%row4_header_y%" />
-				<text>{@rom_slot_header=ROM Slot: %tw_bootslot%}</text>
+				<text>ROM Slot: %tw_bootslot%</text>
 			</text>
 
 			<button style="main_button">
@@ -5435,7 +5435,7 @@
 
 			<text style="text_m">
 				<placement x="%col1_x_header%" y="%row4_header_y%" />
-				<text>{@rom_slot_header=ROM Slot: %tw_bootslot%}</text>
+				<text>ROM Slot: %tw_bootslot%</text>
 			</text>
 
 			<text style="text_m_accent">
@@ -5492,7 +5492,7 @@
 
 			<text style="text_m">
 				<placement x="%col1_x_header%" y="%row4_header_y%" />
-				<text>{@rom_slot_header=ROM Slot: %tw_bootslot%}</text>
+				<text>ROM Slot: %tw_bootslot%</text>
 			</text>
 
 			<text style="text_m">

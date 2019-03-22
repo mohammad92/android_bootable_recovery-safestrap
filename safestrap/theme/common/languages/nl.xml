@@ -31,7 +31,7 @@
 		<string name="adopted_storage">Geadopteerde Opslag</string>
 
 		<!-- GUI XML strings -->
-		<string name="twrp_header">Safestrap %ss_version% (TWRP %tw_version%)</string>
+		<string name="twrp_header">Team Win Recovery Project</string>
 		<string name="twrp_watch_header">TWRP %tw_version%</string>
 		<string name="cpu_temp">CPU: %tw_cpu_temp% ° C</string>
 		<string name="battery_pct">Accu: %tw_battery%</string>
@@ -270,6 +270,7 @@
 		<string name="rb_recovery_btn">Recovery</string>
 		<string name="rb_bootloader_btn">Bootloader</string>
 		<string name="rb_download_btn">Download</string>
+		<string name="rb_edl_btn">Edl</string>
 		<string name="turning_off">Uitschakelen...</string>
 		<string name="swipe_power_off">Veeg om uit te schakelen</string>
 		<string name="swipe_power_off_s">Uitschakelen</string>
