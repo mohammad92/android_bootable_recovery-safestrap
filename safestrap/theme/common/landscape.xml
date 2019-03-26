@@ -252,8 +252,8 @@
 
 			<button style="main_button">
 				<placement x="%center_x%" y="%row2_y%"/>
-				<text>Boot Options</text>
-                                <action function="page">boot_options</action>
+				<text>{@wipe_btn=Wipe}</text>
+				<action function="page">wipe</action>
 			</button>
 
 			<button style="main_button">
@@ -276,8 +276,8 @@
 
 			<button style="main_button">
 				<placement x="%center_x%" y="%row11_y%"/>
-				<text>{@wipe_btn=Wipe}</text>
-				<action function="page">wipe</action>
+				<text>{@settings_btn=Settings}</text>
+				<action function="page">settings</action>
 			</button>
 
 			<button style="main_button">
@@ -3395,8 +3395,8 @@
 
 			<listbox style="advanced_listbox">
 				<placement x="%center_x%" y="%row2_y%" w="%content_half_width%" h="%fileselector_install_height%"/>
-				<listitem name="{@settings_btn=Settings}">
-					<action function="page">settings</action>
+				<listitem name="Boot Options">
+					<action function="page">boot_options</action>
 				</listitem>
 				<listitem name="{@reload_theme_btn=Reload Theme}">
 					<action function="reload"/>
@@ -5868,7 +5868,7 @@
 
 			<action>
 				<touch key="back"/>
-				<action function="page">main</action>
+				<action function="page">advanced</action>
 			</action>
 		</page>
 	</pages>
