@@ -134,7 +134,7 @@ if [ "$RUN_SS" = "1" ]; then
 	CHECK_RECOVERY_ENTRY="1"
 	if [ "$ALT_SYSTEM_MODE" = "2" ]; then
 		ENTER_RECOVERY="1"
-        fi
+	fi
 
 	if [ "$ENTER_RECOVERY" = "0" ]; then
 		CHECK_RECOVERY_ENTRY=$($RECOVERY_DIR/safestrapmenu $ALT_SYSTEM_MODE > /dev/null 2>&1;echo $?)
@@ -164,11 +164,13 @@ if [ "$RUN_SS" = "1" ]; then
 		$BBX mv /init /init.old
 
 		# backup selinux/prop files
+		$BBX cp /file_contexts /tmp/
 		$BBX cp /file_contexts.bin /tmp/
 		$BBX cp /property_contexts /tmp/
 		$BBX cp /seapp_contexts /tmp/
 		$BBX cp /sepolicy /tmp/
 		$BBX cp /sepolicy_version /tmp/
+		$BBX cp /service_contexts /tmp/
 		$BBX echo "ro.secure=0" > /tmp/default.prop
 		$BBX echo "ro.allow.mock.location=1" >> /tmp/default.prop
 		$BBX echo "ro.debuggable=1" >> /tmp/default.prop
@@ -297,16 +299,22 @@ if [ "$RUN_SS" = "1" ]; then
 			# set loglevel
 			$BBX sed -i "s/loglevel \${sys.init_log_level}/loglevel 8/" /init.rc
 
-			# adjust stock init.samsungexynos7420.rc file to include /sbin/fixboot.sh
-			$BBX sed -i "s/mount_all fstab.samsungexynos7420/exec \/sbin\/fixboot.sh\n    mount_all fstab.samsungexynos7420/" /init.samsungexynos7420.rc
+			# adjust stock init.<hardware>.rc file to include /sbin/fixboot.sh
+			$BBX sed -i "s/mount_all \/fstab.samsungexynos7420/exec \/sbin\/fixboot.sh\n    mount_all \/fstab.samsungexynos7420/" /init.samsungexynos7420.rc
+
+			# adjust init.<hardware>.rc for where to mount /sdcard
+			# service sdcard /system/bin/sdcard -u 1023 -g 1023 -l -r /data/media /mnt/shell/emulated
+                        $BBX sed -i "s/service sdcard \/system\/bin\/sdcard -u 1023 -g 1023 -l -r \/data\/media/service sdcard \/system\/bin\/sdcard -u 1023 -g 1023 -l -r \/datamedia\/media/" /init.samsungexynos7420.rc
 
 			# reset permissions
-			$BBX chmod -R 755 /sbin/*
-			$BBX chmod 755 /init
-			$BBX chmod 755 /charger
+			$BBX chmod -R 750 /sbin/*
+			$BBX chmod 750 /init*
+			$BBX chmod 640 /fstab.*
 			$BBX chmod 644 /default.prop
-			$BBX chmod 755 /*.rc
-			$BBX chmod 755 /*.sh
+			$BBX chmod 644 /*contexts
+			$BBX chmod 644 /*.pem
+			$BBX chmod 644 /se*
+			$BBX chmod 644 /ueventd.*
 
 			# if virtual system is mounted unmount it
 			if [ "$ALT_SYSTEM_MODE" = "1" ]; then
