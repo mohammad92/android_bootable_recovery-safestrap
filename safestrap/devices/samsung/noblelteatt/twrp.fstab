@@ -1,0 +1,13 @@
+# mount point	fstype	device device2				flags
+/system		ext4	/dev/block/sda14
+/system_image	emmc	/dev/block/sda14
+/data		ext4	/dev/block/sda16			flags=encryptable=footer;length=-20480
+/cache		ext4	/dev/block/sda15
+/modem		emmc	/dev/block/sda8				flags=backup=1;display="Modem"
+/efs		ext4	/dev/block/sda3				flags=backup=1;display="EFS"
+/usbstorage	vfat	/dev/block/sde1 /dev/block/sde		flags=display="USB Storage";storage;wipeingui;removable
+
+# safestrap
+/datamedia      ext4	/dev/block/sda16-orig			flags=display="Internal Storage";storage
+/ss             ext4	/dev/block/sda16-orig			flags=hidden
+/systemorig     ext4	/dev/block/sda14-orig			flags=hidden;usermrf
