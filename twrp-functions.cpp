@@ -47,14 +47,12 @@
 #include "variables.h"
 #include "bootloader_message_twrp/include/bootloader_message_twrp/bootloader_message.h"
 #include "cutils/properties.h"
-#ifdef ANDROID_RB_POWEROFF
-	#include "cutils/android_reboot.h"
-#endif
+#include "cutils/android_reboot.h"
+#include <sys/reboot.h>
 #endif // ndef BUILD_TWRPTAR_MAIN
 #ifndef TW_EXCLUDE_ENCRYPTED_BACKUPS
 	#include "openaes/inc/oaes_lib.h"
 #endif
-#include "cutils/android_reboot.h"
 #include "set_metadata.h"
 
 extern "C" {
@@ -590,48 +588,50 @@ int TWFunc::tw_reboot(RebootCommand command)
 	switch (command) {
 		case rb_current:
 		case rb_system:
-			Update_Log_File();
 			Update_Intent_File("s");
 			sync();
 			check_and_run_script("/sbin/rebootsystem.sh", "reboot system");
+#ifdef ANDROID_RB_PROPERTY
+			return property_set(ANDROID_RB_PROPERTY, "reboot,");
+#elif defined(ANDROID_RB_RESTART)
+			return android_reboot(ANDROID_RB_RESTART, 0, 0);
+#else
 			return reboot(RB_AUTOBOOT);
+#endif
 		case rb_recovery:
 			check_and_run_script("/sbin/rebootrecovery.sh", "reboot recovery");
 #ifdef ANDROID_RB_PROPERTY
-			property_set(ANDROID_RB_PROPERTY, "reboot,recovery");
+			return property_set(ANDROID_RB_PROPERTY, "reboot,recovery");
 #else
 			return __reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_RESTART2, (void*) "recovery");
 #endif
-			sleep(5);
-			return 0;
 		case rb_bootloader:
 			check_and_run_script("/sbin/rebootbootloader.sh", "reboot bootloader");
 #ifdef ANDROID_RB_PROPERTY
-			property_set(ANDROID_RB_PROPERTY, "reboot,bootloader");
+			return property_set(ANDROID_RB_PROPERTY, "reboot,bootloader");
 #else
 			return __reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_RESTART2, (void*) "bootloader");
 #endif
-			sleep(5);
-			return 0;
 		case rb_poweroff:
 			check_and_run_script("/sbin/poweroff.sh", "power off");
-#ifdef ANDROID_RB_POWEROFF
-			android_reboot(ANDROID_RB_POWEROFF, 0, 0);
-#endif
+#ifdef ANDROID_RB_PROPERTY
+			return property_set(ANDROID_RB_PROPERTY, "shutdown,");
+#elif defined(ANDROID_RB_POWEROFF)
+			return android_reboot(ANDROID_RB_POWEROFF, 0, 0);
+#else
 			return reboot(RB_POWER_OFF);
+#endif
 		case rb_download:
 			check_and_run_script("/sbin/rebootdownload.sh", "reboot download");
 #ifdef ANDROID_RB_PROPERTY
-			property_set(ANDROID_RB_PROPERTY, "reboot,download");
+			return property_set(ANDROID_RB_PROPERTY, "reboot,download");
 #else
 			return __reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_RESTART2, (void*) "download");
 #endif
-			sleep(5);
-			return 0;
 		case rb_edl:
 			check_and_run_script("/sbin/rebootedl.sh", "reboot edl");
 #ifdef ANDROID_RB_PROPERTY
-			property_set(ANDROID_RB_PROPERTY, "reboot,edl");
+			return property_set(ANDROID_RB_PROPERTY, "reboot,edl");
 #else
 			return __reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_RESTART2, (void*) "edl");
 #endif
