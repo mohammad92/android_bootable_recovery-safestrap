@@ -26,7 +26,6 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/mount.h>
-#include <sys/reboot.h>
 #include <sys/sendfile.h>
 #include <sys/stat.h>
 #include <sys/vfs.h>
@@ -591,7 +590,7 @@ int TWFunc::tw_reboot(RebootCommand command)
 			Update_Intent_File("s");
 			sync();
 			check_and_run_script("/sbin/rebootsystem.sh", "reboot system");
-#ifdef ANDROID_RB_PROPERTY
+#if defined(ANDROID_RB_PROPERTY) && !defined(BUILD_SAFESTRAP)
 			return property_set(ANDROID_RB_PROPERTY, "reboot,");
 #elif defined(ANDROID_RB_RESTART)
 			return android_reboot(ANDROID_RB_RESTART, 0, 0);
@@ -600,21 +599,25 @@ int TWFunc::tw_reboot(RebootCommand command)
 #endif
 		case rb_recovery:
 			check_and_run_script("/sbin/rebootrecovery.sh", "reboot recovery");
-#ifdef ANDROID_RB_PROPERTY
+#if defined(ANDROID_RB_PROPERTY) && !defined(BUILD_SAFESTRAP)
 			return property_set(ANDROID_RB_PROPERTY, "reboot,recovery");
+#elif defined(ANDROID_RB_RESTART2) && defined(BUILD_SAFESTRAP)
+			return android_reboot(ANDROID_RB_RESTART2, 0, "recovery");
 #else
 			return __reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_RESTART2, (void*) "recovery");
 #endif
 		case rb_bootloader:
 			check_and_run_script("/sbin/rebootbootloader.sh", "reboot bootloader");
-#ifdef ANDROID_RB_PROPERTY
+#if defined(ANDROID_RB_PROPERTY) && !defined(BUILD_SAFESTRAP)
 			return property_set(ANDROID_RB_PROPERTY, "reboot,bootloader");
+#elif defined(ANDROID_RB_RESTART2) && defined(BUILD_SAFESTRAP)
+			return android_reboot(ANDROID_RB_RESTART2, 0, "bootloader");
 #else
 			return __reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_RESTART2, (void*) "bootloader");
 #endif
 		case rb_poweroff:
 			check_and_run_script("/sbin/poweroff.sh", "power off");
-#ifdef ANDROID_RB_PROPERTY
+#if defined(ANDROID_RB_PROPERTY) && !defined(BUILD_SAFESTRAP)
 			return property_set(ANDROID_RB_PROPERTY, "shutdown,");
 #elif defined(ANDROID_RB_POWEROFF)
 			return android_reboot(ANDROID_RB_POWEROFF, 0, 0);
@@ -623,15 +626,19 @@ int TWFunc::tw_reboot(RebootCommand command)
 #endif
 		case rb_download:
 			check_and_run_script("/sbin/rebootdownload.sh", "reboot download");
-#ifdef ANDROID_RB_PROPERTY
+#if defined(ANDROID_RB_PROPERTY) && !defined(BUILD_SAFESTRAP)
 			return property_set(ANDROID_RB_PROPERTY, "reboot,download");
+#elif defined(ANDROID_RB_RESTART2) && defined(BUILD_SAFESTRAP)
+			return android_reboot(ANDROID_RB_RESTART2, 0, "download");
 #else
 			return __reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_RESTART2, (void*) "download");
 #endif
 		case rb_edl:
 			check_and_run_script("/sbin/rebootedl.sh", "reboot edl");
-#ifdef ANDROID_RB_PROPERTY
+#if defined(ANDROID_RB_PROPERTY) && !defined(BUILD_SAFESTRAP)
 			return property_set(ANDROID_RB_PROPERTY, "reboot,edl");
+#elif defined(ANDROID_RB_RESTART2) && defined(BUILD_SAFESTRAP)
+			return android_reboot(ANDROID_RB_RESTART2, 0, "edl");
 #else
 			return __reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_RESTART2, (void*) "edl");
 #endif
