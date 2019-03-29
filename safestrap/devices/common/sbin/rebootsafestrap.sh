@@ -10,4 +10,3 @@ SS_CONFIG=/ss.config
 readConfig
 
 $BBX echo 1 > /data/$SS_RECOVERY_FILE
-$BBX reboot now

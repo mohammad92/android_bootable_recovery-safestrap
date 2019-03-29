@@ -642,6 +642,15 @@ int TWFunc::tw_reboot(RebootCommand command)
 #else
 			return __reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_RESTART2, (void*) "edl");
 #endif
+#ifdef BUILD_SAFESTRAP
+		case rb_safestrap:
+			check_and_run_script("/sbin/rebootsafestrap.sh", "reboot safestrap recovery");
+#ifdef ANDROID_RB_RESTART
+			return android_reboot(ANDROID_RB_RESTART, 0, 0);
+#else
+			return reboot(RB_AUTOBOOT);
+#endif
+#endif
 		default:
 			return -1;
 	}

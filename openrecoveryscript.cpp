@@ -345,6 +345,10 @@ int OpenRecoveryScript::run_script_file(void) {
 					TWFunc::tw_reboot(rb_download);
 				else if (strlen(value) && strcmp(value, "edl") == 0)
 					TWFunc::tw_reboot(rb_edl);
+#ifdef BUILD_SAFESTRAP
+				else if (strlen(value) && strcmp(value, "safestrap") == 0)
+					TWFunc::tw_reboot(rb_safestrap);
+#endif
 				else
 					TWFunc::tw_reboot(rb_system);
 			} else if (strcmp(command, "cmd") == 0) {

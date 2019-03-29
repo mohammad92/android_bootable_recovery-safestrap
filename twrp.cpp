@@ -353,6 +353,10 @@ int main(int argc, char **argv) {
 		TWFunc::tw_reboot(rb_download);
 	else if (Reboot_Arg == "edl")
 		TWFunc::tw_reboot(rb_edl);
+#ifdef BUILD_SAFESTRAP
+	else if (Reboot_Arg == "safestrap")
+		TWFunc::tw_reboot(rb_safestrap);
+#endif
 	else
 		TWFunc::tw_reboot(rb_system);
 

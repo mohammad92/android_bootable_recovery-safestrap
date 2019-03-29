@@ -38,6 +38,9 @@ typedef enum
 	rb_bootloader,     // May also be fastboot
 	rb_download,
 	rb_edl,
+#ifdef BUILD_SAFESTRAP
+	rb_safestrap,
+#endif
 } RebootCommand;
 
 enum Archive_Type {
