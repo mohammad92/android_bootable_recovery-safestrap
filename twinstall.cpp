@@ -32,6 +32,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <cutils/properties.h>
 
 #include "twcommon.h"
 #include "mtdutils/mounts.h"
@@ -169,7 +170,24 @@ static int Prepare_Update_Binary(const char *path, ZipWrap *Zip, int* wipe_cache
 
 if ((statfs(INCLUDED_BINARY_NAME, &st) != 0) || (stock_install != 0)) {
 #endif
-	if (!Zip->ExtractEntry(ASSUMED_UPDATE_BINARY_NAME, TMP_UPDATER_BINARY_PATH, 0755)) {
+	char arches[PATH_MAX];
+	std::string binary_name = ASSUMED_UPDATE_BINARY_NAME;
+	property_get("ro.product.cpu.abilist", arches, "error");
+	if (strcmp(arches, "error") == 0)
+		property_get("ro.product.cpu.abi", arches, "error");
+	vector<string> split = TWFunc::split_string(arches, ',', true);
+	std::vector<string>::iterator arch;
+	std::string base_name = binary_name;
+	base_name += "-";
+	for (arch = split.begin(); arch != split.end(); arch++) {
+		std::string temp = base_name + *arch;
+		if (Zip->EntryExists(temp)) {
+			binary_name = temp;
+			break;
+		}
+	}
+	LOGINFO("Extracting updater binary '%s'\n", binary_name.c_str());
+	if (!Zip->ExtractEntry(binary_name.c_str(), TMP_UPDATER_BINARY_PATH, 0755)) {
 		Zip->Close();
 		LOGERR("Could not extract '%s'\n", ASSUMED_UPDATE_BINARY_NAME);
 		return INSTALL_ERROR;
