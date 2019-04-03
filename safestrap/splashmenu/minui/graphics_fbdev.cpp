@@ -103,6 +103,12 @@ static void set_displayed_framebuffer(unsigned n)
     vi.bits_per_pixel = gr_framebuffer[0].pixel_bytes * 8;
     if (ioctl(fb_fd, FBIOPUT_VSCREENINFO, &vi) < 0) {
         perror("active fb swap failed");
+#ifdef TW_FBIOPAN
+    } else {
+        if (ioctl(fb_fd, FBIOPAN_DISPLAY, &vi) < 0) {
+            perror("pan failed");
+        }
+#endif
     }
     displayed_buffer = n;
 }
@@ -124,15 +130,39 @@ static GRSurface* fbdev_init(minui_backend* backend) {
         }
     }
 
-    fb_fix_screeninfo fi;
-    if (ioctl(fd, FBIOGET_FSCREENINFO, &fi) < 0) {
-        perror("failed to get fb0 info (FBIOGET_FSCREENINFO)");
+    if (ioctl(fd, FBIOGET_VSCREENINFO, &vi) < 0) {
+        perror("failed to get fb0 info (FBIOGET_VSCREENINFO)");
         close(fd);
         return NULL;
     }
 
-    if (ioctl(fd, FBIOGET_VSCREENINFO, &vi) < 0) {
-        perror("failed to get fb0 info (FBIOGET_VSCREENINFO)");
+#ifdef RECOVERY_FORCE_RGB_565
+    // Changing fb_var_screeninfo can affect fb_fix_screeninfo,
+    // so this needs done before querying for fi.
+    printf("Forcing pixel format: RGB_565\n");
+    vi.blue.offset    = 0;
+    vi.green.offset   = 5;
+    vi.red.offset     = 11;
+    vi.blue.length    = 5;
+    vi.green.length   = 6;
+    vi.red.length     = 5;
+    vi.blue.msb_right = 0;
+    vi.green.msb_right = 0;
+    vi.red.msb_right = 0;
+    vi.transp.offset  = 0;
+    vi.transp.length  = 0;
+    vi.bits_per_pixel = 16;
+
+    if (ioctl(fd, FBIOPUT_VSCREENINFO, &vi) < 0) {
+        perror("failed to put force_rgb_565 fb0 info");
+        close(fd);
+        return NULL;
+    }
+#endif
+
+    fb_fix_screeninfo fi;
+    if (ioctl(fd, FBIOGET_FSCREENINFO, &fi) < 0) {
+        perror("failed to get fb0 info (FBIOGET_FSCREENINFO)");
         close(fd);
         return NULL;
     }
@@ -166,22 +196,6 @@ static GRSurface* fbdev_init(minui_backend* backend) {
     }
 
     memset(bits, 0, fi.smem_len);
-
-#ifdef RECOVERY_FORCE_RGB_565
-    printf("Forcing pixel format: RGB_565\n");
-    vi.blue.offset    = 0;
-    vi.green.offset   = 5;
-    vi.red.offset     = 11;
-    vi.blue.length    = 5;
-    vi.green.length   = 6;
-    vi.red.length     = 5;
-    vi.blue.msb_right = 0;
-    vi.green.msb_right = 0;
-    vi.red.msb_right = 0;
-    vi.transp.offset  = 0;
-    vi.transp.length  = 0;
-    vi.bits_per_pixel = 16;
-#endif
 
     gr_framebuffer[0].width = vi.xres;
     gr_framebuffer[0].height = vi.yres;
@@ -271,17 +285,14 @@ static GRSurface* fbdev_init(minui_backend* backend) {
 static GRSurface* fbdev_flip(minui_backend* backend __unused) {
 #if defined(RECOVERY_BGRA)
     // In case of BGRA, do some byte swapping
-    unsigned int idx;
-    unsigned char tmp;
     unsigned char* ucfb_vaddr = (unsigned char*)gr_draw->data;
-    for (idx = 0 ; idx < (gr_draw->height * gr_draw->row_bytes);
+    for (int idx = 0 ; idx < (gr_draw->height * gr_draw->row_bytes);
             idx += 4) {
-        tmp = ucfb_vaddr[idx];
+        unsigned char tmp = ucfb_vaddr[idx];
         ucfb_vaddr[idx    ] = ucfb_vaddr[idx + 2];
         ucfb_vaddr[idx + 2] = tmp;
     }
 #endif
-#ifndef BOARD_HAS_FLIPPED_SCREEN
     if (double_buffered) {
         // Copy from the in-memory surface to the framebuffer.
         memcpy(gr_framebuffer[1-displayed_buffer].data, gr_draw->data,
@@ -292,32 +303,6 @@ static GRSurface* fbdev_flip(minui_backend* backend __unused) {
         memcpy(gr_framebuffer[0].data, gr_draw->data,
                gr_draw->height * gr_draw->row_bytes);
     }
-#else
-    int gr_active_fb = 0;
-    if (double_buffered)
-        gr_active_fb = 1-displayed_buffer;
-
-    /* flip buffer 180 degrees for devices with physically inverted screens */
-    unsigned int row_pixels = gr_draw->row_bytes / gr_framebuffer[0].pixel_bytes;
-    if (gr_framebuffer[0].pixel_bytes == 4) {
-        for (unsigned int y = 0; y < gr_draw->height; ++y) {
-            uint32_t* dst = reinterpret_cast<uint32_t*>(gr_framebuffer[gr_active_fb].data) + y * row_pixels;
-            uint32_t* src = reinterpret_cast<uint32_t*>(gr_draw->data) + (gr_draw->height - y - 1) * row_pixels + gr_draw->width;
-            for (unsigned int x = 0; x < gr_draw->width; ++x)
-                *(dst++) = *(--src);
-        }
-    } else {
-        for (unsigned int y = 0; y < gr_draw->height; ++y) {
-            uint16_t* dst = reinterpret_cast<uint16_t*>(gr_framebuffer[gr_active_fb].data) + y * row_pixels;
-            uint16_t* src = reinterpret_cast<uint16_t*>(gr_draw->data) + (gr_draw->height - y - 1) * row_pixels + gr_draw->width;
-            for (unsigned int x = 0; x < gr_draw->width; ++x)
-                 *(dst++) = *(--src);
-        }
-    }
-
-    if (double_buffered)
-        set_displayed_framebuffer(1-displayed_buffer);
-#endif
     return gr_draw;
 }
 

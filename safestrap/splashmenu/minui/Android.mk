@@ -38,7 +38,7 @@ else
   LOCAL_C_INCLUDES += $(RECOVERY_INCLUDE_DIR)
   # The header files required for adf graphics can cause compile errors
   # with adf graphics.
-  ifneq ($(wildcard system/core/adf/Android.mk),)
+  ifneq ($(wildcard system/core/adf/Android.*),)
     LOCAL_CFLAGS += -DHAS_ADF
     LOCAL_SRC_FILES += graphics_adf.cpp
     LOCAL_WHOLE_STATIC_LIBRARIES += libadf
@@ -49,7 +49,7 @@ ifeq ($(TW_NEW_ION_HEAP), true)
   LOCAL_CFLAGS += -DNEW_ION_HEAP
 endif
 
-ifneq ($(wildcard external/libdrm/Android.mk),)
+ifneq ($(wildcard external/libdrm/Android.*),)
   LOCAL_CFLAGS += -DHAS_DRM
   LOCAL_SRC_FILES += graphics_drm.cpp
   ifneq ($(wildcard external/libdrm/Android.common.mk),)
@@ -90,10 +90,6 @@ endif
 
 ifeq ($(RECOVERY_GRAPHICS_FORCE_SINGLE_BUFFER), true)
 LOCAL_CFLAGS += -DRECOVERY_GRAPHICS_FORCE_SINGLE_BUFFER
-endif
-
-ifeq ($(TW_IGNORE_VIRTUAL_KEYS), true)
-LOCAL_CFLAGS += -DTW_IGNORE_VIRTUAL_KEYS
 endif
 
 #Remove the # from the line below to enable event logging
@@ -153,8 +149,18 @@ ifeq ($(TW_FBIOPAN), true)
     LOCAL_CFLAGS += -DTW_FBIOPAN
 endif
 
-ifeq ($(BOARD_HAS_FLIPPED_SCREEN), true)
-LOCAL_CFLAGS += -DBOARD_HAS_FLIPPED_SCREEN
+ifneq ($(TW_ROTATION),)
+  ifeq (,$(filter 0 90 180 270, $(TW_ROTATION)))
+    $(error TW_ROTATION must be set to 0, 90, 180 or 270. Currently set to $(TW_ROTATION))
+  endif
+  LOCAL_CFLAGS += -DTW_ROTATION=$(TW_ROTATION)
+else
+  # Support for old flag
+  ifeq ($(BOARD_HAS_FLIPPED_SCREEN), true)
+    LOCAL_CFLAGS += -DTW_ROTATION=180
+  else
+    LOCAL_CFLAGS += -DTW_ROTATION=0
+  endif
 endif
 
 ifeq ($(TW_IGNORE_MAJOR_AXIS_0), true)
@@ -186,11 +192,16 @@ endif
 
 LOCAL_CLANG := true
 
-LOCAL_SHARED_LIBRARIES += libft2 libz libc libcutils libpng libutils
+# Safestrap resources
+ifneq ($(SSRES),)
+    LOCAL_CFLAGS += -DSSRES='"$(SSRES)"'
+else
+    LOCAL_CFLAGS += -DSSRES='"/system/etc/safestrap/res"'
+endif
+LOCAL_SHARED_LIBRARIES += libft2 libz libc libcutils libpng libutils libc++
 ifneq ($(TW_INCLUDE_JPEG),)
     LOCAL_SHARED_LIBRARIES += libjpeg
 endif
-
 LOCAL_STATIC_LIBRARIES += libpixelflinger_twrp
 ifeq ($(shell test $(PLATFORM_SDK_VERSION) -gt 25; echo $$?),0)
 LOCAL_SHARED_LIBRARIES += libcutils liblog libutils

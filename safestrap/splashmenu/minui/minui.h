@@ -51,16 +51,16 @@ void gr_fill(int x, int y, int w, int h);
 void gr_line(int x0, int y0, int x1, int y1, int width);
 gr_surface gr_render_circle(int radius, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
 
-int gr_textEx_scaleW(int x, int y, const char *s, void* pFont, int max_width, int placement, int scale);
-int gr_textEx(int x, int y, const char *s, void* font);
 void gr_text(int x, int y, const char *s, bool bold);
+int gr_textEx_scaleW(int x, int y, const char *s, void* pFont, int max_width, int placement, int scale);
 
 int gr_getMaxFontHeight(void *font);
 
 void *gr_ttf_loadFont(const char *filename, int size, int dpi);
 void *gr_ttf_scaleFont(void *font, int max_width, int measured_width);
 void gr_ttf_freeFont(void *font);
-int gr_ttf_textExWH(void *context, int x, int y, const char *s, void *pFont, int max_width, int max_height);
+int gr_ttf_textExWH(void *context, int x, int y, const char *s, void *pFont,
+                    int max_width, int max_height, const gr_surface gr_draw);
 int gr_ttf_measureEx(const char *s, void *font);
 int gr_ttf_maxExW(const char *s, void *font, int max_width);
 int gr_ttf_getMaxFontHeight(void *font);
@@ -75,6 +75,21 @@ int gr_free_surface(gr_surface surface);
 // Functions in graphics_utils.c
 int gr_save_screenshot(const char *dest);
 
+// Transform minuitwrp API coordinates into display coordinates,
+// for panels that are hardware-mounted in a rotated manner.
+#define ROTATION_X_DISP(x, y, surface) \
+    ((TW_ROTATION ==   0) ? (x) : \
+     (TW_ROTATION ==  90) ? ((surface)->width - (y) - 1) : \
+     (TW_ROTATION == 180) ? ((surface)->width - (x) - 1) : \
+     (TW_ROTATION == 270) ? (y) : -1)
+#define ROTATION_Y_DISP(x, y, surface) \
+    ((TW_ROTATION ==   0) ? (y) : \
+     (TW_ROTATION ==  90) ? (x) : \
+     (TW_ROTATION == 180) ? ((surface)->height - (y) - 1) : \
+     (TW_ROTATION == 270) ? ((surface)->height - (x) - 1) : -1)
+
+void surface_ROTATION_transform(gr_surface dst_ptr, const gr_surface src_ptr, size_t num_bytes_per_pixel);
+
 // input event structure, include <linux/input.h> for the definition.
 // see http://www.mjmwired.net/kernel/Documentation/input/ for info.
 struct input_event;
@@ -84,18 +99,7 @@ void ev_exit(void);
 int ev_get(struct input_event *ev, int timeout_ms);
 int ev_has_mouse(void);
 
-// 'timeout' has the same semantics as poll(2).
-//    0 : don't block
-//  < 0 : block forever
-//  > 0 : block for 'timeout' milliseconds
-int ev_wait(int timeout);
-
-int ev_get_input(int fd, uint32_t epevents, input_event* ev);
-
 // Resources
-#ifndef RES_IMAGES_FOLDER
-#define RES_IMAGES_FOLDER "/system/etc/safestrap/res"
-#endif
 
 // Returns 0 if no error, else negative.
 int res_create_surface(const char* name, gr_surface* pSurface);

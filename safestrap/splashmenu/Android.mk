@@ -46,7 +46,7 @@ LOCAL_STATIC_LIBRARIES := \
 	libpixelflinger_twrp \
 	libpng \
 	libz \
-	libstdc++ \
+	libc++_static \
 	libc \
 	libcutils \
 	liblog \
