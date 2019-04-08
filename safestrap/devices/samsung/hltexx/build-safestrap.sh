@@ -5,5 +5,3 @@ cp -fr hltexx/twrp.fstab $OUT/recovery/root/etc/recovery.fstab
 cp -fr hltexx/ss.config $OUT/install-files/etc/safestrap/ss.config
 cp -fr hltexx/ss.config $OUT/APP/ss.config
 cp -fr hltexx/ss.config $OUT/recovery/root/ss.config
-cp -fr hltexx/build-fs.sh $OUT/recovery/root/sbin/
-

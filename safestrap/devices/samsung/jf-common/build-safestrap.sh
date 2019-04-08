@@ -12,6 +12,5 @@ cp -fr jf-common/twrp.fstab $OUT/recovery/root/etc/recovery.fstab
 cp -fr jf-common/ss.config $OUT/install-files/etc/safestrap/ss.config
 cp -fr jf-common/ss.config $OUT/APP/ss.config
 cp -fr jf-common/ss.config $OUT/recovery/root/ss.config
-cp -fr jf-common/build-fs.sh $OUT/recovery/root/sbin/
 cp -fr ../../sbin-extras/* $OUT/recovery/root/sbin/
 cd ../../../gui

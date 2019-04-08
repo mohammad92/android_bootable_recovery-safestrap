@@ -23,13 +23,21 @@ if [ "$SS_USE_DATAMEDIA" = "1" ]; then
 	DISABLE_JOURNAL="-O ^has_journal"
 fi
 
-if [ "$USERDATA_FSTYPE" = "f2fs" ] && [ "$LOOP_DEV" = "-userdata" ]; then
-	mkfs.f2fs $BLOCK_DIR/loop$LOOP_DEV
+# copy data from stock system after rom-slot creation
+if [ "$SS_COPY_SYSTEM_DATA" = "1" ] && [ "$LOOP_DEV" = "-system" ]; then
+	lfs dd if=$BLOCK_DIR/$BLOCK_SYSTEM-orig of=$BLOCK_DIR/loop$LOOP_DEV bs=4096
+	e2fsck -p -v $BLOCK_DIR/loop$LOOP_DEV
+	mount -t $SYSTEM_FSTYPE $BLOCK_DIR/loop$LOOP_DEV /system
+	rm -rf /system/*
+	umount /system
 else
-	if [ "$LOOP_DEV" = "-userdata" ]; then
-		mke2fs $DISABLE_JOURNAL -T $USERDATA_FSTYPE $BLOCK_DIR/loop$LOOP_DEV
+	if [ "$USERDATA_FSTYPE" = "f2fs" ] && [ "$LOOP_DEV" = "-userdata" ]; then
+		mkfs.f2fs $BLOCK_DIR/loop$LOOP_DEV
 	else
-		mke2fs $DISABLE_JOURNAL -T $SYSTEM_FSTYPE $BLOCK_DIR/loop$LOOP_DEV
+		if [ "$LOOP_DEV" = "-userdata" ]; then
+			mke2fs $DISABLE_JOURNAL -T $USERDATA_FSTYPE $BLOCK_DIR/loop$LOOP_DEV
+		else
+			mke2fs $DISABLE_JOURNAL -T $SYSTEM_FSTYPE $BLOCK_DIR/loop$LOOP_DEV
+		fi
 	fi
 fi
-

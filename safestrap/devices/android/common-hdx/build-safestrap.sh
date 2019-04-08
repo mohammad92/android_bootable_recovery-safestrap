@@ -10,6 +10,5 @@ cp -fr common-hdx/ss.config $OUT/install-files/etc/safestrap/ss.config
 cp -fr common-hdx/ss.config $OUT/APP/ss.config
 cp -fr common-hdx/ss.config $OUT/recovery/root/ss.config
 cp -fr common-hdx/rootfs/* $OUT/install-files/etc/safestrap/rootfs/
-cp -fr common-hdx/build-fs.sh $OUT/recovery/root/sbin/
 cp -fr ../../sbin-extras/* $OUT/recovery/root/sbin/
 cd ../../../gui

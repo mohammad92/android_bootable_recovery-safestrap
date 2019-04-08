@@ -12,6 +12,5 @@ cp -fr msm8998-common/twrp.fstab $OUT/recovery/root/etc/recovery.fstab
 cp -fr msm8998-common/ss.config $OUT/install-files/etc/safestrap/ss.config
 cp -fr msm8998-common/ss.config $OUT/APP/ss.config
 cp -fr msm8998-common/ss.config $OUT/recovery/root/ss.config
-cp -fr msm8998-common/build-fs.sh $OUT/recovery/root/sbin/
 cp -fr ../../sbin-extras/* $OUT/recovery/root/sbin/
 cd ../../../gui
