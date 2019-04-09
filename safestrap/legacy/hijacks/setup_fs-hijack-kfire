@@ -262,4 +262,3 @@ setprop ctl.start drm
 /sbin/bbx mount -o remount,ro /system
 /sbin/bbx mount -o remount,ro rootfs
 /system/bin/$HIJACK_BIN.bin "$@"
-

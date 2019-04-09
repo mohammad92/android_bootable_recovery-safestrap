@@ -41,4 +41,3 @@ else
 	$BBX ln -s /dev/null $BLOCK_DIR/$BLOCK_BOOT
 fi
 $BBX echo "$SS_SLOT" > $SS_DIR/active_slot
-

@@ -308,4 +308,3 @@ fi
 $BBX echo "\nPassing through hijack: /system/etc/init.qcom.modem_links.sh.bin $@\n" > /dev/kmsg
 
 /system/etc/init.qcom.modem_links.sh.bin "$@"
-

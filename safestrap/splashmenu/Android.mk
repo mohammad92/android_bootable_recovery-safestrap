@@ -8,8 +8,8 @@ ifeq ($(TWRP_EVENT_LOGGING), true)
 endif
 
 splash_sources := \
-    splashmenu.cpp \
-    ui.cpp
+	splashmenu.cpp \
+	ui.cpp
 
 ifndef SPLASH_RECOVERY_KEY
   SPLASH_RECOVERY_KEY := KEY_MENU
@@ -31,7 +31,7 @@ ifdef SPLASH_DELAY
 endif
 
 ifeq ($(TW_TARGET_USES_QCOM_BSP), true)
-    LOCAL_CFLAGS += -DTW_QCOM_BSP
+  LOCAL_CFLAGS += -DTW_QCOM_BSP
 endif
 
 LOCAL_MODULE := safestrapmenu
@@ -50,8 +50,8 @@ LOCAL_STATIC_LIBRARIES := \
 	libc \
 	libcutils \
 	liblog \
-        libutils \
-        libm
+	libutils \
+	libm
 
 LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
 LOCAL_PACK_MODULE_RELOCATIONS := false

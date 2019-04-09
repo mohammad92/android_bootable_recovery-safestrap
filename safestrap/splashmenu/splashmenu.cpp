@@ -151,4 +151,3 @@ int main(int argc, char **argv) {
   LOGI("result: %d\n", result);
   exit(result);
 }
-

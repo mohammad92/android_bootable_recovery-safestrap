@@ -10,7 +10,6 @@ BBX=/sbin/bbx
 SS_CONFIG=/ss.config
 DISABLE_JOURNAL=
 
-
 . /sbin/ss_function.sh
 readConfig
 

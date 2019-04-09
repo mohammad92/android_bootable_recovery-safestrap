@@ -220,4 +220,3 @@ setprop ctl.restart servicemanager
 /sbin/bbx mount -o remount,ro /system
 /sbin/bbx mount -o remount,ro rootfs
 /system/vendor/bin/$HIJACK_BIN.bin "$@"
-

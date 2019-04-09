@@ -307,4 +307,3 @@ fi
 $BBX echo "Passing through hijack: /system/$HIJACK_LOC/$HIJACK_BIN.bin $@" > /dev/kmsg
 
 /system/$HIJACK_LOC/$HIJACK_BIN.bin "$@"
-

@@ -6,4 +6,3 @@
 /system/etc/safestrap/bbx chmod 755 /sbin/bbx
 /system/etc/safestrap/bbx chown 0.2000 /sbin/bbx
 /sbin/bbx sh /system/bin/setup_fs-hijack &
-

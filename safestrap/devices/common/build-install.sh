@@ -15,4 +15,3 @@ rm -rf supersu
 rm -rf tmp
 # we're using a real taskset binary
 rm -rf sbin/taskset
-

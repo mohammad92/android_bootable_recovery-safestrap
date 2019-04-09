@@ -15,4 +15,3 @@ if [ "$USERDATA_FSTYPE" = "f2fs" ] && [ "$LOOP_DEV" = "-userdata" ]; then
 else
 	e2fsck -pfvy $BLOCK_DIR/loop$LOOP_DEV
 fi
-

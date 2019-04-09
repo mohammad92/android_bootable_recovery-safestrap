@@ -24,4 +24,3 @@ cp $ANDROID_BUILD_TOP/device/motorola/omap4-common/kexec/kexec $OUT/install-file
 cp $ANDROID_BUILD_TOP/bootable/recovery/safestrap/devices/motorola/solana/safestrapmenu $OUT/install-files/etc/safestrap/
 
 sh $ANDROID_BUILD_TOP/bootable/recovery/safestrap/devices/common/build-install-finish.sh
-

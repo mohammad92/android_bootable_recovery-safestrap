@@ -7,4 +7,3 @@
 /system       ext4      /dev/block/platform/msm_sdcc.1/by-name/system       flags=usermrf
 /systemorig   ext4      /dev/block/mmcblk0p16-orig                          flags=hidden;usermrf
 /ss           ext4      /dev/block/mmcblk0p27-orig                          flags=hidden
-

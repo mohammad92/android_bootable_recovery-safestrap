@@ -211,4 +211,3 @@ if [ "$3" = "/dev/block/platform/omap/omap_hsmmc.1/by-name/userdata" ]; then
 fi
 
 /system/bin/$HIJACK_BIN.bin "$@"
-

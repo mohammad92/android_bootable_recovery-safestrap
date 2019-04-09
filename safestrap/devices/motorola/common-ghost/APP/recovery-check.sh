@@ -41,4 +41,3 @@ if [ "$CURRENTSYS" = "$BLOCK_DIR/loop-system" ]; then
 	umount $DESTMOUNT
 fi
 echo "$vers:$alt_boot_mode:$write_protect"
-

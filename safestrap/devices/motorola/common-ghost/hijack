@@ -353,4 +353,3 @@ fi
 $BBX echo "\nPassing through hijack: /system/bin/resize2fs.bin $@\n" > /dev/kmsg
 
 /system/bin/resize2fs.bin "$@"
-

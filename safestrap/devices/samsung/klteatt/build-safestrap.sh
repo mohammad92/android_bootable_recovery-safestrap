@@ -6,4 +6,3 @@ cp -fr klteatt/twrp.fstab $OUT/recovery/root/etc/recovery.fstab
 cp -fr klteatt/ss.config $OUT/install-files/etc/safestrap/ss.config
 cp -fr klteatt/ss.config $OUT/APP/ss.config
 cp -fr klteatt/ss.config $OUT/recovery/root/ss.config
-

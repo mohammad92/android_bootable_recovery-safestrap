@@ -6,4 +6,3 @@
 /system/etc/safestrap/bbx chmod 755 /sbin/bbx
 /system/etc/safestrap/bbx chown 0.2000 /sbin/bbx
 /system/bin/logwrapper /system/vendor/bin/start_smc.sh-hijack
-

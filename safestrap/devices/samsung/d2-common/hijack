@@ -134,7 +134,7 @@ if [ "$RUN_SS" = "1" ]; then
 	CHECK_RECOVERY_ENTRY="1"
 	if [ "$ALT_SYSTEM_MODE" = "2" ]; then
 		ENTER_RECOVERY="1"
-        fi
+	fi
 
 	if [ "$ENTER_RECOVERY" = "0" ]; then
 		CHECK_RECOVERY_ENTRY=$($RECOVERY_DIR/safestrapmenu $ALT_SYSTEM_MODE > /dev/null 2>&1;echo $?)
@@ -373,4 +373,3 @@ fi
 $BBX echo "<1>Passing through hijack: /system/$HIJACK_LOC/$HIJACK_BIN.bin $@" > /dev/kmsg
 
 /system/$HIJACK_LOC/$HIJACK_BIN.bin "$@"
-

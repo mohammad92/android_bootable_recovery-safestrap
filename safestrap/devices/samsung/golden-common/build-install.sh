@@ -4,4 +4,3 @@ cd $OUT/recovery/root
 # remove fstab.qcom from recovery
 rm fstab.qcom
 cp $ANDROID_BUILD_TOP/bootable/recovery/safestrap/devices/samsung/golden-common/rootfs/init ./init
-

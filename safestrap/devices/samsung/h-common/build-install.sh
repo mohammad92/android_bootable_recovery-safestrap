@@ -3,4 +3,3 @@ sh $ANDROID_BUILD_TOP/bootable/recovery/safestrap/devices/common/build-install.s
 cd $OUT/recovery/root
 # remove fstab.qcom from recovery
 rm fstab.qcom
-

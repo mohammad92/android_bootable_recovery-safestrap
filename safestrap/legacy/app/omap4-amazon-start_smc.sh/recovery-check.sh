@@ -39,4 +39,3 @@ if [ ! "$CURRENTSYS" = "$PRIMARYSYS" ]; then
 	$INSTALLPATH/busybox umount $DESTMOUNT
 fi
 echo "$vers:$alt_boot_mode"
-

@@ -59,6 +59,3 @@ if [ ! "$CURRENTSYS" = "$PRIMARYSYS" ]; then
 else
 	$INSTALLPATH/busybox mount -o ro,remount $DESTMOUNT >> $LOGFILE
 fi
-
-
-

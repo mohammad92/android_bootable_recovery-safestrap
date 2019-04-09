@@ -57,4 +57,3 @@ bbx kill -s KILL $(bbx ps | bbx grep ueventd | bbx head -n 1 | bbx awk '{print $
 
 # try to remove our sockets!
 bbx rm -f /dev/socket/*
-
