@@ -1,7 +1,7 @@
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
-LOCAL_SRC_FILES := 2nd-init.c
+LOCAL_SRC_FILES := 2nd-init.cpp
 LOCAL_STATIC_LIBRARIES += libc
 LOCAL_MODULE_TAGS := eng
 LOCAL_MODULE := 2nd-init
