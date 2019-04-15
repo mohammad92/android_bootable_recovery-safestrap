@@ -34,6 +34,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <2nd-init.h>
+
 static void read_init_map(char *wanted_dev, unsigned long *base)
 {
     char line[128];
@@ -52,48 +54,6 @@ static void read_init_map(char *wanted_dev, unsigned long *base)
 
 static unsigned long find_execve(unsigned long image_base)
 {
-#ifdef __aarch64__
-    /*===================================
-     * Signatures of calling execve inside init
-     * execve:
-     *
-     * D2801BA8     MOV     x8, #0xDD
-     * D4000001     SVC     #0x0
-     * B140041F     CMN     x0, #0x1, LSL #12
-     * DA809400     CNEG    x0, x0, HI
-     *===================================*/
-    const int execve_code[] = { 0xD2801BA8, 0xD4000001, 0xB140041F, 0xDA809400 };
-#else
-    /*====================================
-     * Signatures of execve inside init
-     * execve:
-     *
-     * E1A0C007     MOV     IP, R7
-     * E3A0700B     MOV     r7, #11
-     *
-     *====================================*/
-
-    /*====================================
-     * Signature of calling execve inside init (Android <= 4.2.2)
-     * execve:
-     *
-     * 90002DE9     STMFD   SP!, {R4,R7}
-     * 0B70A0E3     MOV     R7, #0xB
-     * 000000EF     SVC     0
-     * 9000BDE8     LDMFD   SP!, {R4,R7}
-     *====================================*/
-
-    /*====================================
-     * Signature of calling execve inside init (Android 4.3)
-     * execve:
-     *
-     * 07C0A0E1     MOV     IP, R7
-     * 0B70A0E3     LDR     R7, #0xB
-     * 000000EF     SVC     0
-     * 0C70A0E1     MOV     R7, IP
-     *====================================*/
-    const int execve_code[] = { 0xE1A0C007, 0xE3A0700B, 0x90002DE9, 0x0B70A0E3, 0x000000EF, 0x9000BDE8, 0x07C0A0E1, 0x0C70A0E1 };
-#endif
     unsigned long i;
 
     for (i = 0; ; i += sizeof(*execve_code))
