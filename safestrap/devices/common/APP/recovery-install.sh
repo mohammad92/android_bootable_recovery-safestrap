@@ -19,15 +19,15 @@ fi
 echo "CURRENTSYS = $CURRENTSYS" $LOGFILE
 
 if [ -d $INSTALLPATH/install-files ]; then
-	su -c "rm -rf $INSTALLPATH/install-files $LOGFILE"
+	rm -rf $INSTALLPATH/install-files $LOGFILE
 fi
 sync
-su -c "unzip $INSTALLPATH/install-files.zip -d $INSTALLPATH $LOGFILE"
+unzip $INSTALLPATH/install-files.zip -d $INSTALLPATH $LOGFILE
 if [ ! -d $INSTALLPATH/install-files ]; then
 	echo 'ERR: Zip file didnt extract correctly.  Installation aborted.' $LOGFILE
 	exit 1
 fi
-su -c "chmod -R 755 $INSTALLPATH/install-files"
+chmod -R 755 $INSTALLPATH/install-files
 
 # determine our active system, and mount/remount accordingly
 if [ "$CURRENTSYS" = "$BLOCK_DIR/loop-system" ]; then
