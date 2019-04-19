@@ -38,13 +38,13 @@ const int execve_code[] = { 0xD2801BA8, 0xD4000001, 0xB140041F, 0xDA809400 };
  * Signature of calling execve inside init
  * execve:
  *
- * 07C0A0E1	MOV	R12, R7
- * 0B70A0E3	LDR	R7, #0xB
- * 000000EF	SVC	0
- * 0C70A0E1	MOV	R7, R12
+ * E1A0C007	MOV	R12, R7
+ * E3A0700B	LDR	R7, #0xB
+ * EF000000	SVC	0
+ * E1A0700C	MOV	R7, R12
  *========================================================*/
 
-const int execve_code[] = { 0x07C0A0E1, 0x0B70A0E3, 0x000000EF, 0x0C70A0E1 };
+const int execve_code[] = { 0xE1A0C007, 0xE3A0700B, 0xEF000000, 0xE1A0700C };
 #endif
 
 #endif //!SECOND_INIT_H
