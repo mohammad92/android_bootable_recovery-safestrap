@@ -1,7 +1,7 @@
 // action_safestrap.cpp - GUIAction extension
 
 int createImagePartition(string slotName, string imageName, int imageSize, string mountName,
-		int loopNum, int progressBase1, int progressBase2, int progressBase3) {
+		int loopNum __unused, int progressBase1, int progressBase2, int progressBase3) {
 	char cmd[255];
 	string result;
 	string seconds;
@@ -119,7 +119,7 @@ int checkRomSlot(string loopName, bool remount) {
 	return 0;
 }
 
-int GUIAction::refreshsizesnt(std::string arg)
+int GUIAction::refreshsizesnt(std::string arg __unused)
 {
 	if (simulate) {
 		simulate_progress_bar();
@@ -129,7 +129,7 @@ int GUIAction::refreshsizesnt(std::string arg)
 	return 0;
 }
 
-int GUIAction::loadsizes(std::string arg)
+int GUIAction::loadsizes(std::string arg __unused)
 {
 	if (simulate) {
 		simulate_progress_bar();
@@ -174,7 +174,15 @@ int GUIAction::changeslot(std::string arg)
 	PartitionManager.UnMount_By_Path("/cache", true);
 
 	TWFunc::Exec_Cmd("/sbin/changeslot.sh " + arg, result);
-	PartitionManager.Process_Fstab("/etc/recovery.fstab", true, true);
+	std::string fstab_filename = "/etc/twrp.fstab";
+	if (!TWFunc::Path_Exists(fstab_filename)) {
+		fstab_filename = "/etc/recovery.fstab";
+	}
+	printf("=> Processing %s\n", fstab_filename.c_str());
+	if (!PartitionManager.Process_Fstab(fstab_filename, true, true)) {
+		LOGERR("Failing out of recovery due to problem with fstab.\n");
+		return -1;
+	}
 	PartitionManager.Update_System_Details();
 
 	PartitionManager.Mount_By_Path("/cache", true);
@@ -185,7 +193,7 @@ int GUIAction::changeslot(std::string arg)
 	return 0;
 }
 
-int GUIAction::checkslotnames(std::string arg)
+int GUIAction::checkslotnames(std::string arg __unused)
 {
 	char array[512];
 	string str = "Undefined";
@@ -200,9 +208,8 @@ int GUIAction::checkslotnames(std::string arg)
 	return 0;	
 }
 
-int GUIAction::readslotnames(std::string arg)
+int GUIAction::readslotnames(std::string arg __unused)
 {
-	int i;
 	char array[512];
 	char filename[512];
 	long lSize;
@@ -252,7 +259,6 @@ int GUIAction::readslotnames(std::string arg)
 
 int GUIAction::setslotvarname(std::string arg)
 {
-	char array[512];
 	string str = arg;
 	string var = "tw_" + arg +"_name";
 	DataManager::GetValue(var, str);
@@ -261,7 +267,7 @@ int GUIAction::setslotvarname(std::string arg)
 	return 0;
 }
 
-int GUIAction::setslotnickname(std::string arg)
+int GUIAction::setslotnickname(std::string arg __unused)
 {
 	string result;
 	string romslot;
@@ -352,7 +358,15 @@ int GUIAction::createslot(std::string arg)
 
 		DataManager::SetValue("tw_operation", "Updating filesystem details...");
 		gui_print("Updating filesystem details...\n");
-		PartitionManager.Process_Fstab("/etc/recovery.fstab", true, true);
+		std::string fstab_filename = "/etc/twrp.fstab";
+		if (!TWFunc::Path_Exists(fstab_filename)) {
+			fstab_filename = "/etc/recovery.fstab";
+		}
+		printf("=> Processing %s\n", fstab_filename.c_str());
+		if (!PartitionManager.Process_Fstab(fstab_filename, true, true)) {
+			LOGERR("Failing out of recovery due to problem with fstab.\n");
+			return -1;
+		}
 		PartitionManager.Update_System_Details();
 
 		PartitionManager.Mount_By_Path("/cache", true);
@@ -386,7 +400,7 @@ int GUIAction::deleteslot(std::string arg)
 	return 0;
 }
 
-int GUIAction::checkslot(std::string arg)
+int GUIAction::checkslot(std::string arg __unused)
 {
 	operation_start("deleteslot");
 

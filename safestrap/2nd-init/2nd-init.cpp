@@ -36,7 +36,7 @@
 
 #include <2nd-init.h>
 
-static void read_init_map(char *wanted_dev, unsigned long *base)
+static void read_init_map(const char *wanted_dev, unsigned long *base)
 {
     char line[128];
 

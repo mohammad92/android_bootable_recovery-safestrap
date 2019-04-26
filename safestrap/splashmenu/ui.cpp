@@ -169,7 +169,7 @@ static void update_screen_locked(void)
 }
 
 // Reads input events, handles special hot keys, and adds to the key queue.
-static void *input_thread(void *cookie)
+static void *input_thread(void *cookie __unused)
 {
     int rel_sum = 0;
     int fake_key = 0;

@@ -40,14 +40,6 @@ static unsigned long total_delay = 8;
 #endif
 
 /**
- * compare_string()
- *
- */
-static int compare_string(const void* a, const void* b) {
-  return strcmp(*(const char**)a, *(const char**)b);
-}
-
-/**
  * ui_finish()
  *
  */
@@ -86,7 +78,6 @@ static int wait_key(int key, int skipkey, int disablekey) {
 
 
 int main(int argc, char **argv) {
-  int defmode, mode;
   int result = 1;
 
   LOGI("Starting Safestrap Splash\n");

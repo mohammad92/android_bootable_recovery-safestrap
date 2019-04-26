@@ -32,7 +32,7 @@
  * DA809400	CINV	X0, X0, HI
  *========================================================*/
 
-const int execve_code[] = { 0xD2801BA8, 0xD4000001, 0xB140041F, 0xDA809400 };
+unsigned int execve_code[] = { 0xD2801BA8, 0xD4000001, 0xB140041F, 0xDA809400 };
 #else
 /*========================================================
  * Signature of calling execve inside init
@@ -44,7 +44,7 @@ const int execve_code[] = { 0xD2801BA8, 0xD4000001, 0xB140041F, 0xDA809400 };
  * E1A0700C	MOV	R7, R12
  *========================================================*/
 
-const int execve_code[] = { 0xE1A0C007, 0xE3A0700B, 0xEF000000, 0xE1A0700C };
+unsigned int execve_code[] = { 0xE1A0C007, 0xE3A0700B, 0xEF000000, 0xE1A0700C };
 #endif
 
 #endif //!SECOND_INIT_H

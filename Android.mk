@@ -29,9 +29,8 @@ ifeq ($(BUILD_SAFESTRAP), true)
 ifeq ($(SS_PRODUCT_MANUFACTURER), )
     SS_PRODUCT_MANUFACTURER := $(shell echo $(PRODUCT_MANUFACTURER) | tr '[A-Z]' '[a-z]')
 endif
-include $(LOCAL_PATH)/safestrap/devices/$(SS_PRODUCT_MANUFACTURER)/$(TARGET_DEVICE)/safestrap.mk
+include $(commands_TWRP_local_path)/safestrap/devices/$(SS_PRODUCT_MANUFACTURER)/$(TARGET_DEVICE)/safestrap.mk
 endif
-
 
 ifneq ($(project-path-for),)
     ifeq ($(LOCAL_PATH),$(call project-path-for,recovery))
@@ -64,6 +63,11 @@ ifeq ($(CM_PLATFORM_SDK_VERSION),)
 endif
 
 include $(CLEAR_VARS)
+
+ifeq ($(BUILD_SAFESTRAP), true)
+    LOCAL_CFLAGS += -DBUILD_SAFESTRAP
+    LOCAL_CPPFLAGS += -DBUILD_SAFESTRAP
+endif
 
 TWRES_PATH := /twres/
 TWHTCD_PATH := $(TWRES_PATH)htcd/

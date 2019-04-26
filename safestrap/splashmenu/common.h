@@ -71,8 +71,6 @@ void ui_set_background(int icon);
 #define STRINGIFY(x) #x
 #define EXPAND(x) STRINGIFY(x)
 
-static void finish(void);
-
 enum { 
   DISABLE,
   ENABLE
