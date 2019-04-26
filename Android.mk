@@ -19,8 +19,10 @@ BUILD_SAFESTRAP := true
 ifeq ($(BUILD_SAFESTRAP), true)
     LOCAL_CFLAGS += -DBUILD_SAFESTRAP
     LOCAL_CPPFLAGS += -DBUILD_SAFESTRAP
-    TARGET_GLOBAL_CFLAGS += -DBUILD_SAFESTRAP
-    CLANG_TARGET_GLOBAL_CFLAGS += -DBUILD_SAFESTRAP
+    ifeq ($(shell test $(PLATFORM_SDK_VERSION) -lt 26; echo $$?),0)
+        TARGET_GLOBAL_CFLAGS += -DBUILD_SAFESTRAP
+        CLANG_TARGET_GLOBAL_CFLAGS += -DBUILD_SAFESTRAP
+    endif
 endif
 
 ifeq ($(BUILD_SAFESTRAP), true)
@@ -964,6 +966,10 @@ endif
 ifdef SS_INCLUDE_BYPASSLKM
     include $(commands_TWRP_local_path)/safestrap/bypasslkm/Android.mk
 endif
+
+# Call out to device-specific script
+include $(commands_TWRP_local_path)/safestrap/devices/common/build-safestrap.mk
+include $(commands_TWRP_local_path)/safestrap/devices/common/build-install.mk
 endif
 
 ifeq ($(shell test $(PLATFORM_SDK_VERSION) -lt 24; echo $$?),0)

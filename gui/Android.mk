@@ -213,27 +213,6 @@ $(TWRP_RES_GEN):
 	mkdir -p $(TARGET_RECOVERY_ROOT_OUT)$(TWRES_PATH)
 	cp -fr $(TWRP_RES) $(TARGET_RECOVERY_ROOT_OUT)$(TWRES_PATH)
 	cp -fr $(TWRP_THEME_LOC)/* $(TARGET_RECOVERY_ROOT_OUT)$(TWRES_PATH)
-ifeq ($(BUILD_SAFESTRAP), true)
-	# Safestrap Setup
-	rm -rf $(OUT)/2nd-init-files
-	rm -rf $(OUT)/APP
-	rm -rf $(OUT)/install-files
-	mkdir -p $(OUT)/2nd-init-files
-	mkdir -p $(OUT)/install-files/etc/safestrap/flags
-	mkdir -p $(OUT)/install-files/etc/safestrap/res
-	mkdir -p $(OUT)/APP
-	cp -p $(SS_COMMON)/devices/common/2nd-init-files/* $(OUT)/2nd-init-files
-	cp -p $(SS_COMMON)/devices/common/2nd-init-files/fixboot.sh $(TARGET_RECOVERY_ROOT_OUT)/sbin/
-	cp -p $(SS_COMMON)/devices/common/2nd-init-files/ss_function.sh $(TARGET_RECOVERY_ROOT_OUT)/sbin/
-	cp -p $(SS_COMMON)/devices/common/2nd-init-files/ss_function.sh $(OUT)/install-files/etc/safestrap/
-	cp -p $(SS_COMMON)/devices/common/APP/* $(OUT)/APP/
-	cp -p $(SS_COMMON)/devices/common/sbin/* $(TARGET_RECOVERY_ROOT_OUT)/sbin/
-	cp -p $(SS_COMMON)/flags/* $(OUT)/install-files/etc/safestrap/flags/
-	cp -p $(SS_COMMON)/bbx $(OUT)/install-files/etc/safestrap/bbx
-	cp -p $(SS_COMMON)/devices/common/splashscreen-res/$(DEVICE_RESOLUTION)/* $(OUT)/install-files/etc/safestrap/res/
-	# Call out to device-specific script
-	$(SS_COMMON)/devices/$(SS_PRODUCT_MANUFACTURER)/$(TARGET_DEVICE)/build-safestrap.sh
-endif
 
 LOCAL_GENERATED_SOURCES := $(TWRP_RES_GEN)
 LOCAL_SRC_FILES := twrp $(TWRP_RES_GEN)

@@ -1,4 +1,4 @@
-#include $(ANDROID_BUILD_TOP)/bootable/recovery/safestrap/devices/common/safestrap-common.mk
+#include $(commands_TWRP_local_path)/safestrap/devices/common/safestrap-common.mk
 SS_INCLUDE_2NDINIT := true
 SS_INCLUDE_SPLASHMENU := true
 #BOARD_USE_NO_DEVFS_SETUP := true
@@ -10,9 +10,9 @@ BOARD_SUPPRESS_EMMC_WIPE := true
 # Use prebuilt kernel for kexec
 TARGET_KERNEL_SOURCE := 
 TARGET_KERNEL_CONFIG := 
-TARGET_PREBUILT_KERNEL := $(ANDROID_BUILD_TOP)/bootable/recovery/safestrap/devices/motorola/solana/recovery-kernel
+TARGET_PREBUILT_KERNEL := $(commands_TWRP_local_path)/safestrap/devices/motorola/solana/recovery-kernel
 
-include $(ANDROID_BUILD_TOP)/bootable/recovery/safestrap/devices/motorola/common-omap4/safestrap-common-omap4.mk
+include $(commands_TWRP_local_path)/safestrap/devices/motorola/common-omap4/safestrap-common-omap4.mk
 
 DEVICE_RESOLUTION := 540x960
 TW_MAX_BRIGHTNESS := 254

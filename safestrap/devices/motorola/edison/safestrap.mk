@@ -1,4 +1,4 @@
-include $(ANDROID_BUILD_TOP)/bootable/recovery/safestrap/devices/common/safestrap-common.mk
+include $(commands_TWRP_local_path)/safestrap/devices/common/safestrap-common.mk
 
 #TWRP
 RECOVERY_SDCARD_ON_DATA := true
