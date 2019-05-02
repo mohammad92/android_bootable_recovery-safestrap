@@ -45,7 +45,7 @@
 # $(call add-clean-step, rm -rf $(PRODUCT_OUT)/data/*)
 
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/RECOVERY_EXECUTABLES/safestrapmenu_intermediates)
-$(call add-clean-step, rm $(PRODUCT_OUT)/install-files/etc/safestrap/safestrapmenu)
+$(call add-clean-step, rm $(PRODUCT_OUT)/install-files/$(SS_LOC)/safestrap/safestrapmenu)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST

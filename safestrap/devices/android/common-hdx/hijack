@@ -2,7 +2,8 @@
 # By Hashcode
 PATH=/sbin:/system/bin:/system/xbin
 
-RECOVERY_DIR=/system/etc/safestrap
+SS_LOC=etc
+RECOVERY_DIR=/system/$SS_LOC/safestrap
 BBX=/sbin/bbx
 SS_CONFIG=/ss.config
 SS_CHECK_FILE=/.safestrapped
@@ -32,7 +33,7 @@ if [ ! -f "$SS_CHECK_FILE" ]; then
 	$BBX chown 0.0 $SS_CONFIG
 fi
 
-	. /system/etc/safestrap/ss_function.sh
+	. $RECOVERY_DIR/ss_function.sh
 	readConfig
 
 if [ "$RUN_SS" = "1" ]; then

@@ -2,7 +2,8 @@
 # By Hashcode
 PATH=/sbin:/system/bin:/system/xbin
 
-RECOVERY_DIR=/system/etc/safestrap
+SS_LOC=etc
+RECOVERY_DIR=/system/$SS_LOC/safestrap
 BBX=/sbin/bbx
 SS_CONFIG=/ss.config
 SS_CHECK_FILE=/.safestrapped
@@ -29,7 +30,7 @@ if [ ! -f "$SS_CHECK_FILE" ]; then
 	# move qe out of the way
 	$BBX mv /xbin/qe /xbin/qe.bak
 
-	. /system/etc/safestrap/ss_function.sh
+	. $RECOVERY_DIR/ss_function.sh
 	readConfig
 
 	if [ "$DEBUG_MODE" = "1" ]; then

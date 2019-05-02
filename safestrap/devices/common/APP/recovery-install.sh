@@ -2,8 +2,6 @@
 # By Hashcode
 
 INSTALLPATH=$1
-RECOVERY_DIR=etc/safestrap
-#LOGFILE=">> $INSTALLPATH/action-install.log"
 SS_CONFIG=$INSTALLPATH/ss.config
 
 chmod 755 $INSTALLPATH/ss_function.sh
@@ -11,6 +9,7 @@ chmod 755 $INSTALLPATH/ss_function.sh
 . $INSTALLPATH/ss_function.sh
 readConfig
 
+RECOVERY_DIR=$SS_LOC/safestrap
 CURRENTSYS=`readlink $BLOCK_DIR/$BLOCK_SYSTEM`
 # check for older symlink style fixboot
 if [ "$?" -ne 0 ]; then
@@ -58,12 +57,12 @@ cp -f $INSTALLPATH/install-files/$HIJACK_LOC/$HIJACK_BIN $DESTMOUNT/$HIJACK_LOC/
 chown 0.2000 $DESTMOUNT/$HIJACK_LOC/$HIJACK_BIN $LOGFILE
 chmod 755 $DESTMOUNT/$HIJACK_LOC/$HIJACK_BIN $LOGFILE
 
-# delete any existing /system/etc/safestrap dir
+# delete any existing /system/$SS_LOC/safestrap dir
 if [ -d "$DESTMOUNT/$RECOVERY_DIR" ]; then
 	rm -rf $DESTMOUNT/$RECOVERY_DIR $LOGFILE
 fi
 # extract the new dirs to /system
-cp -R $INSTALLPATH/install-files/$RECOVERY_DIR $DESTMOUNT/etc $LOGFILE
+cp -R $INSTALLPATH/install-files/$RECOVERY_DIR $DESTMOUNT/$SS_LOC $LOGFILE
 chown 0.2000 $DESTMOUNT/$RECOVERY_DIR/* $LOGFILE
 chmod 755 $DESTMOUNT/$RECOVERY_DIR/* $LOGFILE
 

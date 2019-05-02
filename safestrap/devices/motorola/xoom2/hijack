@@ -13,7 +13,8 @@ IMG_TYPE=ext4
 SS_MNT=/ss
 SS_PART=userdata
 
-RECOVERY_DIR=/system/etc/safestrap
+SS_LOC=etc
+RECOVERY_DIR=/system/$SS_LOC/safestrap
 SS_DIR=$SS_MNT/safestrap
 ALT_SYSTEM_MODE="0"
 BOOTMODE=$(getprop ro.bootmode)
@@ -21,11 +22,10 @@ CHARGER_MODE=$(cat /sys/class/power_supply/ac/online)
 CHECK_BOOTMODE="bp-tools"
 HIJACK_BIN=logwrapper
 
-
 if [ ! -f "/.safestraped" ]; then
 if [ "$3" = "$BLOCKNAME_DIR/userdata" ]; then
 	# remount root as rw
-	/system/etc/safestrap/bbx mount -o remount,rw rootfs
+	$RECOVERY_DIR/bbx mount -o remount,rw rootfs
 
 	# need busybox
 	cp $RECOVERY_DIR/bbx /sbin/bbx

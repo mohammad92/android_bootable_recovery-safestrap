@@ -196,7 +196,7 @@ LOCAL_CLANG := true
 ifneq ($(SSRES),)
     LOCAL_CFLAGS += -DSSRES='"$(SSRES)"'
 else
-    LOCAL_CFLAGS += -DSSRES='"/system/etc/safestrap/res"'
+    LOCAL_CFLAGS += -DSSRES='"/system/$(SS_LOC)/safestrap/res"'
 endif
 LOCAL_SHARED_LIBRARIES += libft2 libz libc libcutils libpng libutils libc++
 ifneq ($(TW_INCLUDE_JPEG),)

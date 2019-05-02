@@ -2,7 +2,6 @@
 # By Hashcode
 
 INSTALLPATH=$1
-RECOVERY_DIR=etc/safestrap
 #LOGFILE=">> $INSTALLPATH/action-uninstall.log"
 SS_CONFIG=$INSTALLPATH/ss.config
 
@@ -11,6 +10,7 @@ chmod 755 $INSTALLPATH/ss_function.sh
 . $INSTALLPATH/ss_function.sh
 readConfig
 
+RECOVERY_DIR=$SS_LOC/safestrap
 CURRENTSYS=`readlink $BLOCK_DIR/$BLOCK_SYSTEM`
 # check for older symlink style fixboot
 if [ "$?" -ne 0 ]; then

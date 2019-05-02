@@ -10,19 +10,19 @@ BUILD_SAFESTRAP_CMD := \
 	mkdir -p $(PRODUCT_OUT)/2nd-init-files && \
 	mkdir -p $(PRODUCT_OUT)/APP && \
 	mkdir -p $(PRODUCT_OUT)/install-files/bin && \
-	mkdir -p $(PRODUCT_OUT)/install-files/etc/safestrap/flags && \
-	mkdir -p $(PRODUCT_OUT)/install-files/etc/safestrap/res && \
-	mkdir -p $(PRODUCT_OUT)/install-files/etc/safestrap/rootfs && \
+	mkdir -p $(PRODUCT_OUT)/install-files/$(SS_LOC)/safestrap/flags && \
+	mkdir -p $(PRODUCT_OUT)/install-files/$(SS_LOC)/safestrap/res && \
+	mkdir -p $(PRODUCT_OUT)/install-files/$(SS_LOC)/safestrap/rootfs && \
 	mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/sbin && \
-	cp -p $(SS_COMMON)/flags/* $(PRODUCT_OUT)/install-files/etc/safestrap/flags/ && \
-	cp -p $(SS_COMMON)/bbx $(PRODUCT_OUT)/install-files/etc/safestrap/bbx && \
+	cp -p $(SS_COMMON)/flags/* $(PRODUCT_OUT)/install-files/$(SS_LOC)/safestrap/flags/ && \
+	cp -p $(SS_COMMON)/bbx $(PRODUCT_OUT)/install-files/$(SS_LOC)/safestrap/bbx && \
 	cp -p $(SS_COMMON)/devices/common/2nd-init-files/* $(PRODUCT_OUT)/2nd-init-files && \
 	cp -p $(SS_COMMON)/devices/common/2nd-init-files/fixboot.sh $(TARGET_RECOVERY_ROOT_OUT)/sbin/ && \
 	cp -p $(SS_COMMON)/devices/common/2nd-init-files/ss_function.sh $(TARGET_RECOVERY_ROOT_OUT)/sbin/ && \
-	cp -p $(SS_COMMON)/devices/common/2nd-init-files/ss_function.sh $(PRODUCT_OUT)/install-files/etc/safestrap/ && \
+	cp -p $(SS_COMMON)/devices/common/2nd-init-files/ss_function.sh $(PRODUCT_OUT)/install-files/$(SS_LOC)/safestrap/ && \
 	cp -p $(SS_COMMON)/devices/common/APP/* $(PRODUCT_OUT)/APP/ && \
 	cp -p $(SS_COMMON)/devices/common/sbin/* $(TARGET_RECOVERY_ROOT_OUT)/sbin/ && \
-	cp -p $(SS_COMMON)/devices/common/splashscreen-res/$(DEVICE_RESOLUTION)/* $(PRODUCT_OUT)/install-files/etc/safestrap/res/
+	cp -p $(SS_COMMON)/devices/common/splashscreen-res/$(DEVICE_RESOLUTION)/* $(PRODUCT_OUT)/install-files/$(SS_LOC)/safestrap/res/
 
 include $(SS_COMMON)/devices/$(SS_PRODUCT_MANUFACTURER)/$(TARGET_DEVICE)/build-safestrap.mk
 

@@ -1,5 +1,12 @@
 SS_DEVICES_COMMON_PATH := $(call my-dir)
 
+# Safestrap location
+ifneq ($(SS_LOC),)
+    SS_LOC=$(SS_LOC)
+else
+    SS_LOC=etc
+endif
+
 #SAFESTRAP COMMON
 SS_INCLUDE_2NDINIT := true
 SS_INCLUDE_SPLASHMENU := true
