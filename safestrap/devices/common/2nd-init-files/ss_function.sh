@@ -16,6 +16,7 @@ readConfig() {
 	SS_PART=$($BBX fgrep "SS_PART=" $SS_CONFIG | $BBX sed 's/SS_PART=//')
 	SS_FSTYPE=$($BBX fgrep "SS_FSTYPE=" $SS_CONFIG | $BBX sed 's/SS_FSTYPE=//')
 	SS_DIR=$($BBX fgrep "SS_DIR=" $SS_CONFIG | $BBX sed 's/SS_DIR=//')
+	SS_LOC=$($BBX fgrep "SS_LOC=" $SS_CONFIG | $BBX sed 's/SS_LOC=//')
 	HIJACK_BIN=$($BBX fgrep "HIJACK_BIN=" $SS_CONFIG | $BBX sed 's/HIJACK_BIN=//')
 	HIJACK_LOC=$($BBX fgrep "HIJACK_LOC=" $SS_CONFIG | $BBX sed 's/HIJACK_LOC=//')
 	BOOTMODE=$(getprop $($BBX fgrep "BOOTMODE_PROP=" $SS_CONFIG | $BBX sed 's/BOOTMODE_PROP=//'))
@@ -45,6 +46,7 @@ dumpConfig() {
 	$BBX echo "<1>SS_PART=$SS_PART" > /dev/kmsg
 	$BBX echo "<1>SS_FSTYPE=$SS_FSTYPE" > /dev/kmsg
 	$BBX echo "<1>SS_DIR=$SS_DIR" > /dev/kmsg
+	$BBX echo "<1>SS_LOC=$SS_LOC" > /dev/kmsg
 	$BBX echo "<1>HIJACK_BIN=$HIJACK_BIN" > /dev/kmsg
 	$BBX echo "<1>BOOTMODE=$BOOTMODE" > /dev/kmsg
 	$BBX echo "<1>CHECK_BOOTMODE=$CHECK_BOOTMODE" > /dev/kmsg
