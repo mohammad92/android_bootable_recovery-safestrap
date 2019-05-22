@@ -402,7 +402,7 @@ int GUIAction::deleteslot(std::string arg)
 
 int GUIAction::checkslot(std::string arg __unused)
 {
-	operation_start("deleteslot");
+	operation_start("checkslot");
 
 	if (simulate) {
 		simulate_progress_bar();
