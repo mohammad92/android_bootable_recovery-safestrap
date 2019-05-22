@@ -202,6 +202,11 @@ int TWPartitionManager::Process_Fstab(string Fstab_Filename, bool Display_Error)
 		if (strstr(fstab_line, "swap"))
 			continue; // Skip swap in recovery
 
+#ifdef BUILD_SAFESTRAP
+		if (strstr(fstab_line, "systemorig"))
+			continue; // Skip systemorig in recovery
+#endif
+
 		size_t line_size = strlen(fstab_line);
 		if (fstab_line[line_size - 1] != '\n')
 			fstab_line[line_size] = '\n';
