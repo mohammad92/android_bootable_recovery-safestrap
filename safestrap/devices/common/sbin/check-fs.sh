@@ -13,5 +13,5 @@ readConfig
 if [ "$USERDATA_FSTYPE" = "f2fs" ] && [ "$LOOP_DEV" = "-userdata" ]; then
 	fsck.f2fs $BLOCK_DIR/loop$LOOP_DEV
 else
-	e2fsck -pfvy $BLOCK_DIR/loop$LOOP_DEV
+	e2fsck -pfv $BLOCK_DIR/loop$LOOP_DEV
 fi
