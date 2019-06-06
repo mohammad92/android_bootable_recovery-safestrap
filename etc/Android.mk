@@ -41,11 +41,7 @@ ifeq ($(shell test $(PLATFORM_SDK_VERSION) -ge 22; echo $$?),0)
     LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
     LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT)
 
-ifeq ($(SS_FORCE_SECLABEL_RECOVERY_SERVICE), true)
     LOCAL_SRC_FILES := init.recovery.service22.rc
-else
-    LOCAL_SRC_FILES := init.recovery.service21.rc
-endif
     include $(BUILD_PREBUILT)
 else
     include $(CLEAR_VARS)
@@ -97,21 +93,25 @@ ifeq ($(TWRP_INCLUDE_LOGCAT), true)
 endif
 
 ifeq ($(BUILD_SAFESTRAP), true)
-include $(CLEAR_VARS)
-LOCAL_MODULE := init.recovery.safestrap.rc
-LOCAL_MODULE_TAGS := eng
-LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
+ifeq ($(shell test $(PLATFORM_SDK_VERSION) -ge 22; echo $$?),0)
+    include $(CLEAR_VARS)
+    LOCAL_MODULE := init.recovery.safestrap.rc
+    LOCAL_MODULE_TAGS := eng
+    LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
+    LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT)
 
-# Cannot send to TARGET_RECOVERY_ROOT_OUT since build system wipes init*.rc
-# during ramdisk creation and only allows init.recovery.*.rc files to be copied
-# from TARGET_ROOT_OUT thereafter
-LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT)
-ifeq ($(SS_FORCE_SECLABEL_RECOVERY_SERVICE), true)
-LOCAL_SRC_FILES := init.recovery.safestrap22.rc
+    LOCAL_SRC_FILES := init.recovery.safestrap22.rc
+    include $(BUILD_PREBUILT)
 else
-LOCAL_SRC_FILES := init.recovery.safestrap21.rc
+    include $(CLEAR_VARS)
+    LOCAL_MODULE := init.recovery.service.rc
+    LOCAL_MODULE_TAGS := eng
+    LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
+    LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT)
+
+    LOCAL_SRC_FILES := init.recovery.safestrap21.rc
+    include $(BUILD_PREBUILT)
 endif
-include $(BUILD_PREBUILT)
 endif
 
 ifeq ($(TW_USE_TOOLBOX), true)
