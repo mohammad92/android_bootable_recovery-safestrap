@@ -1674,7 +1674,7 @@ bool TWPartition::Wipe(string New_File_System) {
 		update_crypt = wiped;
 #ifdef BUILD_SAFESTRAP
 		// RESTORE Safestrap files if this is stock
-		if ((bootslot == "stock") && (Mount_Point == "/system")) {
+		if ((bootslot == "stock") && (Mount_Point == PartitionManager.Get_Android_Root_Path())) {
 			Mount(true);
 			PartitionManager.Restore_Safestrap();
 			UnMount(true);

@@ -2414,9 +2414,9 @@ int TWPartitionManager::Backup_Safestrap(void) {
 		if (stat("/tmp/.dont-restore-ss", &st) == 0) {
 			TWFunc::Exec_Cmd("rm /tmp/.dont-restore-ss", result);
 		}
-		PartitionManager.Mount_By_Path("/system", true);
+		PartitionManager.Mount_By_Path(Get_Android_Root_Path(), true);
 		TWFunc::Exec_Cmd("/sbin/backup-ss.sh", result);
-		PartitionManager.UnMount_By_Path("/system", true);
+		PartitionManager.UnMount_By_Path(Get_Android_Root_Path(), true);
 		if (result != "") returnVal = 1;
 	}
 	return returnVal;
@@ -2434,9 +2434,9 @@ int TWPartitionManager::Restore_Safestrap(void) {
 
 		// RESTORE Safestrap files if this is stock
 		if (bootslot == "stock") {
-			PartitionManager.Mount_By_Path("/system", true);
+			PartitionManager.Mount_By_Path(Get_Android_Root_Path(), true);
 			TWFunc::Exec_Cmd("/sbin/restore-ss.sh", result);
-			PartitionManager.UnMount_By_Path("/system", true);
+			PartitionManager.UnMount_By_Path(Get_Android_Root_Path(), true);
 			if (result != "") returnVal = 1;
 		}
 	}

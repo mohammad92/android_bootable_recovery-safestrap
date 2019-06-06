@@ -141,7 +141,7 @@ int GUIAction::loadsizes(std::string arg __unused)
 		//tw_slot_system_size / tw_slot_system_free
 		//tw_slot_data_size / tw_slot_data_free
 		//tw_slot_cache_size / tw_slot_cache_free
-		Part = PartitionManager.Find_Partition_By_Path("/system");
+		Part = PartitionManager.Find_Partition_By_Path(PartitionManager.Get_Android_Root_Path());
 		if (Part) {
 			DataManager::SetValue("tw_slot_system_size", (int)(Part->Size / mb));
 			DataManager::SetValue("tw_slot_system_free", (int)(Part->Free / mb));
@@ -163,7 +163,7 @@ int GUIAction::loadsizes(std::string arg __unused)
 int GUIAction::changeslot(std::string arg)
 {
         string result;
-	PartitionManager.UnMount_By_Path("/system", true);
+	PartitionManager.UnMount_By_Path(PartitionManager.Get_Android_Root_Path(), true);
 	PartitionManager.UnMount_By_Path("/data", true);
 
 	// CACHE COPY
