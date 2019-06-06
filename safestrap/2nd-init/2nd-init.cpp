@@ -69,6 +69,12 @@ static unsigned long find_execve(unsigned long image_base)
         {
             /* Found the address of execve */
             return image_base + i;
+#ifndef __aarch64__
+        } else if (memcmp(buffer, execve_code_2, sizeof(buffer)) == 0)
+        {
+            /* Found the address of execve 2 */
+            return image_base + i;
+#endif
         }
     }
 

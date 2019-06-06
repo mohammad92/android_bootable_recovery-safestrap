@@ -35,7 +35,7 @@
 unsigned int execve_code[] = { 0xD2801BA8, 0xD4000001, 0xB140041F, 0xDA809400 };
 #else
 /*========================================================
- * Signature of calling execve inside init
+ * Signature of calling execve inside init (Android 4.3)
  * execve:
  *
  * E1A0C007	MOV	R12, R7
@@ -45,6 +45,18 @@ unsigned int execve_code[] = { 0xD2801BA8, 0xD4000001, 0xB140041F, 0xDA809400 };
  *========================================================*/
 
 unsigned int execve_code[] = { 0xE1A0C007, 0xE3A0700B, 0xEF000000, 0xE1A0700C };
+
+/*========================================================
+ * Signature of calling execve inside init (Android 4.2.2)
+ * execve:
+ *
+ * E92D0090	STMFD   SP!, {R4,R7}
+ * E3A0700B	MOV     R7, #0xB
+ * EF000000	SVC	0
+ * E8BD0090	LDMFD   SP!, {R4,R7}
+ *========================================================*/
+
+unsigned int execve_code_2[] = { 0xE92D0090, 0xE3A0700B, 0xEF000000, 0xE8BD0090 };
 #endif
 
 #endif //!SECOND_INIT_H
