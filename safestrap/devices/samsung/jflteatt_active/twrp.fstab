@@ -1,9 +1,16 @@
-# mount point   fstype          device
+# mount point	fstype	device	device2					flags
+/system		ext4	/dev/block/platform/msm_sdcc.1/by-name/system
+/system_image	emmc	/dev/block/platform/msm_sdcc.1/by-name/system
+/data		ext4	/dev/block/platform/msm_sdcc.1/by-name/userdata	length=-16384
+/cache		ext4	/dev/block/platform/msm_sdcc.1/by-name/cache
+/efs		ext4	/dev/block/platform/msm_sdcc.1/by-name/efs	flags=display="EFS";backup=1
+/modem		ext4	/dev/block/platform/msm_sdcc.1/by-name/apnhlos
+/mdm		emmc	/dev/block/platform/msm_sdcc.1/by-name/mdm
+/misc		emmc	/dev/block/platform/msm_sdcc.1/by-name/fota
+/external_sd	vfat	/dev/block/mmcblk1p1	/dev/block/mmcblk1	flags=display="Micro SDcard";storage;wipeingui;removable
+/usb-otg	vfat	/dev/block/sda1	/dev/block/sda			flags=display="USB-OTG";storage;wipeingui;removable
 
-/external_sd  vfat      /dev/block/mmcblk1p1  /dev/block/mmcblk1            flags=display="Micro SDcard";storage;wipeingui;removable
-/datamedia    ext4      /dev/block/mmcblk0p27-orig                          flags=display="Internal Storage";storage;backup=n
-/data         ext4      /dev/block/platform/msm_sdcc.1/by-name/userdata
-/cache        ext4      /dev/block/platform/msm_sdcc.1/by-name/cache
-/system       ext4      /dev/block/platform/msm_sdcc.1/by-name/system       flags=usermrf
-/systemorig   ext4      /dev/block/mmcblk0p16-orig                          flags=hidden;usermrf
-/ss           ext4      /dev/block/mmcblk0p27-orig                          flags=hidden
+# safestrap
+/datamedia	ext4	/dev/block/mmcblk0p27-orig			flags=display="Internal Storage";storage
+/ss		ext4	/dev/block/mmcblk0p27-orig			flags=hidden
+/systemorig	ext4	/dev/block/mmcblk0p16-orig			flags=hidden;usermrf

@@ -6,10 +6,6 @@ RECOVERY_GRAPHICS_FORCE_SINGLE_BUFFER := true
 SS_DEFAULT_USB_INIT := ../safestrap/devices/samsung/jf-common/init.recovery.usb.rc
 
 RECOVERY_SDCARD_ON_DATA := true
-TW_INTERNAL_STORAGE_PATH := "/datamedia/media"
-TW_INTERNAL_STORAGE_MOUNT_POINT := "datamedia"
-TW_EXTERNAL_STORAGE_PATH := "/external_sd"
-TW_EXTERNAL_STORAGE_MOUNT_POINT := "external_sd"
 TW_NO_REBOOT_BOOTLOADER := true
 TW_HAS_DOWNLOAD_MODE := true
 TW_NO_EXFAT := true
@@ -29,7 +25,7 @@ SPLASH_DISABLE_KEY := KEY_HOMEPAGE
 
 TW_DEFAULT_EXTERNAL_STORAGE := true
 TARGET_USERIMAGES_USE_EXT4 := true
-TW_BRIGHTNESS_PATH := /sys/class/lcd/panel/backlight
+TW_BRIGHTNESS_PATH := /sys/devices/platform/msm_fb.526593/leds/lcd-backlight/brightness
 
 # Virtual partition size default (in mb)
 BOARD_DEFAULT_VIRT_SYSTEM_SIZE := 2760
