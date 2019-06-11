@@ -170,6 +170,7 @@ if [ "$RUN_SS" = "1" ]; then
 		$BBX cp /seapp_contexts /tmp/
 		$BBX cp /sepolicy /tmp/
 		$BBX cp /sepolicy_version /tmp/
+		$BBX cp /service_contexts /tmp/
 		$BBX echo "ro.secure=0" > /tmp/default.prop
 		$BBX echo "ro.allow.mock.location=1" >> /tmp/default.prop
 		$BBX echo "ro.debuggable=1" >> /tmp/default.prop
@@ -299,15 +300,17 @@ if [ "$RUN_SS" = "1" ]; then
 			$BBX sed -i "s/loglevel \${sys.init_log_level}/loglevel 8/" /init.rc
 
 			# adjust stock init.target.rc file to include /sbin/fixboot.sh
-			$BBX sed -i "s/mount_all fstab.qcom/exec \/sbin\/fixboot.sh\n    mount_all fstab.qcom/" /init.target.rc
+			$BBX sed -i "s/on fs/on fs\nexec \/sbin\/fixboot.sh/" /init.target.rc
 
 			# reset permissions
-			$BBX chmod -R 755 /sbin/*
-			$BBX chmod 755 /init
-			$BBX chmod 755 /charger
+			$BBX chmod -R 750 /sbin/*
+			$BBX chmod 750 /init*
+			$BBX chmod 640 /fstab.*
 			$BBX chmod 644 /default.prop
-			$BBX chmod 755 /*.rc
-			$BBX chmod 755 /*.sh
+			$BBX chmod 644 /*contexts
+			$BBX chmod 644 /*.pem
+			$BBX chmod 644 /se*
+			$BBX chmod 644 /ueventd.*
 
 			# if virtual system is mounted unmount it
 			if [ "$ALT_SYSTEM_MODE" = "1" ]; then
