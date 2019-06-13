@@ -500,13 +500,12 @@ bool TWPartition::Process_Fstab_Line(const char *fstab_line, bool Display_Error,
 			Storage_Name = Display_Name;
 			Mount_Read_Only = true;
 #ifdef BUILD_SAFESTRAP
-#ifdef RECOVERY_SDCARD_ON_DATA
-		} else if (Mount_Point == "/datamedia") {
+		} else if (Mount_Point == "/datamedia" && datamedia) {
 			Display_Name = "DataMedia";
 			Storage_Name = Display_Name;
 			Is_Storage = true;
 			Can_Be_Wiped = true;
-#endif
+			Hidden = true;
 #endif
 		}
 #ifdef TW_EXTERNAL_STORAGE_PATH
@@ -623,12 +622,10 @@ void TWPartition::Partition_Post_Processing(bool Display_Error) {
 	if (Mount_Point == "/data")
 		Setup_Data_Partition(Display_Error);
 #ifdef BUILD_SAFESTRAP
-#ifdef RECOVERY_SDCARD_ON_DATA
-	else if (Mount_Point == "/datamedia") {
+	else if (Mount_Point == "/datamedia" && datamedia) {
 		Setup_Data_Media();
 		Recreate_Media_Folder();
 	}
-#endif
 #endif
 	else if (Mount_Point == "/cache")
 		Setup_Cache_Partition(Display_Error);
@@ -1129,7 +1126,7 @@ void TWPartition::Setup_AndSec(void) {
 void TWPartition::Setup_Data_Media() {
 #ifdef BUILD_SAFESTRAP
 	LOGINFO("Setting up '%s' as data/media emulated storage.\n", Mount_Point.c_str());
-	if (Storage_Name.empty() || Storage_Name == "DataMedia")
+	if (Storage_Name.empty() || Storage_Name == "Data" || Storage_Name == "DataMedia")
 		Storage_Name = "Internal Storage";
 	Has_Data_Media = true;
 	Is_Storage = true;
@@ -3021,7 +3018,12 @@ void TWPartition::Find_Actual_Block_Device(void) {
 
 void TWPartition::Recreate_Media_Folder(void) {
 	string Command;
+#ifdef BUILD_SAFESTRAP
+	string datamedia_mount = EXPAND(TW_SS_DATAMEDIA_MOUNT);
+	string Media_Path = datamedia_mount + "/media";
+#else
 	string Media_Path = Mount_Point + "/media";
+#endif
 
 	if (Is_FBE) {
 		LOGINFO("Not recreating media folder on FBE\n");

@@ -2190,12 +2190,6 @@ void TWPartitionManager::Get_Partition_List(string ListType, std::vector<Partiti
 		}
 	} else if (ListType == "storage") {
 		char free_space[255];
-#ifdef BUILD_SAFESTRAP
-#ifdef RECOVERY_SDCARD_ON_DATA
-		string bootslot;
-		DataManager::GetValue("tw_bootslot", bootslot);
-#endif
-#endif
 		string Current_Storage = DataManager::GetCurrentStoragePath();
 		for (iter = Partitions.begin(); iter != Partitions.end(); iter++) {
 #ifdef BUILD_SAFESTRAP
@@ -2205,8 +2199,9 @@ void TWPartitionManager::Get_Partition_List(string ListType, std::vector<Partiti
 #endif
 				struct PartitionList part;
 #ifdef BUILD_SAFESTRAP
-#ifdef RECOVERY_SDCARD_ON_DATA
-				if (((*iter)->Mount_Point == "/data") && (bootslot != "stock")) {
+				string bootslot;
+				DataManager::GetValue("tw_bootslot", bootslot);
+				if (((*iter)->Mount_Point == "/data") && (bootslot != "stock") && datamedia) {
 					// Use datamedia free instead
 					string datamedia_mount = EXPAND(TW_SS_DATAMEDIA_MOUNT);
 					TWPartition* datamed = Find_Partition_By_Path(datamedia_mount);
@@ -2215,9 +2210,6 @@ void TWPartitionManager::Get_Partition_List(string ListType, std::vector<Partiti
 				else {
 					sprintf(free_space, "%llu", (*iter)->Free / 1024 / 1024);
 				}
-#else
-				sprintf(free_space, "%llu", (*iter)->Free / 1024 / 1024);
-#endif
 #else
 				sprintf(free_space, "%llu", (*iter)->Free / 1024 / 1024);
 #endif
