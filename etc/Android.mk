@@ -41,7 +41,11 @@ ifeq ($(shell test $(PLATFORM_SDK_VERSION) -ge 22; echo $$?),0)
     LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
     LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT)
 
-    LOCAL_SRC_FILES := init.recovery.service22.rc
+    ifeq ($(SS_FORCE_SECLABEL_RECOVERY_SERVICE), true)
+        LOCAL_SRC_FILES := init.recovery.service22.rc
+    else
+        LOCAL_SRC_FILES := init.recovery.service21.rc
+    endif
     include $(BUILD_PREBUILT)
 else
     include $(CLEAR_VARS)
@@ -100,7 +104,11 @@ ifeq ($(shell test $(PLATFORM_SDK_VERSION) -ge 22; echo $$?),0)
     LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
     LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT)
 
-    LOCAL_SRC_FILES := init.recovery.safestrap22.rc
+    ifeq ($(SS_FORCE_SECLABEL_RECOVERY_SERVICE), true)
+        LOCAL_SRC_FILES := init.recovery.safestrap22.rc
+    else
+        LOCAL_SRC_FILES := init.recovery.safestrap21.rc
+    endif
     include $(BUILD_PREBUILT)
 else
     include $(CLEAR_VARS)
