@@ -1,10 +1,16 @@
-# mount point   fstype          device
+# mount point	fstype	device device2						flags
+/data		ext4	/dev/block/platform/msm_sdcc.1/by-name/userdata
+/cache		ext4	/dev/block/platform/msm_sdcc.1/by-name/cache
+/system		ext4	/dev/block/platform/msm_sdcc.1/by-name/system		flags=usermrf
+/system_image	emmc	/dev/block/platform/msm_sdcc.1/by-name/system
+/efs		ext4	/dev/block/platform/msm_sdcc.1/by-name/efs
+/modem		emmc	/dev/block/platform/msm_sdcc.1/by-name/modem
 
-/external_sd  vfat      /dev/block/mmcblk1p1  /dev/block/mmcblk1            flags=display="Micro SDcard";storage;wipeingui;removable
-/usb-otg      vfat      /dev/block/sda1       /dev/block/sda                flags=display="USB-OTG";storage;wipeingui;removable
-/datamedia    ext4      /dev/block/mmcblk0p15-orig                          flags=display="Internal Storage";storage;backup=n
-/data         ext4      /dev/block/platform/msm_sdcc.1/by-name/userdata
-/cache        ext4      /dev/block/platform/msm_sdcc.1/by-name/cache
-/system       ext4      /dev/block/platform/msm_sdcc.1/by-name/system       flags=usermrf
-/systemorig   ext4      /dev/block/mmcblk0p14-orig                          flags=hidden;usermrf
-/ss           ext4      /dev/block/mmcblk0p15-orig                          flags=hidden
+# Removable storage
+/external_sd	vfat	/dev/block/mmcblk1p1	/dev/block/mmcblk1		flags=display="Micro SDcard";storage;wipeingui;removable
+/usb-otg	vfat	/dev/block/sda1	/dev/block/sda				flags=display="USB-OTG";storage;wipeingui;removable
+
+# safestrap
+/datamedia	ext4	/dev/block/mmcblk0p15-orig				flags=display="Internal Storage";storage
+/ss		ext4	/dev/block/mmcblk0p15-orig				flags=hidden
+/systemorig	ext4	/dev/block/mmcblk0p14-orig				flags=hidden;usermrf
