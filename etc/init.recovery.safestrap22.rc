@@ -1,6 +1,7 @@
 on fs
     start fixboot
 
+# Fix safestrap recovery boot for Android 5.0 and newer
 service fixboot /sbin/fixboot.sh
     oneshot
     disabled

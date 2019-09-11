@@ -1,4 +1,3 @@
 on fs
-    start fixboot
-
-service fixboot /sbin/fixboot.sh
+    # Fix safestrap recovery boot for Android 4.4 and older
+    exec /sbin/fixboot.sh
