@@ -36,6 +36,10 @@
 
 #include <2nd-init.h>
 
+#ifndef SECOND_INIT_DEBUG
+#  define SECOND_INIT_DEBUG 0
+#endif
+
 static void read_init_map(const char *wanted_dev, unsigned long *base)
 {
     char line[128];
@@ -91,14 +95,18 @@ static void replace_init(void)
     /* Get first free address to inject */
     unsigned long data_inject_address = 0;
     read_init_map("00:00", &data_inject_address);
+    printf("Address for data injection: 0x%08lX.\n", data_inject_address);
 
     /* Get init text address */
     unsigned long text_base = 0;
     read_init_map("00:01", &text_base);
+    printf("Address for text base: 0x%08lX.\n", text_base);
 
     /* Find the address of execve in the init text */
     unsigned long execve_address = find_execve(text_base);
+    printf("execve located on: 0x%08lX.\n", execve_address);
 
+#if !SECOND_INIT_DEBUG
     /*======================================
      * Inject the data
      *
@@ -144,6 +152,7 @@ static void replace_init(void)
 
     /* Detach the ptrace */
     ptrace(PTRACE_DETACH, 1, NULL, NULL);
+#endif
 }
 
 int main()
