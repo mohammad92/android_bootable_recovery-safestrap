@@ -173,6 +173,7 @@ public:
 	string Crypto_Key_Location;                                               // Location of the crypto key used for decrypting encrypted data partitions
 	unsigned int MTP_Storage_ID;
 	string Adopted_GUID;
+	unsigned int Adopted_Mount_Delay;
 
 #ifdef BUILD_SAFESTRAP
 	string Display_Name;                                                      // Display name for the GUI
