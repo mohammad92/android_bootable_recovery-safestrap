@@ -302,6 +302,8 @@ private:
 	bool Hidden;                                                              // Dont show in lists
 #endif
 	string Key_Directory;                                                     // Metadata key directory needed for mounting FBE encrypted data partitions using metadata encryption
+	string Original_Path;
+	bool Use_Original_Path;
 
 	struct partition_fs_flags_struct {                                        // This struct is used to store mount flags and options for different file systems for the same partition
 		string File_System;
