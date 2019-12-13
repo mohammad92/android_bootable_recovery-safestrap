@@ -539,7 +539,7 @@ int gr_init(void)
 
 void gr_exit(void)
 {
-    gr_backend->exit(gr_backend);
+    //gr_backend->exit(gr_backend);
 }
 
 int gr_fb_width(void)
