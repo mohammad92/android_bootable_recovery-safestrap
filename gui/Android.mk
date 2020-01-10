@@ -100,6 +100,7 @@ endif
 
 LOCAL_C_INCLUDES += \
     bionic \
+    system/core/base/include \
     system/core/include \
     system/core/libpixelflinger/include
 
