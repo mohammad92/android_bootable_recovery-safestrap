@@ -112,9 +112,9 @@ TWPartitionManager::TWPartitionManager(void) {
 }
 
 #ifdef BUILD_SAFESTRAP
-int TWPartitionManager::Process_Fstab(string Fstab_Filename, bool Display_Error, bool Reset_Partition_List) {
+int TWPartitionManager::Process_Fstab(string Fstab_Filename, bool Display_Error, bool Sar_Detect, bool Reset_Partition_List) {
 #else
-int TWPartitionManager::Process_Fstab(string Fstab_Filename, bool Display_Error) {
+int TWPartitionManager::Process_Fstab(string Fstab_Filename, bool Display_Error, bool Sar_Detect) {
 #endif
 	FILE *fstabFile;
 	char fstab_line[MAX_FSTAB_LINE_LENGTH];
@@ -207,7 +207,7 @@ int TWPartitionManager::Process_Fstab(string Fstab_Filename, bool Display_Error)
 			fstab_line[line_size] = '\n';
 
 		TWPartition* partition = new TWPartition();
-		if (partition->Process_Fstab_Line(fstab_line, Display_Error, &twrp_flags))
+		if (partition->Process_Fstab_Line(fstab_line, Display_Error, &twrp_flags, Sar_Detect))
 			Partitions.push_back(partition);
 		else
 			delete partition;
@@ -222,7 +222,7 @@ int TWPartitionManager::Process_Fstab(string Fstab_Filename, bool Display_Error)
 		for (std::map<string, Flags_Map>::iterator mapit=twrp_flags.begin(); mapit!=twrp_flags.end(); mapit++) {
 			if (Find_Partition_By_Path(mapit->first) == NULL) {
 				TWPartition* partition = new TWPartition();
-				if (partition->Process_Fstab_Line(mapit->second.fstab_line, Display_Error, NULL))
+				if (partition->Process_Fstab_Line(mapit->second.fstab_line, Display_Error, NULL, Sar_Detect))
 					Partitions.push_back(partition);
 				else
 					delete partition;
@@ -236,6 +236,13 @@ int TWPartitionManager::Process_Fstab(string Fstab_Filename, bool Display_Error)
 
 	std::vector<TWPartition*>::iterator iter;
 	for (iter = Partitions.begin(); iter != Partitions.end(); iter++) {
+		if (Sar_Detect) {
+			if ((*iter)->Mount_Point == "/s")
+				return true;
+			else
+				continue;
+		}
+
 		(*iter)->Partition_Post_Processing(Display_Error);
 
 		if ((*iter)->Is_Storage) {
@@ -3009,7 +3016,7 @@ string TWPartitionManager::Get_Active_Slot_Display() {
 }
 
 string TWPartitionManager::Get_Android_Root_Path() {
-	if (property_get_bool("ro.build.system_root_image", false))
+	if (property_get_bool("ro.twrp.sar", false))
 		return "/system_root";
 	return "/system";
 }
