@@ -179,7 +179,7 @@ int GUIAction::changeslot(std::string arg)
 		fstab_filename = "/etc/recovery.fstab";
 	}
 	printf("=> Processing %s\n", fstab_filename.c_str());
-	if (!PartitionManager.Process_Fstab(fstab_filename, true, true)) {
+	if (!PartitionManager.Process_Fstab(fstab_filename, 1, 0, 1)) {
 		LOGERR("Failing out of recovery due to problem with fstab.\n");
 		return -1;
 	}
@@ -363,7 +363,7 @@ int GUIAction::createslot(std::string arg)
 			fstab_filename = "/etc/recovery.fstab";
 		}
 		printf("=> Processing %s\n", fstab_filename.c_str());
-		if (!PartitionManager.Process_Fstab(fstab_filename, true, true)) {
+		if (!PartitionManager.Process_Fstab(fstab_filename, 1, 0, 1)) {
 			LOGERR("Failing out of recovery due to problem with fstab.\n");
 			return -1;
 		}
