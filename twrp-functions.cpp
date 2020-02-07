@@ -58,6 +58,10 @@ extern "C" {
 	#include "libcrecovery/common.h"
 }
 
+#ifdef TW_INCLUDE_LIBRESETPROP
+    #include <resetprop.h>
+#endif
+
 struct selabel_handle *selinux_handle;
 
 /* Execute a command */
@@ -1332,4 +1336,13 @@ bool TWFunc::Is_TWRP_App_In_System() {
 	PartitionManager.UnMount_By_Path(PartitionManager.Get_Android_Root_Path(), false);
 	return false;
 }
+
+int TWFunc::Property_Override(string Prop_Name, string Prop_Value) {
+#ifdef TW_INCLUDE_LIBRESETPROP
+    return setprop(Prop_Name.c_str(), Prop_Value.c_str(), false);
+#else
+    return -2;
+#endif
+}
+
 #endif // ndef BUILD_TWRPTAR_MAIN
