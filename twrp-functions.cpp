@@ -1337,6 +1337,7 @@ bool TWFunc::Is_TWRP_App_In_System() {
 		}
 	}
 	DataManager::SetValue("tw_app_installed_in_system", 0);
+	PartitionManager.UnMount_By_Path(PartitionManager.Get_Android_Root_Path(), false);
 	return false;
 }
 
