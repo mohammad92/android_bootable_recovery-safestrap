@@ -17,10 +17,10 @@
 #include "updater/updater.h"
 
 #include <stdio.h>
-#include <unistd.h>
 #include <stdlib.h>
 #include <fcntl.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <string>
 
@@ -32,12 +32,11 @@
 #include <ziparchive/zip_archive.h>
 
 #include "edify/expr.h"
-#include "otafault/config.h"
-#include "otautil/DirUtil.h"
-#include "otautil/SysUtil.h"
-#include "otautil/cache_location.h"
+#include "otautil/dirutil.h"
 #include "otautil/error_code.h"
+#include "otautil/sysutil.h"
 #include "updater/blockimg.h"
+#include "updater/dynamic_partitions.h"
 #include "updater/install.h"
 
 #ifdef BUILD_SAFESTRAP
@@ -55,11 +54,14 @@
 // (Note it's "updateR-script", not the older "update-script".)
 static constexpr const char* SCRIPT_NAME = "META-INF/com/google/android/updater-script";
 
+<<<<<<< HEAD
 #define SELINUX_CONTEXTS_ZIP "file_contexts"
 #define SELINUX_CONTEXTS_TMP "/tmp/file_contexts"
 
 extern bool have_eio_error;
 
+=======
+>>>>>>> android-10.0.0_r25
 struct selabel_handle *sehandle;
 
 static void UpdaterLogger(android::base::LogId /* id */, android::base::LogSeverity /* severity */,
@@ -139,6 +141,7 @@ int main(int argc, char** argv) {
   RegisterBuiltins();
   RegisterInstallFunctions();
   RegisterBlockImageFunctions();
+  RegisterDynamicPartitionsFunctions();
 #ifndef BUILD_SAFESTRAP
   RegisterDeviceExtensions();
 #endif
@@ -151,7 +154,7 @@ int main(int argc, char** argv) {
 
   std::unique_ptr<Expr> root;
   int error_count = 0;
-  int error = parse_string(script.c_str(), &root, &error_count);
+  int error = ParseString(script, &root, &error_count);
   if (error != 0 || error_count > 0) {
     LOG(ERROR) << error_count << " parse errors";
     CloseArchive(za);
@@ -183,7 +186,6 @@ int main(int argc, char** argv) {
       printf("unexpected argument: %s", argv[4]);
     }
   }
-  ota_io_init(za, state.is_retry);
 
   if (access(SELINUX_CONTEXTS_TMP, R_OK) == 0) {
     struct selinux_opt seopts[] = {
@@ -201,10 +203,6 @@ int main(int argc, char** argv) {
 
   std::string result;
   bool status = Evaluate(&state, root, &result);
-
-  if (have_eio_error) {
-    fprintf(cmd_pipe, "retry_update\n");
-  }
 
   if (!status) {
     if (state.errmsg.empty()) {
@@ -236,6 +234,9 @@ int main(int argc, char** argv) {
       fprintf(cmd_pipe, "log cause: %d\n", state.cause_code);
       if (state.cause_code == kPatchApplicationFailure) {
         LOG(INFO) << "Patch application failed, retry update.";
+        fprintf(cmd_pipe, "retry_update\n");
+      } else if (state.cause_code == kEioFailure) {
+        LOG(INFO) << "Update failed due to EIO, retry update.";
         fprintf(cmd_pipe, "retry_update\n");
       }
     }

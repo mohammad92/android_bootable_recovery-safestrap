@@ -34,32 +34,35 @@ endif
 
 updater_common_static_libraries := \
     libapplypatch \
+    libbootloader_message \
     libbspatch \
     libedify \
-    libziparchive \
     libotautil \
-    libbootloader_message \
-    libutils \
-    libmounts \
-    libotafault \
     libext4_utils \
+    libdm \
     libfec \
     libfec_rs \
+    libverity_tree \
     libfs_mgr \
+    libgtest_prod \
     liblog \
+    liblp \
     libselinux \
     libsparse \
     libsquashfs_utils \
+    libbrotli \
     libbz \
+    libziparchive \
     libz \
     libbase \
     libcrypto \
     libcrypto_utils \
     libcutils \
+    libutils \
     libtune2fs \
-    libbrotli \
     $(tune2fs_static_libraries)
 
+<<<<<<< HEAD
 # libupdater (static library)
 # ===============================
 include $(CLEAR_VARS)
@@ -96,6 +99,8 @@ LOCAL_STATIC_LIBRARIES := \
 
 include $(BUILD_STATIC_LIBRARY)
 
+=======
+>>>>>>> android-10.0.0_r25
 # updater (static executable)
 # ===============================
 include $(CLEAR_VARS)
@@ -119,7 +124,6 @@ LOCAL_SRC_FILES += \
 endif
 
 LOCAL_C_INCLUDES := \
-    $(LOCAL_PATH)/.. \
     $(LOCAL_PATH)/include
 
 LOCAL_CFLAGS := \
