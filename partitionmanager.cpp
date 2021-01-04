@@ -1780,6 +1780,7 @@ void TWPartitionManager::Post_Decrypt(const string& Block_Device) {
 #endif
 			dat->UnMount(false);
 		}
+		DataManager::LoadTWRPFolderInfo();
 		Update_System_Details();
 		Output_Partition(dat);
 		UnMount_Main_Partitions();
