@@ -421,7 +421,7 @@ int GUIAction::flash_zip(std::string filename, int* wipe_cache)
 #ifdef BUILD_SAFESTRAP
 		if (PartitionManager.Backup_Safestrap()) return 1;
 #endif
-		ret_val = TWinstall_zip(filename.c_str(), wipe_cache);
+		ret_val = TWinstall_zip(filename.c_str(), wipe_cache, (bool) DataManager::GetIntValue(TW_SKIP_DIGEST_CHECK_VAR));
 
 		// Now, check if we need to ensure TWRP remains installed...
 		struct stat st;
