@@ -813,6 +813,7 @@ void DataManager::SetDefaultValues()
         mPersist.SetValue(TW_SS_STORAGE_FREE_SIZE, "0");
 #endif
 	mPersist.SetValue(TW_SKIP_DIGEST_CHECK_VAR, "0");
+	mPersist.SetValue(TW_SKIP_DIGEST_CHECK_ZIP_VAR, "1");
 	mPersist.SetValue(TW_SKIP_DIGEST_GENERATE_VAR, "0");
 	mPersist.SetValue(TW_SDEXT_SIZE, "0");
 	mPersist.SetValue(TW_SWAP_SIZE, "0");
