@@ -119,7 +119,7 @@
 		<string name="rebooting">Rebooting...</string>
 		<string name="swipe_reboot">Swipe to Reboot</string>
 		<string name="swipe_reboot_s">   Reboot</string>
-		<string name="reboot_install_app_hdr">Install TWRP App?</string>
+		<string name="reboot_install_app_hdr">Install TWRP App</string>
 		<string name="reboot_install_app1">Would you like to install the Official TWRP App?</string>
 		<string name="reboot_install_app2">The app can check for new TWRP versions.</string>
 		<string name="reboot_install_app_prompt_install">Prompt to install TWRP app if not installed</string>
@@ -521,6 +521,10 @@
 		<string name="decrypt_user_fail_fbe">Failed to decrypt user {1}</string>
 		<string name="decrypt_data_enter_pass_fbe">Enter Password for User [%tw_crypto_user_id%]</string>
 		<string name="decrypt_data_enter_pattern_fbe">Enter Pattern for User [%tw_crypto_user_id%]</string>
+		<string name="multiuser_warning1">Not all users decrypted!</string>
+		<string name="multiuser_warning2">Backup/restore operations may fail!</string>
+		<string name="multiuser_warning_accept">Continue Anyway</string>
+		<string name="multiuser_warning_hdr">Multiuser Warning</string>
 
 		<!-- Various console messages - these consist of user displayed messages, oftentimes errors -->
 		<string name="no_kernel_selinux">Kernel does not have support for reading SELinux contexts.</string>
@@ -732,7 +736,6 @@
 		<string name="unmount_sys_install">Unmount System before installing a ZIP</string>
 		<string name="unmount_system">Unmounting System...</string>
 		<string name="unmount_system_err">Failed unmounting System</string>
-		<string name="fbe_wipe_msg">WARNING: {1} wiped. FBE device should be booted into Android and not Recovery to set initial FBE policy after wipe.</string>
 		<string name="flash_ab_inactive">Flashing A/B zip to inactive slot: {1}</string>
 		<string name="flash_ab_reboot">To flash additional zips, please reboot recovery to switch to the updated slot.</string>
 		<string name="ozip_decrypt_decryption">Starting Ozip Decryption...</string>
